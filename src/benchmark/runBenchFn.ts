@@ -15,7 +15,6 @@ export async function runBenchFn<T, T2>(
   opts: BenchmarkRunOptsWithFn<T, T2>,
   persistRunsNs?: boolean
 ): Promise<{result: BenchmarkResult; runsNs: bigint[]}> {
-  console.trace("runBenchFn", opts, persistRunsNs);
   const minRuns = opts.minRuns || 1;
   const maxRuns = opts.maxRuns || Infinity;
   const maxMs = opts.maxMs || Infinity;

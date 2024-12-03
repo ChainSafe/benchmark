@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import {getCurrentSuite, getCurrentTest, test} from "@vitest/runner";
-
-import {optsByRootSuite, optsMap, resultsByRootSuite} from "./globalState.js";
-import {BenchmarkOpts, BenchmarkResult} from "../types.js";
+import {getCurrentSuite, Suite, SuiteCollector} from "@vitest/runner";
+import {createChainable} from "@vitest/runner/utils";
+import {store} from "./globalState.js";
+import {BenchmarkOpts} from "../types.js";
 import {runBenchFn} from "./runBenchFn.js";
 
 export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
@@ -15,93 +15,97 @@ export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
 
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-function getOptsFromParent(parent: object): BenchmarkOpts {
-  // console.trace("Called to get options.");
-  const optsArr: BenchmarkOpts[] = [];
-  getOptsFromSuite(parent, optsArr);
-  // Merge opts, highest parent = lowest priority
-  return Object.assign({}, ...optsArr.reverse()) as BenchmarkOpts;
-}
-
-/**
- * Recursively append suite opts from child to parent.
- *
- * @returns `[suiteChildOpts, suiteParentOpts, suiteParentParentOpts]`
- */
-function getOptsFromSuite(suite: object, optsArr: BenchmarkOpts[]): void {
-  const suiteOpts = optsMap.get(suite);
-  if (suiteOpts) {
-    optsArr.push(suiteOpts);
+export function getRootSuite(suite: Suite | SuiteCollector): Suite {
+  if (suite.type === "collector") {
+    return getRootSuite(suite.tasks[0] as Suite);
   }
+
+  if (suite.name === "") {
+    return suite;
+  } else if (suite.suite) {
+    getRootSuite(suite.suite);
+  } else {
+    return suite;
+  }
+
+  throw new Error("Can not find root suite");
 }
 
-const itBenchFn: ItBenchFn = function itBench<T, T2>(
-  this: object,
+export const bench = createBenchmarkFunction(function <T, T2>(
   idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
   fn?: (arg: T) => void | Promise<void>
-): void {
-  let opts = coerceToOptsObj(idOrOpts, fn);
-  const itFn = opts.only ? test : opts.skip ? test.skip : test;
+) {
+  const {fn: benchTask, ...opts} = coerceToOptsObj(idOrOpts, fn);
 
-  itFn(opts.id, async () => {
-    const parent = getCurrentTest();
-    const optsParent = parent ? getOptsFromParent(parent) : undefined;
+  const task = getCurrentSuite().task(opts.id, {
+    skip: opts.skip,
+    only: opts.only,
+    sequential: true,
+    concurrent: false,
+    meta: {
+      "dapplion/benchmark": true,
+    },
+    async handler(context) {
+      const parentSuite = context.task.suite;
+      const parentOpts = parentSuite ? store.getOptions(parentSuite) : {};
 
-    // Get results array from root suite
-    const rootSuite = getCurrentSuite();
-    let results = resultsByRootSuite.get(rootSuite);
-    let rootOpts = optsByRootSuite.get(rootSuite);
+      // TODO: Find better way to point to root suite
+      const rootSuite = context.task.suite;
+      const rootOpts = rootSuite ? store.getRootOptions(rootSuite) : {};
 
-    if (!results) {
-      results = new Map<string, BenchmarkResult>();
-      resultsByRootSuite.set(rootSuite, results);
-    }
+      const fullOptions = Object.assign({}, rootOpts, parentOpts, opts);
 
-    if (!rootOpts) {
-      rootOpts = {};
-      optsByRootSuite.set(rootSuite, rootOpts);
-    }
+      // Ensure bench id is unique
+      if (store.getResult(opts.id)) {
+        throw Error(`test titles must be unique, duplicated: '${opts.id}'`);
+      }
 
-    opts = Object.assign({}, rootOpts, optsParent, opts);
-
-    // Ensure bench id is unique
-    if (results.has(opts.id)) {
-      throw Error(`test titles must be unique, duplicated: '${opts.id}'`);
-    }
-
-    // Extend timeout if maxMs is set
-    if (opts.timeoutBench !== undefined) {
+      // Extend timeout if maxMs is set
+      // if (opts.timeoutBench !== undefined) {
       // this.timeout(opts.timeoutBench);
-    } else {
+      // } else {
       // const timeout = this.timeout();
       // if (opts.maxMs && opts.maxMs > timeout) {
       // this.timeout(opts.maxMs * 1.5);
       // } else if (opts.minMs && opts.minMs > timeout) {
       // this.timeout(opts.minMs * 1.5);
       // }
-    }
+      // }
 
-    // Persist full results if requested. dir is created in `beforeAll`
-    const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
-    const persistRunsNs = Boolean(benchmarkResultsCsvDir);
+      // Persist full results if requested. dir is created in `beforeAll`
+      const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
+      const persistRunsNs = Boolean(benchmarkResultsCsvDir);
 
-    const {result, runsNs} = await runBenchFn(opts, persistRunsNs);
+      const {result, runsNs} = await runBenchFn({...fullOptions, fn: benchTask}, persistRunsNs);
 
-    // Store result for:
-    // - to persist benchmark data latter
-    // - to render with the custom reporter
-    results.set(opts.id, result);
+      // Store result for:
+      // - to persist benchmark data latter
+      // - to render with the custom reporter
+      store.setResult(opts.id, result);
 
-    if (benchmarkResultsCsvDir) {
-      fs.mkdirSync(benchmarkResultsCsvDir, {recursive: true});
-      const filename = `${result.id}.csv`;
-      const filepath = path.join(benchmarkResultsCsvDir, filename);
-      fs.writeFileSync(filepath, runsNs.join("\n"));
-    }
+      if (benchmarkResultsCsvDir) {
+        fs.mkdirSync(benchmarkResultsCsvDir, {recursive: true});
+        const filename = `${result.id}.csv`;
+        const filepath = path.join(benchmarkResultsCsvDir, filename);
+        fs.writeFileSync(filepath, runsNs.join("\n"));
+      }
+    },
   });
-};
 
-interface ItBenchFn {
+  store.setOptions(task, opts);
+});
+
+function createBenchmarkFunction(
+  fn: <T, T2>(
+    this: Record<"skip" | "only", boolean | undefined>,
+    idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
+    fn?: (arg: T) => void | Promise<void>
+  ) => void
+): BenchFuncApi {
+  return createChainable(["skip", "only"], fn) as BenchFuncApi;
+}
+
+interface BenchFuncApi {
   <T, T2>(opts: BenchmarkRunOptsWithFn<T, T2>): void;
   <T, T2>(idOrOpts: string | Omit<BenchmarkRunOptsWithFn<T, T2>, "fn">, fn: (arg: T) => void): void;
   <T, T2>(
@@ -110,10 +114,12 @@ interface ItBenchFn {
   ): void;
 }
 
-interface ItBench extends ItBenchFn {
-  only: ItBenchFn;
-  skip: ItBenchFn;
+interface BenchApi extends BenchFuncApi {
+  only: BenchFuncApi;
+  skip: BenchFuncApi;
 }
+
+export const itBench = bench as BenchApi;
 
 function coerceToOptsObj<T, T2>(
   idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
@@ -136,5 +142,3 @@ function coerceToOptsObj<T, T2>(
 
   return opts;
 }
-
-export const itBench = itBenchFn as ItBench;
