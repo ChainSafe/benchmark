@@ -1,4 +1,4 @@
-import {options} from "../src/options.js";
+import {options} from "../src/cli/options.js";
 
 const sections: string[] = [];
 

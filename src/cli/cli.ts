@@ -1,9 +1,9 @@
 // Must not use `* as yargs`, see https://github.com/yargs/yargs/issues/1131
 import yargs from "yargs";
-import {loadOptions, handleRequires} from "./utils/mochaCliExports.js";
+import {loadOptions, handleRequires} from "../utils/mochaCliExports.js";
 import {options, optionsDefault} from "./options.js";
-import {run} from "./run.js";
-import {Opts} from "./types.js";
+import {run} from "../benchmark/run.js";
+import {Opts} from "../types.js";
 
 /**
  * Common factory for running the CLI and running integration tests

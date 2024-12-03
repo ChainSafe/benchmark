@@ -11,23 +11,3 @@ export function getRootSuite(suite: Suite): Suite {
   if (!suite.suite) return suite;
   return getRootSuite(suite.suite);
 }
-
-// export function getAllTestsInRootSuite(ctx: Mocha.Context): Mocha.Test[] {
-//   const parent = getParentSuite(ctx);
-//   const rootSuite = getRootSuite(parent);
-
-//   const tests: Mocha.Test[] = [];
-
-//   function getTests(suite: Mocha.Suite): void {
-//     for (const test of suite.tests) {
-//       tests.push(test);
-//     }
-//     for (const childSuite of suite.suites) {
-//       getTests(childSuite);
-//     }
-//   }
-
-//   getTests(rootSuite);
-
-//   return tests;
-// }

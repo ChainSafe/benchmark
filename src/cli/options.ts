@@ -1,6 +1,6 @@
 import {Options} from "yargs";
-import {Opts, BenchmarkOpts} from "./types.js";
-import {FileCollectionOptions} from "./utils/mochaCliExports.js";
+import {Opts, BenchmarkOpts} from "../types.js";
+import {FileCollectionOptions} from "../utils/mochaCliExports.js";
 
 export const optionsDefault = {
   threshold: 2,
