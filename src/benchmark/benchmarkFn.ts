@@ -32,14 +32,15 @@ export function getRootSuite(suite: Suite | SuiteCollector): Suite {
 }
 
 export const bench = createBenchmarkFunction(function <T, T2>(
+  this: Record<"skip" | "only", boolean | undefined>,
   idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
   fn?: (arg: T) => void | Promise<void>
 ) {
   const {fn: benchTask, ...opts} = coerceToOptsObj(idOrOpts, fn);
 
   const task = getCurrentSuite().task(opts.id, {
-    skip: opts.skip,
-    only: opts.only,
+    skip: opts.skip ?? this.skip,
+    only: opts.only ?? this.only,
     sequential: true,
     concurrent: false,
     meta: {
@@ -56,7 +57,7 @@ export const bench = createBenchmarkFunction(function <T, T2>(
       const fullOptions = Object.assign({}, rootOpts, parentOpts, opts);
 
       // Ensure bench id is unique
-      if (store.getResult(opts.id)) {
+      if (store.getResult(opts.id) && !opts.skip) {
         throw Error(`test titles must be unique, duplicated: '${opts.id}'`);
       }
 

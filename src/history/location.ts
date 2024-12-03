@@ -1,10 +1,10 @@
 import {isGaRun} from "../github/context.js";
-import {Opts} from "../types.js";
+import {StorageOptions} from "../types.js";
 import {optionsDefault} from "../cli/options.js";
 
 export type HistoryLocation = {type: "local"; path: string} | {type: "ga-cache"; key: string};
 
-export function resolveHistoryLocation(opts: Opts): HistoryLocation {
+export function resolveHistoryLocation(opts: StorageOptions): HistoryLocation {
   if (opts.historyLocal && opts.historyGaCache) {
     throw Error("Must not set 'historyLocal' and 'historyGaCache'");
   }

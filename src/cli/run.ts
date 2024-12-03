@@ -2,17 +2,20 @@ import * as github from "@actions/github";
 import {getHistoryProvider} from "../history/index.js";
 import {resolveShouldPersist} from "../history/shouldPersist.js";
 import {validateBenchmark} from "../history/schema.js";
-import {Benchmark, BenchmarkOpts, BenchmarkResult, BenchmarkResults, Opts} from "../types.js";
+import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
 import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
-import {parseBranchFromRef, getCurrentCommitInfo, shell, getCurrentBranch} from "../utils/index.js";
+import {parseBranchFromRef, getCurrentCommitInfo, shell, getCurrentBranch, collectFiles} from "../utils/index.js";
 import {computeBenchComparision} from "../compare/compute.js";
 import {postGaComment} from "../github/comment.js";
 import {isGaRun} from "../github/context.js";
-import {BenchmarkRunner} from "./runner.js";
+import {BenchmarkRunner} from "../benchmark/runner.js";
+import {optionsDefault} from "./options.js";
 
 /* eslint-disable no-console */
 
-export async function run(opts: Opts & BenchmarkOpts): Promise<void> {
+export async function run(opts_: FileCollectionOptions & StorageOptions & BenchmarkOpts): Promise<void> {
+  const opts = Object.assign({}, optionsDefault, opts_);
+
   // Sanitize opts
   if (isNaN(opts.threshold)) throw Error("opts.threshold is not a number");
 
@@ -27,11 +30,25 @@ export async function run(opts: Opts & BenchmarkOpts): Promise<void> {
     console.log(`Found previous benchmark for ${renderCompareWith(compareWith)}, at commit ${prevBench.commitSha}`);
     validateBenchmark(prevBench);
   } else {
-    console.log(`No previous bencharmk found for ${renderCompareWith(compareWith)}`);
+    console.log(`No previous benchmark found for ${renderCompareWith(compareWith)}`);
+  }
+
+  const {files, unmatchedFiles} = await collectFiles(opts).catch((err) => {
+    console.log("Error loading up spec patterns");
+    throw err;
+  });
+
+  if (unmatchedFiles.length > 0) {
+    console.log(`Found unmatched files: \n${unmatchedFiles.join("\n")}\n`);
+  }
+
+  if (files.length === 0) {
+    console.log(`Can not find any matching spec file for ${opts.spec.join(",")}\n`);
+    process.exit(1);
   }
 
   const runner = new BenchmarkRunner({prevBench});
-  const results = await runner.process(["/Users/nazar/Hub/Lodestar/Projects/benchmark/test/perf/iteration.test.ts"]);
+  const results = await runner.process(files);
 
   if (results.length === 0) {
     throw Error("No benchmark result was produced");

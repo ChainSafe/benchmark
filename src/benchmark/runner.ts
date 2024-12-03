@@ -3,6 +3,7 @@ import {
   startTests,
   Suite,
   Task,
+  TaskResultPack,
   VitestRunner,
   VitestRunnerConfig,
   VitestRunnerImportSource,

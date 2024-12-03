@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import {itBench, setBenchOpts} from "../../src/index.js";
+import {itBench, describe, it} from "../../src/index.js";
 
 // As of Jun 17 2021
 // Compare state root
@@ -9,7 +9,7 @@ import {itBench, setBenchOpts} from "../../src/index.js";
 // byteArrayEquals with valueOf()                                         853971.0 ops/s      1.171000 us/op 9963051 runs    16.07 s
 
 describe("Array iteration", () => {
-  setBenchOpts({maxMs: 60 * 1000, convergeFactor: 0.1 / 100});
+  // setBenchOpts({maxMs: 60 * 1000, convergeFactor: 0.1 / 100});
 
   it("Regular test", () => {
     assert.strictEqual(1 + 2, 3);
