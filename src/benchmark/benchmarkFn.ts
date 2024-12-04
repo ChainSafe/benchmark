@@ -4,7 +4,8 @@ import {getCurrentSuite, Suite, SuiteCollector} from "@vitest/runner";
 import {createChainable} from "@vitest/runner/utils";
 import {store} from "./globalState.js";
 import {BenchmarkOpts} from "../types.js";
-import {runBenchFn} from "./runBenchFn.js";
+import {runBenchFn} from "./runBenchmarkFn.js";
+import {optionsDefault} from "../cli/options.js";
 
 export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
   id: string;
@@ -37,47 +38,42 @@ export const bench = createBenchmarkFunction(function <T, T2>(
   fn?: (arg: T) => void | Promise<void>
 ) {
   const {fn: benchTask, ...opts} = coerceToOptsObj(idOrOpts, fn);
+  const currentSuite = getCurrentSuite();
 
-  const task = getCurrentSuite().task(opts.id, {
+  const globalOptions = store.getGlobalOptions() ?? {};
+  const parentOptions = store.getOptions(getCurrentSuite()) ?? {};
+  const options = {...globalOptions, ...parentOptions, ...opts};
+  const {timeoutBench, maxMs, minMs} = options;
+
+  let timeout = timeoutBench ?? optionsDefault.timeoutBench;
+  if (maxMs && maxMs > timeout) {
+    timeout = maxMs * 1.5;
+  }
+
+  if (minMs && minMs > timeout) {
+    timeout = minMs * 1.5;
+  }
+
+  const task = currentSuite.task(opts.id, {
     skip: opts.skip ?? this.skip,
     only: opts.only ?? this.only,
     sequential: true,
     concurrent: false,
+    timeout,
     meta: {
       "dapplion/benchmark": true,
     },
-    async handler(context) {
-      const parentSuite = context.task.suite;
-      const parentOpts = parentSuite ? store.getOptions(parentSuite) : {};
-
-      // TODO: Find better way to point to root suite
-      const rootSuite = context.task.suite;
-      const rootOpts = rootSuite ? store.getRootOptions(rootSuite) : {};
-
-      const fullOptions = Object.assign({}, rootOpts, parentOpts, opts);
-
+    async handler() {
       // Ensure bench id is unique
       if (store.getResult(opts.id) && !opts.skip) {
         throw Error(`test titles must be unique, duplicated: '${opts.id}'`);
       }
 
-      // Extend timeout if maxMs is set
-      // if (opts.timeoutBench !== undefined) {
-      // this.timeout(opts.timeoutBench);
-      // } else {
-      // const timeout = this.timeout();
-      // if (opts.maxMs && opts.maxMs > timeout) {
-      // this.timeout(opts.maxMs * 1.5);
-      // } else if (opts.minMs && opts.minMs > timeout) {
-      // this.timeout(opts.minMs * 1.5);
-      // }
-      // }
-
       // Persist full results if requested. dir is created in `beforeAll`
       const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
       const persistRunsNs = Boolean(benchmarkResultsCsvDir);
 
-      const {result, runsNs} = await runBenchFn({...fullOptions, fn: benchTask}, persistRunsNs);
+      const {result, runsNs} = await runBenchFn({...options, fn: benchTask}, persistRunsNs);
 
       // Store result for:
       // - to persist benchmark data latter
@@ -130,7 +126,7 @@ function coerceToOptsObj<T, T2>(
 
   if (typeof idOrOpts === "string") {
     if (!fn) throw Error("fn arg must be set");
-    opts = {id: idOrOpts, fn};
+    opts = {id: idOrOpts, fn, threshold: optionsDefault.threshold};
   } else {
     if (fn) {
       opts = {...idOrOpts, fn};
@@ -143,3 +139,30 @@ function coerceToOptsObj<T, T2>(
 
   return opts;
 }
+
+/**
+ * Customize benchmark opts for a describe block. Affects only tests within that Mocha.Suite
+ * ```ts
+ * describe("suite A1", function () {
+ *   setBenchOpts({runs: 100});
+ *   // 100 runs
+ *   itBench("bench A1.1", function() {});
+ *   itBench("bench A1.2", function() {});
+ *   // 300 runs
+ *   itBench({id: "bench A1.3", runs: 300}, function() {});
+ *
+ *   // Supports nesting, child has priority over parent.
+ *   // Arrow functions can be used, won't break it.
+ *   describe("suite A2", () => {
+ *     setBenchOpts({runs: 200});
+ *     // 200 runs.
+ *     itBench("bench A2.1", () => {});
+ *   })
+ * })
+ * ```
+ */
+export function setBenchOpts(opts: BenchmarkOpts): void {
+  store.setOptions(getCurrentSuite(), opts);
+}
+
+export const setBenchmarkOptions = setBenchOpts;

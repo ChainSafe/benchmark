@@ -10,8 +10,7 @@ import {postGaComment} from "../github/comment.js";
 import {isGaRun} from "../github/context.js";
 import {BenchmarkRunner} from "../benchmark/runner.js";
 import {optionsDefault} from "./options.js";
-
-/* eslint-disable no-console */
+import {consoleLog} from "../utils/output.js";
 
 export async function run(opts_: FileCollectionOptions & StorageOptions & BenchmarkOpts): Promise<void> {
   const opts = Object.assign({}, optionsDefault, opts_);
@@ -21,33 +20,33 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
 
   // Retrieve history
   const historyProvider = getHistoryProvider(opts);
-  console.log(`Connected to historyProvider: ${historyProvider.providerInfo()}`);
+  consoleLog(`Connected to historyProvider: ${historyProvider.providerInfo()}`);
 
   // Select prev benchmark to compare against
   const compareWith = await resolveCompareWith(opts);
   const prevBench = await resolvePrevBenchmark(compareWith, historyProvider);
   if (prevBench) {
-    console.log(`Found previous benchmark for ${renderCompareWith(compareWith)}, at commit ${prevBench.commitSha}`);
+    consoleLog(`Found previous benchmark for ${renderCompareWith(compareWith)}, at commit ${prevBench.commitSha}`);
     validateBenchmark(prevBench);
   } else {
-    console.log(`No previous benchmark found for ${renderCompareWith(compareWith)}`);
+    consoleLog(`No previous benchmark found for ${renderCompareWith(compareWith)}`);
   }
 
   const {files, unmatchedFiles} = await collectFiles(opts).catch((err) => {
-    console.log("Error loading up spec patterns");
+    consoleLog("Error loading up spec patterns");
     throw err;
   });
 
   if (unmatchedFiles.length > 0) {
-    console.log(`Found unmatched files: \n${unmatchedFiles.join("\n")}\n`);
+    consoleLog(`Found unmatched files: \n${unmatchedFiles.join("\n")}\n`);
   }
 
   if (files.length === 0) {
-    console.log(`Can not find any matching spec file for ${opts.spec.join(",")}\n`);
+    consoleLog(`Can not find any matching spec file for ${opts.spec.join(",")}\n`);
     process.exit(1);
   }
 
-  const runner = new BenchmarkRunner({prevBench});
+  const runner = new BenchmarkRunner({prevBench, benchmarkOpts: opts});
   const results = await runner.process(files);
 
   if (results.length === 0) {
@@ -66,7 +65,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
   if (shouldPersist === true) {
     const refStr = github.context.ref || (await shell("git symbolic-ref HEAD"));
     const branch = parseBranchFromRef(refStr);
-    console.log(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
+    consoleLog(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
     // TODO: prune and limit total entries
     // appendBenchmarkToHistoryAndPrune(history, currBench, branch, opts);
     await historyProvider.writeLatestInBranch(branch, currBench);

@@ -3,20 +3,21 @@ import {
   startTests,
   Suite,
   Task,
-  TaskResultPack,
   VitestRunner,
   VitestRunnerConfig,
   VitestRunnerImportSource,
 } from "@vitest/runner";
-import {Benchmark, BenchmarkResults} from "../types.js";
+import {Benchmark, BenchmarkOpts, BenchmarkResults} from "../types.js";
 import {BenchmarkReporter} from "./reporter.js";
 import {store} from "./globalState.js";
 
 export class BenchmarkRunner implements VitestRunner {
-  config: VitestRunnerConfig;
-  reporter: BenchmarkReporter;
+  readonly config: VitestRunnerConfig;
+  readonly reporter: BenchmarkReporter;
+  readonly prevBench: Benchmark | null;
+  readonly benchmarkOpts: BenchmarkOpts;
 
-  constructor(protected opts: {prevBench: Benchmark | null}) {
+  constructor({prevBench, benchmarkOpts}: {prevBench: Benchmark | null; benchmarkOpts: BenchmarkOpts}) {
     this.config = {
       root: "",
       sequence: {seed: 1234, hooks: "list", setupFiles: "list"},
@@ -27,7 +28,9 @@ export class BenchmarkRunner implements VitestRunner {
       setupFiles: [],
       retry: 0,
     };
-    this.reporter = new BenchmarkReporter(opts.prevBench, 0.2);
+    this.prevBench = prevBench;
+    this.benchmarkOpts = benchmarkOpts;
+    this.reporter = new BenchmarkReporter({prevBench, benchmarkOpts});
   }
 
   onBeforeRunSuite(suite: Suite): void {
@@ -57,12 +60,22 @@ export class BenchmarkRunner implements VitestRunner {
   }
 
   async process(files: string[]): Promise<BenchmarkResults> {
+    store.setGlobalOptions(this.benchmarkOpts);
+
     const res = await startTests(files, this);
 
-    if (res[0].result?.state === "pass") {
+    const passed = res.filter((r) => r.result?.state == "pass");
+    const skipped = res.filter((r) => r.result?.state == "skip");
+    const failed = res.filter((r) => r.result?.state == "fail");
+
+    if (failed.length > 0) {
+      throw failed[0].result?.errors;
+    }
+
+    if (passed.length + skipped.length === res.length) {
       return store.getAllResults();
     }
 
-    return store.getAllResults();
+    throw new Error("Some tests cause returned with unknown state");
   }
 }

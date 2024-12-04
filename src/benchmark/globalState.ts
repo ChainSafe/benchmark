@@ -1,4 +1,4 @@
-import type {Suite, Task} from "@vitest/runner";
+import type {Suite, SuiteCollector, Task} from "@vitest/runner";
 import {BenchmarkResult, BenchmarkOpts, BenchmarkResults} from "../types.js";
 
 /**t
@@ -10,7 +10,7 @@ const results = new Map<string, BenchmarkResult>();
 /**
  * Global opts from CLI
  */
-const optsByRootSuite = new WeakMap<object, BenchmarkOpts>();
+let globalOpts: BenchmarkOpts | undefined;
 
 /**
  * Map to persist options set in describe blocks
@@ -27,16 +27,19 @@ export const store = {
   getAllResults(): BenchmarkResults {
     return [...results.values()];
   },
-  getOptions(suite: Task): BenchmarkOpts | undefined {
+  getOptions(suite: Task | Suite | SuiteCollector): BenchmarkOpts | undefined {
     return optsMap.get(suite);
   },
-  setOptions(suite: Task, opts: BenchmarkOpts): void {
+  setOptions(suite: Task | Suite | SuiteCollector, opts: BenchmarkOpts): void {
     optsMap.set(suite, opts);
   },
-  getRootOptions(suite: Suite): BenchmarkOpts | undefined {
-    return optsByRootSuite.get(suite);
+  removeOptions(suite: Task | Suite): void {
+    optsMap.delete(suite);
   },
-  setRootOptions(suite: Suite, opts: BenchmarkOpts): void {
-    optsByRootSuite.set(suite, opts);
+  setGlobalOptions(opts: Partial<BenchmarkOpts>): void {
+    globalOpts = opts;
+  },
+  getGlobalOptions(): BenchmarkOpts | undefined {
+    return globalOpts;
   },
 };

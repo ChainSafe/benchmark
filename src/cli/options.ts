@@ -3,6 +3,7 @@ import {StorageOptions, BenchmarkOpts, FileCollectionOptions} from "../types.js"
 
 export const optionsDefault = {
   threshold: 2,
+  timeoutBench: 10_000,
   historyLocalPath: "./benchmark_data",
   historyCacheKey: "benchmark_data",
 };
@@ -174,7 +175,8 @@ export const benchmarkOptions: ICliCommandOptions<CLIBenchmarkOptions> = {
   },
   timeoutBench: {
     type: "number",
-    description: "Hard timeout, enforced by mocha.",
+    description: "Hard timeout for each benchmark",
+    default: optionsDefault.timeoutBench,
     group: benchmarkGroup,
   },
 };
