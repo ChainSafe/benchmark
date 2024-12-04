@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import {expect} from "chai";
-import {rimrafSync} from "rimraf";
+import rimraf from "rimraf";
 import {Benchmark} from "../../../src/types.js";
 import {LocalHistoryProvider} from "../../../src/history/local.js";
 
@@ -15,7 +15,7 @@ describe("benchmark history local", () => {
   const historyProvider = new LocalHistoryProvider(testDir);
 
   after(() => {
-    rimrafSync(testDir);
+    rimraf.sync(testDir);
   });
 
   it("Should write and read history", async () => {
