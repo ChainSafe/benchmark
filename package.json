@@ -40,7 +40,6 @@
     "@types/chai": "^4.2.19",
     "@types/mocha": "^10.0.9",
     "@types/node": "^18.15.3",
-    "@types/rimraf": "^3.0.0",
     "@types/yargs": "^17.0.33",
     "chai": "^4.5.0",
     "dotenv": "^10.0.0",
@@ -52,7 +51,7 @@
     "eslint-config-prettier": "^9.1.0",
     "mocha": "^10.8.2",
     "prettier": "^3.4.0",
-    "rimraf": "^3.0.2",
+    "rimraf": "^6.0.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.6.3",
     "typescript-eslint": "^8.16.0"
@@ -65,8 +64,11 @@
     "aws-sdk": "^2.932.0",
     "csv-parse": "^4.16.0",
     "csv-stringify": "^5.6.2",
-    "glob": "^9.3.5",
+    "glob": "^10.4.5",
     "yargs": "^17.7.2",
     "log-symbols": "^7.0.0"
+  },
+  "resolutions": {
+    "lru-cache": "11.0.2"
   }
 }
