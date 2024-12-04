@@ -24,7 +24,7 @@ export const fileCollectionOptions: ICliCommandOptions<CLIFileCollectionOptions>
     description: "File extension(s) to load",
     type: "array",
     alias: "ext",
-    default: ["js", "cjs", "mjs"],
+    default: ["js", "cjs", "mjs", "ts"],
     group: fileGroup,
   },
   ignore: {
