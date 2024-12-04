@@ -69,6 +69,6 @@
     "log-symbols": "^7.0.0"
   },
   "resolutions": {
-    "lru-cache": "11.0.2"
+    "lru-cache": "10.4.3"
   }
 }
