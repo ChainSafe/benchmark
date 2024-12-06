@@ -12,7 +12,7 @@ This tooling provides both a easy to use runner for benchmarking and easy integr
 Create a test mocha test file but use `itBench` instead of `it`
 
 ```ts
-import {itBench, setBenchOpts} from "../../src";
+import {itBench, setBenchOpts, describe} from "../../src";
 
 describe("Sum array benchmark", () => {
   itBench("sum array with reduce", () => {
