@@ -1,6 +1,9 @@
 import fs from "node:fs";
+import path from "node:path";
+import {glob} from "glob";
 import csvParse from "csv-parse/lib/sync.js";
 import csvStringify from "csv-stringify/lib/sync.js";
+import {FileCollectionOptions} from "../types.js";
 
 type CsvMetadata = Record<string, string>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -71,4 +74,38 @@ function splitCsvMetadata(str: string): {csv: string; metadata: Record<string, s
     }
   }
   return {csv: rows.slice(i).join("\n"), metadata};
+}
+
+export async function collectFiles({spec, extension, ignore, recursive}: FileCollectionOptions): Promise<{
+  files: string[];
+  unmatchedFiles: string[];
+}> {
+  const matchedFiles = new Set<string>();
+  const unmatchedFiles: string[] = [];
+
+  // Normalize extensions to ensure leading dots
+  const normalizedExtensions = extension.map((ext) => (ext.startsWith(".") ? ext : `.${ext}`));
+
+  for (const pattern of spec) {
+    const files = await glob(pattern, {
+      ignore,
+      nodir: true,
+      cwd: process.cwd(),
+      absolute: true,
+      follow: recursive,
+    });
+
+    for (const file of files) {
+      if (normalizedExtensions.includes(path.extname(file))) {
+        matchedFiles.add(file);
+      } else {
+        unmatchedFiles.push(file);
+      }
+    }
+  }
+
+  return {
+    files: Array.from(matchedFiles),
+    unmatchedFiles,
+  };
 }

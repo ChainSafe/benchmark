@@ -1,10 +1,18 @@
-import {FileCollectionOptions} from "./utils/mochaCliExports.js";
+export interface FileCollectionOptions {
+  /** File extensions to use */
+  extension: string[];
+  /** Files, dirs, globs to ignore */
+  ignore: string[];
+  /** Find files recursively */
+  recursive: boolean;
+  /** Glob pattern to load spec */
+  spec: string[];
+}
 
-export type Opts = Partial<FileCollectionOptions> & {
+export type StorageOptions = {
   defaultBranch?: string;
   persistBranches?: string[];
   benchmarksPerBranch?: number;
-  threshold: number;
   compareBranch?: string;
   compareCommit?: string;
   prune?: boolean;

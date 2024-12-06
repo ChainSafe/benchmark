@@ -1,5 +1,5 @@
 import * as github from "@actions/github";
-import {Benchmark, Opts} from "../types.js";
+import {Benchmark, StorageOptions} from "../types.js";
 import {getGithubEventData, GithubActionsEventData, parseBranchFromRef, getDefaultBranch} from "../utils/index.js";
 import {isGaRun} from "../github/context.js";
 import {IHistoryProvider} from "../history/provider.js";
@@ -14,7 +14,7 @@ export type CompareWith =
   | {type: CompareWithType.latestCommitInBranch; branch: string; before?: string}
   | {type: CompareWithType.exactCommit; commitSha: string};
 
-export async function resolveCompare(provider: IHistoryProvider, opts: Opts): Promise<Benchmark | null> {
+export async function resolveCompare(provider: IHistoryProvider, opts: StorageOptions): Promise<Benchmark | null> {
   const compareWith = await resolveCompareWith(opts);
   const prevBench = await resolvePrevBenchmark(compareWith, provider);
   if (!prevBench) return null;
@@ -54,7 +54,7 @@ export function renderCompareWith(compareWith: CompareWith): string {
   }
 }
 
-export async function resolveCompareWith(opts: Opts): Promise<CompareWith> {
+export async function resolveCompareWith(opts: StorageOptions): Promise<CompareWith> {
   // compare may be a branch or commit
   if (opts.compareBranch) {
     return {type: CompareWithType.latestCommitInBranch, branch: opts.compareBranch};

@@ -1,13 +1,13 @@
-import {Opts} from "../types.js";
+import {StorageOptions} from "../types.js";
 import {resolveHistoryLocation} from "./location.js";
 import {LocalHistoryProvider} from "./local.js";
 import {getGaCacheHistoryProvider} from "./gaCache.js";
 import {IHistoryProvider} from "./provider.js";
-import {optionsDefault} from "../options.js";
+import {optionsDefault} from "../cli/options.js";
 import {S3HistoryProvider} from "./s3.js";
 export {resolveHistoryLocation};
 
-export function getHistoryProvider(opts: Opts): IHistoryProvider {
+export function getHistoryProvider(opts: StorageOptions): IHistoryProvider {
   if (opts.historyGaCache) {
     const cacheKey = typeof opts.historyGaCache === "string" ? opts.historyGaCache : optionsDefault.historyCacheKey;
     return getGaCacheHistoryProvider(cacheKey);
