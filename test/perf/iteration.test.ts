@@ -1,5 +1,5 @@
 import assert from "node:assert";
-import {itBench, setBenchOpts} from "../../src/index.js";
+import {itBench, describe, it, setBenchOpts} from "../../src/index.js";
 
 // As of Jun 17 2021
 // Compare state root
@@ -61,8 +61,6 @@ describe("Array iteration", () => {
       // arr.reduce((total, curr) => total + curr, 0);
     },
   });
-
-  // Test mocha skip and only
 
   itBench.skip("sum array with reduce", () => {
     arr.reduce((total, curr) => total + curr, 0);

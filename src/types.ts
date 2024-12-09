@@ -1,10 +1,18 @@
-import {FileCollectionOptions} from "./utils/mochaCliExports.js";
+export interface FileCollectionOptions {
+  /** File extensions to use */
+  extension: string[];
+  /** Files, dirs, globs to ignore */
+  ignore: string[];
+  /** Find files recursively */
+  recursive: boolean;
+  /** Glob pattern to load spec */
+  spec: string[];
+}
 
-export type Opts = Partial<FileCollectionOptions> & {
+export type StorageOptions = {
   defaultBranch?: string;
   persistBranches?: string[];
   benchmarksPerBranch?: number;
-  threshold: number;
   compareBranch?: string;
   compareCommit?: string;
   prune?: boolean;
@@ -41,8 +49,7 @@ export type BenchmarkOpts = {
   runsFactor?: number;
   /** Run `sleep(0)` after each fn() call. Use when the event loop needs to tick to free resources created by fn() */
   yieldEventLoopAfterEach?: boolean;
-  /** Hard timeout, enforced by mocha. */
-  // NOTE: Must not use `.timeout` or it collisions with mocha's .timeout option. It defaults to 2000 and messed up everything
+  /** Hard timeout */
   timeoutBench?: number;
   // For reporter
   /** Customize the threshold for this specific benchmark. Set to Infinity to disable it */
@@ -50,7 +57,6 @@ export type BenchmarkOpts = {
   /** Equivalent to setting threshold = Infinity */
   noThreshold?: boolean;
 
-  // For mocha
   only?: boolean;
   skip?: boolean;
 };
