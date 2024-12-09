@@ -15,9 +15,6 @@ import {consoleLog} from "../utils/output.js";
 export async function run(opts_: FileCollectionOptions & StorageOptions & BenchmarkOpts): Promise<void> {
   const opts = Object.assign({}, optionsDefault, opts_);
 
-  // Sanitize opts
-  if (isNaN(opts.threshold)) throw Error("opts.threshold is not a number");
-
   // Retrieve history
   const historyProvider = getHistoryProvider(opts);
   consoleLog(`Connected to historyProvider: ${historyProvider.providerInfo()}`);
