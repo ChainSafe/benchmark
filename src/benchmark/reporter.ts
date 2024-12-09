@@ -69,7 +69,6 @@ export class BenchmarkReporter {
           this.passed++;
         } catch (e) {
           this.failed++;
-          // Log error manually since mocha doesn't log errors thrown here
           consoleLog(e);
           process.exitCode = 1;
           throw e;

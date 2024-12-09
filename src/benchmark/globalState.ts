@@ -3,7 +3,6 @@ import {BenchmarkResult, BenchmarkOpts, BenchmarkResults} from "../types.js";
 
 /**t
  * Map of results by root suite.
- * Before running mocha, you must register the root suite here
  */
 const results = new Map<string, BenchmarkResult>();
 

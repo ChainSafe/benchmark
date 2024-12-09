@@ -62,8 +62,6 @@ describe("Array iteration", () => {
     },
   });
 
-  // Test mocha skip and only
-
   itBench.skip("sum array with reduce", () => {
     arr.reduce((total, curr) => total + curr, 0);
   });

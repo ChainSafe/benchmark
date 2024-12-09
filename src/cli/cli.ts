@@ -22,7 +22,6 @@ void yargs(hideBin(process.argv))
     // As of yargs v16.1.0 dot-notation breaks strictOptions()
     // Manually processing options is typesafe tho more verbose
     "dot-notation": false,
-    // From mocha
     "combine-arrays": true,
     "short-option-groups": false,
     "strip-aliased": true,

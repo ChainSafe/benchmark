@@ -49,8 +49,7 @@ export type BenchmarkOpts = {
   runsFactor?: number;
   /** Run `sleep(0)` after each fn() call. Use when the event loop needs to tick to free resources created by fn() */
   yieldEventLoopAfterEach?: boolean;
-  /** Hard timeout, enforced by mocha. */
-  // NOTE: Must not use `.timeout` or it collisions with mocha's .timeout option. It defaults to 2000 and messed up everything
+  /** Hard timeout */
   timeoutBench?: number;
   // For reporter
   /** Customize the threshold for this specific benchmark. Set to Infinity to disable it */
@@ -58,7 +57,6 @@ export type BenchmarkOpts = {
   /** Equivalent to setting threshold = Infinity */
   noThreshold?: boolean;
 
-  // For mocha
   only?: boolean;
   skip?: boolean;
 };

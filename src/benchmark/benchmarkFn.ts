@@ -14,6 +14,7 @@ export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
   beforeEach?: (arg: T2, i: number) => T | Promise<T>;
 };
 
+// Create partial only for specific keys
 type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
 export function getRootSuite(suite: Suite | SuiteCollector): Suite {
@@ -61,7 +62,7 @@ export const bench = createBenchmarkFunction(function <T, T2>(
     concurrent: false,
     timeout,
     meta: {
-      "dapplion/benchmark": true,
+      "chainsafe/benchmark": true,
     },
     async handler() {
       // Ensure bench id is unique
@@ -141,7 +142,7 @@ function coerceToOptsObj<T, T2>(
 }
 
 /**
- * Customize benchmark opts for a describe block. Affects only tests within that Mocha.Suite
+ * Customize benchmark opts for a describe block
  * ```ts
  * describe("suite A1", function () {
  *   setBenchOpts({runs: 100});
