@@ -61,33 +61,28 @@ export type BenchmarkOpts = {
   skip?: boolean;
 };
 
-/** Manual lodash.pick() function. Ensure no unwanted options end up in optsByRootSuite */
-export function onlyBenchmarkOpts(opts: BenchmarkOpts): BenchmarkOpts {
-  // Define in this way so Typescript guarantees all keys are considered
-  const keysObj: Record<keyof BenchmarkOpts, true> = {
-    maxRuns: true,
-    minRuns: true,
-    maxMs: true,
-    minMs: true,
-    maxWarmUpMs: true,
-    maxWarmUpRuns: true,
-    convergeFactor: true,
-    runsFactor: true,
-    yieldEventLoopAfterEach: true,
-    timeoutBench: true,
-    threshold: true,
-    noThreshold: true,
-    only: true,
-    skip: true,
-  };
+// Create partial only for specific keys
+export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
-  const optsOut = {} as Record<keyof BenchmarkOpts, BenchmarkOpts[keyof BenchmarkOpts]>;
-  for (const key of Object.keys(keysObj) as (keyof BenchmarkOpts)[]) {
-    if (opts[key] !== undefined) {
-      optsOut[key] = opts[key];
-    }
-  }
-  return optsOut as BenchmarkOpts;
+export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
+  id: string;
+  fn: (arg: T) => void | Promise<void>;
+  before?: () => T2 | Promise<T2>;
+  beforeEach?: (arg: T2, i: number) => T | Promise<T>;
+};
+
+export interface BenchFuncApi {
+  <T, T2>(opts: BenchmarkRunOptsWithFn<T, T2>): void;
+  <T, T2>(idOrOpts: string | Omit<BenchmarkRunOptsWithFn<T, T2>, "fn">, fn: (arg: T) => void): void;
+  <T, T2>(
+    idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
+    fn?: (arg: T) => void | Promise<void>
+  ): void;
+}
+
+export interface BenchApi extends BenchFuncApi {
+  only: BenchFuncApi;
+  skip: BenchFuncApi;
 }
 
 export type BenchmarkResults = BenchmarkResult[];
@@ -115,14 +110,14 @@ export type BenchmarkHistory = {
   };
 };
 
-export type BenchmarkComparision = {
+export type BenchmarkComparison = {
   currCommitSha: string;
   prevCommitSha: string | null;
   someFailed: boolean;
-  results: ResultComparision[];
+  results: ResultComparison[];
 };
 
-export type ResultComparision = {
+export type ResultComparison = {
   id: string;
   currAverageNs: number;
   prevAverageNs: number | null;

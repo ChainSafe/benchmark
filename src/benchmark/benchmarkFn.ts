@@ -1,39 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import {getCurrentSuite, Suite, SuiteCollector} from "@vitest/runner";
+import {getCurrentSuite} from "@vitest/runner";
 import {createChainable} from "@vitest/runner/utils";
 import {store} from "./globalState.js";
-import {BenchmarkOpts} from "../types.js";
+import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.js";
 import {runBenchFn} from "./runBenchmarkFn.js";
 import {optionsDefault} from "../cli/options.js";
 
-export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
-  id: string;
-  fn: (arg: T) => void | Promise<void>;
-  before?: () => T2 | Promise<T2>;
-  beforeEach?: (arg: T2, i: number) => T | Promise<T>;
-};
-
-// Create partial only for specific keys
-type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
-
-export function getRootSuite(suite: Suite | SuiteCollector): Suite {
-  if (suite.type === "collector") {
-    return getRootSuite(suite.tasks[0] as Suite);
-  }
-
-  if (suite.name === "") {
-    return suite;
-  } else if (suite.suite) {
-    getRootSuite(suite.suite);
-  } else {
-    return suite;
-  }
-
-  throw new Error("Can not find root suite");
-}
-
-export const bench = createBenchmarkFunction(function <T, T2>(
+export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
   this: Record<"skip" | "only", boolean | undefined>,
   idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
   fn?: (arg: T) => void | Promise<void>
@@ -99,25 +73,9 @@ function createBenchmarkFunction(
     idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
     fn?: (arg: T) => void | Promise<void>
   ) => void
-): BenchFuncApi {
-  return createChainable(["skip", "only"], fn) as BenchFuncApi;
+): BenchApi {
+  return createChainable(["skip", "only"], fn) as BenchApi;
 }
-
-interface BenchFuncApi {
-  <T, T2>(opts: BenchmarkRunOptsWithFn<T, T2>): void;
-  <T, T2>(idOrOpts: string | Omit<BenchmarkRunOptsWithFn<T, T2>, "fn">, fn: (arg: T) => void): void;
-  <T, T2>(
-    idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
-    fn?: (arg: T) => void | Promise<void>
-  ): void;
-}
-
-interface BenchApi extends BenchFuncApi {
-  only: BenchFuncApi;
-  skip: BenchFuncApi;
-}
-
-export const itBench = bench as BenchApi;
 
 function coerceToOptsObj<T, T2>(
   idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
