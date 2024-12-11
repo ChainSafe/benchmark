@@ -1,6 +1,6 @@
 import {isGaRun} from "../github/context.js";
 import {getGithubDefaultBranch} from "../github/octokit.js";
-import {Opts} from "../types.js";
+import {StorageOptions} from "../types.js";
 import {shell} from "./shell.js";
 
 let defaultBranch: string | null = null;
@@ -8,7 +8,7 @@ let defaultBranch: string | null = null;
 /**
  * Return a cached value of a best guess of the repo's default branch
  */
-export async function getDefaultBranch(opts?: Pick<Opts, "defaultBranch">): Promise<string> {
+export async function getDefaultBranch(opts?: Pick<StorageOptions, "defaultBranch">): Promise<string> {
   if (opts?.defaultBranch) {
     return opts.defaultBranch;
   }

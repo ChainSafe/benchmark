@@ -1,9 +1,9 @@
 import * as github from "@actions/github";
-import {BenchmarkComparision} from "../types.js";
+import {BenchmarkComparison} from "../types.js";
 import {commetToPrUpdatable, commentToCommit} from "./octokit.js";
 import {getGithubEventData, GithubActionsEventData, renderComment} from "../utils/index.js";
 
-export async function postGaComment(resultsComp: BenchmarkComparision): Promise<void> {
+export async function postGaComment(resultsComp: BenchmarkComparison): Promise<void> {
   switch (github.context.eventName) {
     case "pull_request": {
       const eventData = getGithubEventData<GithubActionsEventData["pull_request"]>();

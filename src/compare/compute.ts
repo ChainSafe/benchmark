@@ -1,10 +1,10 @@
-import {ResultComparision, BenchmarkComparision, Benchmark, BenchmarkResult} from "../types.js";
+import {ResultComparison, BenchmarkComparison, Benchmark, BenchmarkResult} from "../types.js";
 
 export function computeBenchComparision(
   currBench: Benchmark,
   prevBench: Benchmark | null,
   threshold: number
-): BenchmarkComparision {
+): BenchmarkComparison {
   const prevResults = new Map<string, BenchmarkResult>();
   if (prevBench) {
     for (const bench of prevBench.results) {
@@ -12,7 +12,7 @@ export function computeBenchComparision(
     }
   }
 
-  const results = currBench.results.map((currBench): ResultComparision => {
+  const results = currBench.results.map((currBench): ResultComparison => {
     const {id} = currBench;
     const prevBench = prevResults.get(id);
     const thresholdBench = currBench.threshold ?? threshold;

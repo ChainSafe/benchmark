@@ -1,8 +1,8 @@
-import {BenchmarkComparision, ResultComparision} from "../types.js";
+import {BenchmarkComparison, ResultComparison} from "../types.js";
 
-type CommitsSha = Pick<BenchmarkComparision, "currCommitSha" | "prevCommitSha">;
+type CommitsSha = Pick<BenchmarkComparison, "currCommitSha" | "prevCommitSha">;
 
-export function renderComment(benchComp: BenchmarkComparision): string {
+export function renderComment(benchComp: BenchmarkComparison): string {
   const isFailedResults = benchComp.results.filter((r) => r.isFailed);
   const isImprovedResults = benchComp.results.filter((r) => r.isImproved);
 
@@ -42,7 +42,7 @@ ${renderBenchmarkTable(benchComp.results, benchComp)}
 `;
 }
 
-function renderBenchmarkTable(benchComp: ResultComparision[], {currCommitSha, prevCommitSha}: CommitsSha): string {
+function renderBenchmarkTable(benchComp: ResultComparison[], {currCommitSha, prevCommitSha}: CommitsSha): string {
   function toRow(arr: (number | string)[]): string {
     // Don't surround string items with \`, it doesn't look great rendered in Github comments
     const row = arr.map((e) => `${e}`).join(" | ");
