@@ -1,5 +1,4 @@
-import assert from "node:assert";
-import {itBench, describe, it, setBenchOpts} from "../../src/index.js";
+import {bench, describe, setBenchOpts} from "../../src/index.js";
 
 // As of Jun 17 2021
 // Compare state root
@@ -11,15 +10,11 @@ import {itBench, describe, it, setBenchOpts} from "../../src/index.js";
 describe("Array iteration", () => {
   setBenchOpts({maxMs: 60 * 1000, convergeFactor: 0.1 / 100});
 
-  it("Regular test", () => {
-    assert.strictEqual(1 + 2, 3);
-  });
-
   // nonce = 5
   const n = 1e6;
   const arr = Array.from({length: n}, (_, i) => i);
 
-  itBench("sum array with raw for loop", () => {
+  bench("sum array with raw for loop", () => {
     let sum = 0;
     for (let i = 0, len = arr.length; i < len; i++) {
       sum += i;
@@ -27,7 +22,7 @@ describe("Array iteration", () => {
     return sum;
   });
 
-  itBench("sum array with reduce", () => {
+  bench("sum array with reduce", () => {
     arr.reduce((total, curr) => total + curr, 0);
 
     // Uncomment below to cause a guaranteed performance regression
@@ -37,7 +32,7 @@ describe("Array iteration", () => {
 
   // Test before and beforeEach hooks
 
-  itBench({
+  bench({
     id: "sum array with reduce beforeEach",
     beforeEach: () => Array.from({length: 1e4}, (_, i) => i),
     fn: () => {
@@ -49,7 +44,7 @@ describe("Array iteration", () => {
     },
   });
 
-  itBench({
+  bench({
     id: "sum array with reduce before beforeEach",
     before: () => Array.from({length: 1e4}, (_, i) => i),
     beforeEach: (arr) => arr.slice(0),
@@ -62,17 +57,17 @@ describe("Array iteration", () => {
     },
   });
 
-  itBench.skip("sum array with reduce", () => {
+  bench.skip("sum array with reduce", () => {
     arr.reduce((total, curr) => total + curr, 0);
   });
 
-  // itBench.only("sum array with reduce", () => {
+  // bench.only("sum array with reduce", () => {
   //   arr.reduce((total, curr) => total + curr, 0);
   // });
 
   // Reporter options
 
-  itBench({
+  bench({
     id: "sum array with reduce high threshold",
     threshold: 5,
     fn: () => {
@@ -80,7 +75,7 @@ describe("Array iteration", () => {
     },
   });
 
-  itBench({
+  bench({
     id: "sum array with reduce no threshold",
     threshold: Infinity,
     fn: () => {
