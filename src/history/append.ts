@@ -1,10 +1,10 @@
-import {Benchmark, BenchmarkHistory, Opts} from "../types.js";
+import {Benchmark, BenchmarkHistory, StorageOptions} from "../types.js";
 
 export function appendBenchmarkToHistoryAndPrune(
   history: BenchmarkHistory,
   newBench: Benchmark,
   branch: string,
-  opts: Opts
+  opts: StorageOptions
 ): void {
   if (opts.benchmarksPerBranch) {
     limitBenchmarksPerBranch(history, opts.benchmarksPerBranch);

@@ -9,10 +9,10 @@ This tooling provides both a easy to use runner for benchmarking and easy integr
 
 ## Quick start
 
-Create a test mocha test file but use `itBench` instead of `it`
+Create a benchmark test file but use `itBench` instead of `it`
 
 ```ts
-import {itBench, setBenchOpts} from "../../src";
+import {itBench, setBenchOpts, describe} from "../../src";
 
 describe("Sum array benchmark", () => {
   itBench("sum array with reduce", () => {
@@ -21,7 +21,7 @@ describe("Sum array benchmark", () => {
 });
 ```
 
-Then run the CLI, compatible with all mocha options.
+Then run the CLI.
 
 ```
 benchmark 'test/perf/**/*.perf.ts' --local
@@ -36,7 +36,7 @@ Inspect benchmark results in the terminal
 
 ## How does it work?
 
-This tool is a CLI wrapper around mocha, example usage:
+This tool is a CLI tool, example usage:
 
 ```
 benchmark 'test/perf/**/*.perf.ts' --s3
@@ -47,9 +47,7 @@ The above command will:
 - Read benchmark history from the specified provider (AWS S3)
 - Figure out the prev benchmark based on your option (defaults to latest commit in main branch)
 - Run benchmark comparing with previous
-  - Runs mocha programatically against the file globs
-  - Collect benchmark data in-memory while streaming results with a familiar mocha reporter
-  - Note: also runs any test that would regularly be run with mocha
+  - Collect benchmark data in-memory while streaming results
 - Add result to benchmark history and persist them to the specified provider (AWS S3)
 - If in CI, post a PR or commit comment with an expandable summary of the benchmark results comparision
 - If a performance regression was detected, exit 1

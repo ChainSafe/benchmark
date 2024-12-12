@@ -5,5 +5,8 @@
     "outDir": "./lib/esm",
 		"esModuleInterop": true,
 		"module": "es2020",
+
+    // To build for Node 18 the lru-cache package has conflicting types
+    "skipLibCheck": true,
   }
 }
