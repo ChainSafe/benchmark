@@ -1,5 +1,7 @@
-import {expect} from "chai";
+import {expect, describe, it} from "vitest";
 import {toCsv, fromCsv} from "../../../src/utils/index.js";
+
+console.log(process.versions);
 
 describe("utils / file - csv", () => {
   it("Convert to and from CSV", () => {

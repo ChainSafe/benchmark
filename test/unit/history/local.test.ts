@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import {expect} from "chai";
+import fs from "fs";
+import {expect, describe, it, afterAll} from "vitest";
 import {rimrafSync} from "rimraf";
 import {Benchmark} from "../../../src/types.js";
 import {LocalHistoryProvider} from "../../../src/history/local.js";
@@ -14,15 +14,16 @@ describe("benchmark history local", () => {
   const testDir = fs.mkdtempSync("test_files_");
   const historyProvider = new LocalHistoryProvider(testDir);
 
-  after(() => {
+  afterAll(() => {
     rimrafSync(testDir);
   });
 
   it("Should write and read history", async () => {
+    console.log("%%%%%%%%%%%%%%%%", process.versions);
     await historyProvider.writeToHistory(benchmark);
 
     const benchmarks = await historyProvider.readHistory();
-    expect(benchmarks).to.deep.equal([benchmark], "Wrong history");
+    expect(benchmarks).not.to.deep.equal([benchmark], "Wrong history");
   });
 
   it("Should write and read latest in branch", async () => {

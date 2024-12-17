@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {expect, describe, it, vi, beforeAll, afterAll} from "vitest";
 import S3 from "aws-sdk/clients/s3.js";
 import {Benchmark} from "../../../src/types.js";
 import {S3HistoryProvider} from "../../../src/history/s3.js";
@@ -10,7 +10,7 @@ describe("benchmark history S3 paths", () => {
   const keyPrefix = "myorg/myproject/Linux";
 
   let historyProvider: S3HistoryProvider;
-  before(() => {
+  beforeAll(() => {
     historyProvider = new S3HistoryProvider({Bucket, keyPrefix});
   });
 
@@ -32,7 +32,7 @@ describe("benchmark history S3 paths", () => {
 });
 
 describe.skip("benchmark history S3", function () {
-  this.timeout(60 * 1000);
+  vi.setConfig({testTimeout: 60 * 1000});
 
   const branch = "main";
   const benchmark: Benchmark = {
@@ -41,7 +41,7 @@ describe.skip("benchmark history S3", function () {
   };
 
   let historyProvider: S3HistoryProvider;
-  before(() => {
+  beforeAll(() => {
     historyProvider = S3HistoryProvider.fromEnv();
   });
 
@@ -63,7 +63,7 @@ describe.skip("benchmark history S3", function () {
     expect(benchmarks).to.deep.equal([benchmark], "Wrong history");
   });
 
-  after("Delete uploaded artifacts", async () => {
+  afterAll(async () => {
     const config = historyProvider["config"];
     const s3 = new S3(config);
     const keys = [
