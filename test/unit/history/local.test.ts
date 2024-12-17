@@ -23,7 +23,7 @@ describe("benchmark history local", () => {
     await historyProvider.writeToHistory(benchmark);
 
     const benchmarks = await historyProvider.readHistory();
-    expect(benchmarks).not.to.deep.equal([benchmark], "Wrong history");
+    expect(benchmarks).to.deep.equal([benchmark], "Wrong history");
   });
 
   it("Should write and read latest in branch", async () => {
