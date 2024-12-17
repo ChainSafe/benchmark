@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import * as cache from "@actions/cache";
 import {Benchmark} from "../types.js";
 import {LocalHistoryProvider} from "./local.js";

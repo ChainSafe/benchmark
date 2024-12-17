@@ -1,5 +1,5 @@
-import fs from "fs";
-import path from "path";
+import fs from "node:fs";
+import path from "node:path";
 import {glob} from "glob";
 import csvParse from "csv-parse/lib/sync.js";
 import csvStringify from "csv-stringify/lib/sync.js";

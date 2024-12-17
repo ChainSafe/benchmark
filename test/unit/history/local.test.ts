@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs from "node:fs";
 import {expect, describe, it, afterAll} from "vitest";
 import {rimrafSync} from "rimraf";
 import {Benchmark} from "../../../src/types.js";
