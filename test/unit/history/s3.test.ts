@@ -51,7 +51,7 @@ describe.skip("benchmark history S3", function () {
 
   it("readLatestInBranch", async function () {
     const benchRead = await historyProvider.readLatestInBranch(branch);
-    expect(benchRead).to.deep.equal(benchmark, "Wrong bench read from disk");
+    expect(benchRead).toEqual(benchmark);
   });
 
   it("writeToHistory", async function () {
@@ -60,7 +60,7 @@ describe.skip("benchmark history S3", function () {
 
   it("readHistory", async function () {
     const benchmarks = await historyProvider.readHistory();
-    expect(benchmarks).to.deep.equal([benchmark], "Wrong history");
+    expect(benchmarks).toEqual([benchmark]);
   });
 
   afterAll(async () => {

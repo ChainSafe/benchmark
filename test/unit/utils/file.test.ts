@@ -1,8 +1,6 @@
 import {expect, describe, it} from "vitest";
 import {toCsv, fromCsv} from "../../../src/utils/index.js";
 
-console.log(process.versions);
-
 describe("utils / file - csv", () => {
   it("Convert to and from CSV", () => {
     const data = [
@@ -17,13 +15,13 @@ describe("utils / file - csv", () => {
 `);
 
     const dataRev = fromCsv(csv).data;
-    expect(dataRev).to.deep.equal(data);
+    expect(dataRev).toEqual(data);
   });
 
   it("Handle comma in value", () => {
     const data = [{id: "1,2,3"}];
     const csv = toCsv(data);
-    expect(csv).to.equal(`id
+    expect(csv).toEqual(`id
 "1,2,3"
 `);
   });
@@ -38,15 +36,15 @@ describe("utils / file - csv", () => {
     };
 
     const csv = toCsv(data, metadata);
-    expect(csv).to.equal(`#,commit,4b235978fa5227dae61a6bed6d73461eeb550dac
+    expect(csv).toEqual(`#,commit,4b235978fa5227dae61a6bed6d73461eeb550dac
 a,b
 1,x
 3,y
 `);
 
     const dataRev = fromCsv(csv);
-    expect(dataRev.data).to.deep.equal(data, "Wrong data");
-    expect(dataRev.metadata).to.deep.equal(metadata, "Wrong metadata");
+    expect(dataRev.data).toEqual(data);
+    expect(dataRev.metadata).toEqual(metadata);
   });
 
   it("Parse CSV with only embedded metadata", () => {
@@ -56,11 +54,11 @@ a,b
     };
 
     const csv = toCsv(data, metadata);
-    expect(csv).to.equal(`#,commit,4b235978fa5227dae61a6bed6d73461eeb550dac
+    expect(csv).toEqual(`#,commit,4b235978fa5227dae61a6bed6d73461eeb550dac
 `);
 
     const dataRev = fromCsv(csv);
-    expect(dataRev.data).to.deep.equal(data, "Wrong data");
-    expect(dataRev.metadata).to.deep.equal(metadata, "Wrong metadata");
+    expect(dataRev.data).toEqual(data);
+    expect(dataRev.metadata).toEqual(metadata);
   });
 });

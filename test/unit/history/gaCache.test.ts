@@ -28,13 +28,13 @@ describe.skip("benchmark history gaCache", function () {
   it("writeLatestInBranch", async ({skip}) => {
     if (!isGaRun()) return skip();
 
-    await historyProvider.writeLatestInBranch(branch, benchmark);
+    await expect(historyProvider.writeLatestInBranch(branch, benchmark)).resolves.toBeDefined();
   });
 
   it("readLatestInBranch", async ({skip}) => {
     if (!isGaRun()) return skip();
 
     const benchRead = await historyProvider.readLatestInBranch(branch);
-    expect(benchRead).to.deep.equal(benchmark, "Wrong bench read from disk");
+    expect(benchRead).toEqual(benchmark);
   });
 });

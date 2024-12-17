@@ -19,17 +19,16 @@ describe("benchmark history local", () => {
   });
 
   it("Should write and read history", async () => {
-    console.log("%%%%%%%%%%%%%%%%", process.versions);
     await historyProvider.writeToHistory(benchmark);
 
     const benchmarks = await historyProvider.readHistory();
-    expect(benchmarks).to.deep.equal([benchmark], "Wrong history");
+    expect(benchmarks).toEqual([benchmark]);
   });
 
   it("Should write and read latest in branch", async () => {
     await historyProvider.writeLatestInBranch(branch, benchmark);
 
     const benchRead = await historyProvider.readLatestInBranch(branch);
-    expect(benchRead).to.deep.equal(benchmark, "Wrong bench read from disk");
+    expect(benchRead).toEqual(benchmark);
   });
 });
