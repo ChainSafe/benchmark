@@ -1,4 +1,4 @@
-import fs from "node:fs";
+import fs from "fs";
 
 /**
  * Github actions store the event data payload at a JSON file with path

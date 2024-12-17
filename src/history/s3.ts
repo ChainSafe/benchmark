@@ -1,4 +1,4 @@
-import path from "node:path";
+import path from "path";
 import S3 from "aws-sdk/clients/s3.js";
 import {Benchmark, BenchmarkResults} from "../types.js";
 import {fromCsv, toCsv, extendError, AwsError} from "../utils/index.js";

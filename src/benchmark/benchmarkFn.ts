@@ -1,5 +1,5 @@
-import fs from "node:fs";
-import path from "node:path";
+import fs from "fs";
+import path from "path";
 import {getCurrentSuite} from "@vitest/runner";
 import {createChainable} from "@vitest/runner/utils";
 import {store} from "./globalState.js";
