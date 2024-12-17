@@ -37,7 +37,7 @@ jobs:
           node-version: "22"
       - uses: denoland/setup-deno@v2
         with:
-          deno-version: stable
+          deno-version: v2.x
       - name: Install
         run: yarn install --frozen-lockfile
       - name: Build
