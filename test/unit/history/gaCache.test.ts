@@ -1,4 +1,4 @@
-import {expect} from "chai";
+import {expect, describe, it, vi, beforeAll} from "vitest";
 import {Benchmark} from "../../../src/types.js";
 import {getGaCacheHistoryProvider} from "../../../src/history/gaCache.js";
 import {isGaRun} from "../../../src/github/context.js";
@@ -11,7 +11,7 @@ import {isGaRun} from "../../../src/github/context.js";
 //  - https://github.com/nektos/act/issues/329
 //  - https://github.com/nektos/act/issues/285
 describe.skip("benchmark history gaCache", function () {
-  this.timeout(60 * 1000);
+  vi.setConfig({testTimeout: 60 * 1000});
 
   const branch = "main";
   const benchmark: Benchmark = {
@@ -21,20 +21,20 @@ describe.skip("benchmark history gaCache", function () {
 
   const cacheKey = "ga-cache-testing";
   let historyProvider: ReturnType<typeof getGaCacheHistoryProvider>;
-  before(() => {
+  beforeAll(() => {
     historyProvider = getGaCacheHistoryProvider(cacheKey);
   });
 
-  it("writeLatestInBranch", async function () {
-    if (!isGaRun()) this.skip();
+  it("writeLatestInBranch", async ({skip}) => {
+    if (!isGaRun()) return skip();
 
-    await historyProvider.writeLatestInBranch(branch, benchmark);
+    await expect(historyProvider.writeLatestInBranch(branch, benchmark)).resolves.toBeDefined();
   });
 
-  it("readLatestInBranch", async function () {
-    if (!isGaRun()) this.skip();
+  it("readLatestInBranch", async ({skip}) => {
+    if (!isGaRun()) return skip();
 
     const benchRead = await historyProvider.readLatestInBranch(branch);
-    expect(benchRead).to.deep.equal(benchmark, "Wrong bench read from disk");
+    expect(benchRead).toEqual(benchmark);
   });
 });

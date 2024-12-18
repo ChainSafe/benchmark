@@ -3,8 +3,8 @@ name: Tests
 on: [pull_request, push]
 
 jobs:
-  test:
-    name: Test
+  test-node:
+    name: Test Node
     strategy:
       fail-fast: false
       matrix:
@@ -25,3 +25,41 @@ jobs:
         run: yarn lint
       - name: Unit tests
         run: yarn test:unit
+
+  test-deno:
+    name: Test Deno
+    runs-on: ubuntu-latest
+    steps:
+      # <common-build> - Uses YAML anchors in the future
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "22"
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: v2.x
+      - name: Install
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: deno run build
+      - name: Unit tests
+        run: deno run -A test:unit
+
+  test-bun:
+    name: Test Bun
+    runs-on: ubuntu-latest
+    steps:
+      # <common-build> - Uses YAML anchors in the future
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: "22"
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: latest
+      - name: Install
+        run: yarn install --frozen-lockfile
+      - name: Build
+        run: bun run --bun build
+      - name: Unit tests
+        run: bun run --bun test:unit
