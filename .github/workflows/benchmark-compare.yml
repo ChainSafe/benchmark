@@ -18,6 +18,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+        with: 
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
@@ -40,6 +44,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: 
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -62,6 +70,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with: 
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
