@@ -5,7 +5,7 @@
   "author": "dapplion <35266934+dapplion@users.noreply.github.com>",
   "license": "MIT",
   "bin": {
-    "benchmark": "./bin/index.cjs"
+    "benchmark": "./bin/index.js"
   },
   "files": [
     "lib/**/*.d.ts",
@@ -61,6 +61,7 @@
     "@vitest/runner": "^2.1.6",
     "ajv": "^8.6.0",
     "aws-sdk": "^2.932.0",
+    "cli-table3": "^0.6.5",
     "csv-parse": "^4.16.0",
     "csv-stringify": "^5.6.2",
     "glob": "^10.4.5",
