@@ -26,7 +26,7 @@ jobs:
         run: yarn install --frozen-lockfile
 
       - name: Run performance tests on node
-        run: yarn benchmark --local ./nodejs-benchmark --noThrow ${{ github.event_name == 'push' }}
+        run: yarn benchmark --local ./nodejs-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -48,7 +48,7 @@ jobs:
         run: bun install
 
       - name: Run performance tests on bun
-        run: bun run --bun benchmark --local ./bun-benchmark --noThrow ${{ github.event_name == 'push' }}
+        run: bun run --bun benchmark --local ./bun-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -70,7 +70,7 @@ jobs:
         run: deno install
 
       - name: Run performance tests on bun
-        run: deno run -A benchmark --local ./deno-benchmark --noThrow ${{ github.event_name == 'push' }}
+        run: deno run -A benchmark --local ./deno-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
