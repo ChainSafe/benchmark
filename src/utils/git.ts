@@ -5,9 +5,12 @@ export async function getCurrentCommitInfo(): Promise<{
   commitSha: string;
   /** committer date, UNIX timestamp in seconds */
   timestamp: number;
+  /** Branch name for current repo checkout */
+  branch: string;
 }> {
   const commitSha = await shell("git show -s --format=%H");
   const timestampStr = await shell("git show -s --format=%ct");
+  const branch = await shell("git branch --show-current");
   const timestamp = parseInt(timestampStr, 10);
 
   if (!timestamp || isNaN(timestamp)) {
@@ -17,11 +20,12 @@ export async function getCurrentCommitInfo(): Promise<{
   return {
     commitSha,
     timestamp,
+    branch,
   };
 }
 
 /**
- * Returns a chornological list of commits from `$branch`.
+ * Returns a chronological list of commits from `$branch`.
  *
  * - `--format=format:%H`: Print the full commit hash only
  * - `-n`: Display up to n commits

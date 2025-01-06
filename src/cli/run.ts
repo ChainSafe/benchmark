@@ -60,8 +60,8 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
   const currentBranch = await getCurrentBranch();
   const shouldPersist = await resolveShouldPersist(opts, currentBranch);
   if (shouldPersist === true) {
-    const refStr = github.context.ref ?? (await shell("git symbolic-ref HEAD"));
-    const branch = parseBranchFromRef(refStr);
+    const branch =
+      currentCommit.branch ?? parseBranchFromRef(github.context.ref ?? (await shell("git symbolic-ref HEAD")));
     consoleLog(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
     // TODO: prune and limit total entries
     // appendBenchmarkToHistoryAndPrune(history, currBench, branch, opts);
