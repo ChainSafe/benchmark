@@ -13,20 +13,14 @@ on:
       - main
 
 jobs:
-  nodejs:
+  benchmark-nodejs:
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
-        with:
-          # Get the entire git history to walk commit history on head branch
-          fetch-depth: 0
-          # Do not checkout merge commit
-          ref: ${{ github.event.pull_request.head.sha }}
-
       - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22"
 
       - name: Install
         run: yarn install --frozen-lockfile
@@ -42,14 +36,10 @@ jobs:
           name: nodejs-benchmark
           path: nodejs
 
-  bun:
+  benchmark-bun:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
-
       - uses: oven-sh/setup-bun@v2
         with:
           bun-version: latest
@@ -68,14 +58,10 @@ jobs:
           name: bun-benchmark
           path: bun
 
-  deno:
+  benchmark-deno:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-          ref: ${{ github.event.pull_request.head.sha }}
-
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
@@ -94,7 +80,7 @@ jobs:
           name: deno-benchmark
           path: deno
 
-  compare:
+  benchmark-compare:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
