@@ -5,7 +5,7 @@ import {validateBenchmark} from "../history/schema.js";
 import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
 import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
 import {parseBranchFromRef, getCurrentCommitInfo, shell, getCurrentBranch, collectFiles} from "../utils/index.js";
-import {computeBenchComparision} from "../compare/compute.js";
+import {computeBenchComparison} from "../compare/compute.js";
 import {postGaComment} from "../github/comment.js";
 import {isGaRun} from "../github/context.js";
 import {BenchmarkRunner} from "../benchmark/runner.js";
@@ -69,7 +69,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
     await historyProvider.writeToHistory(currBench);
   }
 
-  const resultsComp = computeBenchComparision(currBench, prevBench, opts.threshold);
+  const resultsComp = computeBenchComparison(currBench, prevBench, opts.threshold);
 
   if (!opts.skipPostComment && isGaRun()) {
     await postGaComment(resultsComp);
