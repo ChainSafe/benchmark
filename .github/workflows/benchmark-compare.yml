@@ -56,7 +56,7 @@ jobs:
         run: bun install
 
       - name: Run performance tests on bun
-        run: bun run --bun benchmark --local ./bun-benchmark --persist --noThrow ${{ github.event_name == 'push' }} 
+        run: bun run --bun ./src/cli/cli.ts 'test/perf/**/*.test.ts' --local ./bun-benchmark --persist --noThrow ${{ github.event_name == 'push' }} 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -82,7 +82,7 @@ jobs:
         run: deno install
 
       - name: Run performance tests on bun
-        run: deno run -A benchmark --local ./deno-benchmark --persist --noThrow ${{ github.event_name == 'push' }} 
+        run: deno run --unstable-sloppy-imports -A ./src/cli/cli.ts 'test/perf/**/*.test.ts' --local ./deno-benchmark --persist --noThrow ${{ github.event_name == 'push' }} 
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
