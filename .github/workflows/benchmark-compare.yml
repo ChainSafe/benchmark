@@ -113,3 +113,6 @@ jobs:
 
       - name: Run comparison
         run: node --loader ts-node/esm ./src/cli/cli.ts cmp nodejs-benchmark deno-benchmark bun-benchmark
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
