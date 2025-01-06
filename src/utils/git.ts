@@ -6,11 +6,11 @@ export async function getCurrentCommitInfo(): Promise<{
   /** committer date, UNIX timestamp in seconds */
   timestamp: number;
   /** Branch name for current repo checkout */
-  branch: string;
+  branch?: string;
 }> {
   const commitSha = await shell("git show -s --format=%H");
   const timestampStr = await shell("git show -s --format=%ct");
-  const branch = await shell("git branch --show-current");
+  const branchStr = await shell("git branch --show-current");
   const timestamp = parseInt(timestampStr, 10);
 
   if (!timestamp || isNaN(timestamp)) {
@@ -20,7 +20,7 @@ export async function getCurrentCommitInfo(): Promise<{
   return {
     commitSha,
     timestamp,
-    branch,
+    branch: branchStr === "" ? undefined : branchStr,
   };
 }
 
