@@ -5,7 +5,7 @@ import {consoleLog} from "../utils/output.js";
 import {compareBenchmarks} from "../compare/compute.js";
 import {renderBenchmarkComparisonTable} from "../utils/render.js";
 import {isGaRun} from "../github/context.js";
-import {postGaCommentSelfComparison} from "../github/comment.js";
+import {postGaCommentCrossComparison} from "../github/comment.js";
 
 export async function compare({dirs}: {dirs: string[]}): Promise<void> {
   consoleLog("Comparing benchmarks:");
@@ -37,6 +37,6 @@ export async function compare({dirs}: {dirs: string[]}): Promise<void> {
   consoleLog(renderBenchmarkComparisonTable(resultsComp));
 
   if (isGaRun()) {
-    await postGaCommentSelfComparison(resultsComp);
+    await postGaCommentCrossComparison(resultsComp);
   }
 }
