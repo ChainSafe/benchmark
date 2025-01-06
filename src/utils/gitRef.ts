@@ -32,14 +32,13 @@ export function parseRef(refStr: string): Ref {
 export function parseBranchFromRef(refStr: string): string {
   const ref = parseRef(refStr);
 
-  console.log("%%%%%%%%%%%%%%%%%", ref);
-
   switch (ref.type) {
     case "heads":
       return ref.name;
 
     case "pull":
-      throw Error("Merge commit not supported. Make sure to checkout head branch commit");
+      return `pull/${ref.name}`;
+    // throw Error("Merge commit not supported. Make sure to checkout head branch commit");
 
     case "tags":
       throw Error("Running on tags not supported. Trigger on push events only");
