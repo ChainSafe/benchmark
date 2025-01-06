@@ -32,6 +32,8 @@ export function parseRef(refStr: string): Ref {
 export function parseBranchFromRef(refStr: string): string {
   const ref = parseRef(refStr);
 
+  console.log("%%%%%%%%%%%%%%%%%", ref);
+
   switch (ref.type) {
     case "heads":
       return ref.name;
