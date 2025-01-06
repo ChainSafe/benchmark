@@ -2,7 +2,7 @@ import {getContext} from "./context.js";
 
 const commentTag = "benchmarkbot/action";
 
-export async function commetToPrUpdatable(prNumber: number, body: string): Promise<void> {
+export async function commentToPrUpdatable(prNumber: number, body: string): Promise<void> {
   const {repo, octokit} = getContext();
 
   // Append tag so the comment is findable latter

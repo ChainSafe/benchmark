@@ -6,11 +6,12 @@ import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from ".
 import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
 import {parseBranchFromRef, getCurrentCommitInfo, shell, getCurrentBranch, collectFiles} from "../utils/index.js";
 import {computeBenchComparison} from "../compare/compute.js";
-import {postGaComment} from "../github/comment.js";
+import {postGaCommentSelfComparison} from "../github/comment.js";
 import {isGaRun} from "../github/context.js";
 import {BenchmarkRunner} from "../benchmark/runner.js";
 import {optionsDefault} from "./options.js";
 import {consoleLog} from "../utils/output.js";
+import {HistoryProviderType} from "../history/provider.js";
 
 export async function run(opts_: FileCollectionOptions & StorageOptions & BenchmarkOpts): Promise<void> {
   const opts = Object.assign({}, optionsDefault, opts_);
@@ -61,7 +62,11 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
   const shouldPersist = await resolveShouldPersist(opts, currentBranch);
   if (shouldPersist === true) {
     const branch =
-      currentCommit.branch ?? parseBranchFromRef(github.context.ref ?? (await shell("git symbolic-ref HEAD")));
+      currentCommit.branch ??
+      parseBranchFromRef(
+        github.context.ref ?? (await shell("git symbolic-ref HEAD")),
+        historyProvider.type === HistoryProviderType.Local
+      );
     consoleLog(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
     // TODO: prune and limit total entries
     // appendBenchmarkToHistoryAndPrune(history, currBench, branch, opts);
@@ -72,7 +77,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
   const resultsComp = computeBenchComparison(currBench, prevBench, opts.threshold);
 
   if (!opts.skipPostComment && isGaRun()) {
-    await postGaComment(resultsComp);
+    await postGaCommentSelfComparison(resultsComp);
   }
 
   if (resultsComp.someFailed && !opts.noThrow) {
