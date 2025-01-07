@@ -1,6 +1,6 @@
 import * as github from "@actions/github";
 import {BenchmarkCrossComparison, BenchmarkSelfComparison} from "../types.js";
-import {commentToCommit, commentToPrUpdatable} from "./octokit.js";
+import {commentToCommit, commentToPrUpdatable, GithubCommentTag} from "./octokit.js";
 import {
   getGithubEventData,
   GithubActionsEventData,
@@ -19,7 +19,7 @@ export async function postGaCommentSelfComparison(resultsComp: BenchmarkSelfComp
 
       // Build a comment to publish to a PR
       const commentBody = renderComment(resultsComp);
-      await commentToPrUpdatable(prNumber, commentBody);
+      await commentToPrUpdatable(prNumber, commentBody, GithubCommentTag.BenchmarkResult);
 
       break;
     }
@@ -49,20 +49,16 @@ export async function postGaCommentCrossComparison(resultsComp: BenchmarkCrossCo
       }
 
       const commentBody = `
-      \`\`\`
-      ${renderBenchmarkComparisonTable(resultsComp)}
-      \`\`\`
+      ${renderBenchmarkComparisonTable(resultsComp, "html")}
       `;
-      await commentToPrUpdatable(prNumber, commentBody);
+      await commentToPrUpdatable(prNumber, commentBody, GithubCommentTag.CrossCompareResult);
 
       break;
     }
 
     case "push": {
       const commentBody = `
-      \`\`\`
-      ${renderBenchmarkComparisonTable(resultsComp)}
-      \`\`\`
+      ${renderBenchmarkComparisonTable(resultsComp, "html")}
       `;
       await commentToCommit(github.context.sha, commentBody);
 

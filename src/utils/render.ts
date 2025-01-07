@@ -1,5 +1,5 @@
-import CliTable, {Table, CellValue, CellOptions} from "cli-table3";
 import {BenchmarkCrossComparison, BenchmarkSelfComparison, ResultSelfComparison} from "../types.js";
+import {CellOptions, CellValue, ExtendedTable} from "./extendedTable.js";
 
 type CommitsSha = Pick<BenchmarkSelfComparison, "currCommitSha" | "prevCommitSha">;
 
@@ -66,35 +66,7 @@ ${rows.join("\n")}
 `;
 }
 
-export function toMarkdownTable(table: Table): string {
-  const chars = {
-    middle: "|",
-
-    mid: " ",
-    "mid-mid": "",
-
-    right: "|",
-    "right-mid": " ",
-
-    top: "",
-    "top-left": "",
-    "top-right": "",
-    "top-mid": "",
-
-    left: "|",
-    "left-mid": " ",
-
-    bottom: "-",
-    "bottom-left": "|",
-    "bottom-right": "|",
-    "bottom-mid": "-",
-  };
-  table.options.chars = chars;
-
-  return table.toString();
-}
-
-export function renderBenchmarkComparisonTable(benchComp: BenchmarkCrossComparison): string {
+export function renderBenchmarkComparisonTable(benchComp: BenchmarkCrossComparison, output: "cli" | "html"): string {
   const keys = [...benchComp.results.keys()];
   const benchmarkSize = benchComp.commitsShas.length;
 
@@ -106,7 +78,7 @@ export function renderBenchmarkComparisonTable(benchComp: BenchmarkCrossComparis
     secondaryHead.push(...["Average Ns", "Ratio"]);
   }
 
-  const table = new CliTable({
+  const table = new ExtendedTable({
     head: [],
   });
   table.push(heads);
@@ -127,7 +99,7 @@ export function renderBenchmarkComparisonTable(benchComp: BenchmarkCrossComparis
     table.push(row);
   }
 
-  return table.toString();
+  return output === "cli" ? table.toString() : table.toHTML();
 }
 
 function prettyTimeStr(nanoSec: number): string {

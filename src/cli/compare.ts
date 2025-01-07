@@ -34,7 +34,7 @@ export async function compare({dirs}: {dirs: string[]}): Promise<void> {
 
   const resultsComp = compareBenchmarks(benchmarks);
 
-  consoleLog(renderBenchmarkComparisonTable(resultsComp));
+  consoleLog(renderBenchmarkComparisonTable(resultsComp, "cli"));
 
   if (isGaRun()) {
     await postGaCommentCrossComparison(resultsComp);

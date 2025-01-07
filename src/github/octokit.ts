@@ -1,18 +1,21 @@
 import {getContext} from "./context.js";
 
-const commentTag = "benchmarkbot/action";
+export enum GithubCommentTag {
+  BenchmarkResult = "benchmarkbot/action",
+  CrossCompareResult = "benchmarkbot/action/compare",
+}
 
-export async function commentToPrUpdatable(prNumber: number, body: string): Promise<void> {
+export async function commentToPrUpdatable(prNumber: number, body: string, tag: GithubCommentTag): Promise<void> {
   const {repo, octokit} = getContext();
 
   // Append tag so the comment is findable latter
-  const bodyWithTag = `${body}\n\n\n> by ${commentTag}`;
+  const bodyWithTag = `${body}\n\n\n> by ${tag}`;
 
   const comments = await octokit.rest.issues.listComments({
     ...repo,
     issue_number: prNumber,
   });
-  const prevComment = comments.data.find((c) => c.body && c.body.includes(commentTag));
+  const prevComment = comments.data.find((c) => c.body && c.body.includes(tag));
 
   if (prevComment) {
     // Update
