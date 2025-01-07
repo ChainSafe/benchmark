@@ -46,6 +46,9 @@ jobs:
         with:
           node-version: ${{ inputs.node-version }}
 
+      - name: Install Dependencies
+        run: yarn install
+  
       - name: Run setup command
         if: inputs.setup != ''
         run: node --run ${{ inputs.setup }}
