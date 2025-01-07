@@ -1,3 +1,3 @@
 #!/usr/bin/env node
 
-require("../lib/esm/cli/cli.js");
+await import("../lib/esm/cli/cli.js");
