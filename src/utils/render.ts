@@ -18,7 +18,7 @@ export function renderPerformanceTable(
     if (prevAverageNs != undefined && ratio != undefined) {
       table.push([id, prettyTimeStr(currAverageNs), prettyTimeStr(prevAverageNs), ratio.toFixed(2)]);
     } else {
-      table.push([id, prettyTimeStr(currAverageNs)]);
+      table.push([id, prettyTimeStr(currAverageNs), "", ""]);
     }
   }
 
