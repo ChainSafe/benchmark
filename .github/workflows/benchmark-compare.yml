@@ -20,5 +20,3 @@ jobs:
       bun-version: latest
       deno-version: v2.x
       command: 'test/perf/**/*.test.ts'
-    secrets: 
-      github_token: ${{ secrets.GITHUB_TOKEN }}
