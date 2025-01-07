@@ -14,7 +14,7 @@ on:
 
 jobs:
   compare-js-runtimes: 
-    uses: ChainSafe/benchmark/.github/workflows/compare-js-runtimes.yml@nh/compare
+    uses: "ChainSafe/benchmark/.github/workflows/compare-js-runtimes.yml@${{ github.ref }}"
     with: 
       node-version: 22
       node-options: --loader ts-node/esm
