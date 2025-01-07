@@ -23,10 +23,6 @@ on:
         type: string
         description: Deno version, if specified will be used in comparison
         required: false
-    secrets: 
-      github_token: 
-        required: true
-        description: Github Token used to post the comparison report
 
 jobs:
   run-benchmark-nodejs:
