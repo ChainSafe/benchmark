@@ -70,6 +70,10 @@ jobs:
       - name: Install Dependencies
         run: bun install
 
+      - name: Run setup command
+        if: inputs.setup != ''
+        run: bun run --bun ${{ inputs.setup }}
+
       - name: Run performance tests on bun
         run: bun run --bun ${{ inputs.command }} ${{ inputs.files }} --local ./bun-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
 
@@ -94,6 +98,10 @@ jobs:
       - name: Install Dependencies
         run: deno install
 
+      - name: Run setup command
+        if: inputs.setup != ''
+        run: deno run --unstable-sloppy-imports -A ${{ inputs.setup }}
+        
       - name: Run performance tests on bun
         run: deno run --unstable-sloppy-imports -A ${{ inputs.command }} ${{ inputs.files }} --local ./deno-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
 
