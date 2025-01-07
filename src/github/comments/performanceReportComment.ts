@@ -13,6 +13,10 @@ Possible performance regression was detected for some benchmarks.
 Benchmark result of this commit is worse than the previous benchmark result exceeding threshold.
 
 ${renderPerformanceTable(isFailedResults, report, "html")}
+
+<details><summary>Full benchmark results</summary>
+${renderPerformanceTable(report.results, report, "html")}
+</details>
 `;
   }
 
@@ -22,8 +26,10 @@ ${renderPerformanceTable(isFailedResults, report, "html")}
 
 🚀🚀 Significant benchmark improvement detected
 
-<details><summary>Full benchmark results</summary>
 ${renderPerformanceTable(isImprovedResults, report, "html")}
+
+<details><summary>Full benchmark results</summary>
+${renderPerformanceTable(report.results, report, "html")}
 </details>
 `;
   }
