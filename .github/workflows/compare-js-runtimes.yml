@@ -48,7 +48,7 @@ jobs:
 
       - name: Run setup command
         if: inputs.setup != ''
-        run: ${{ inputs.setup }}
+        run: node --run ${{ inputs.setup }}
 
       - name: Run performance tests on node
         run: node ${{ inputs.node-options }} ${{ inputs.command }} ${{ inputs.files }} --local ./nodejs-benchmark --persist --noThrow ${{ github.event_name == 'push' }} --skipPostComment 
