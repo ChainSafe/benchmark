@@ -9,7 +9,12 @@ on:
         required: false
       command:
         type: string
-        description: Benchmark command to use in your repo
+        description: Benchmark command
+        required: false
+        default: "benchmark"
+      files: 
+        type: string
+        description: The glob pattern to match the files
         required: true
       node-version:
         type: string
@@ -42,7 +47,7 @@ jobs:
         run: ${{ inputs.setup }}
 
       - name: Run performance tests on node
-        run: ${{ inputs.command }} --local ./nodejs-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
+        run: node ${{ inputs.command }} ${{ inputs.files }} --local ./nodejs-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
 
       - name: Archive nodejs benchmark artifacts
         uses: actions/upload-artifact@v4
@@ -66,7 +71,7 @@ jobs:
         run: bun install
 
       - name: Run performance tests on bun
-        run: bun run --bun ${{ inputs.command }} --local ./bun-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
+        run: bun run --bun ${{ inputs.command }} ${{ inputs.files }} --local ./bun-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
 
       - name: Archive bun benchmark artifacts
         uses: actions/upload-artifact@v4
@@ -90,7 +95,7 @@ jobs:
         run: deno install
 
       - name: Run performance tests on bun
-        run: deno run --unstable-sloppy-imports -A ${{ inputs.command }} --local ./deno-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
+        run: deno run --unstable-sloppy-imports -A ${{ inputs.command }} ${{ inputs.files }} --local ./deno-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
 
       - name: Archive deno benchmark artifacts
         uses: actions/upload-artifact@v4
@@ -109,15 +114,15 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22"
 
-      - name: Install
-        run: yarn install --frozen-lockfile
+      # - name: Install
+      #   run: yarn install --frozen-lockfile
 
       - name: Download all benchmark artifacts
         uses: actions/download-artifact@v4
 
       - name: Run comparison
-        run: node --loader ts-node/esm ./src/cli/cli.ts cmp nodejs-benchmark deno-benchmark bun-benchmark
+        run: node ${{ inputs.command }} cmp nodejs-benchmark deno-benchmark bun-benchmark
         env:
           GITHUB_TOKEN: ${{ secrets.github_token }}
