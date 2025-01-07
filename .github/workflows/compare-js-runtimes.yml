@@ -20,6 +20,10 @@ on:
         type: string
         description: Nodejs version
         required: true
+      node-options: 
+        type: string
+        description: Extra options to run with the node, useful when using different loaders
+        required: false
       bun-version:
         type: string
         description: Bun version, if specified will be used in comparison
@@ -47,7 +51,7 @@ jobs:
         run: ${{ inputs.setup }}
 
       - name: Run performance tests on node
-        run: node ${{ inputs.command }} ${{ inputs.files }} --local ./nodejs-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
+        run: node ${{ inputs.node-options }} ${{ inputs.command }} ${{ inputs.files }} --local ./nodejs-benchmark --persist --noThrow ${{ github.event_name == 'push' }}
 
       - name: Archive nodejs benchmark artifacts
         uses: actions/upload-artifact@v4

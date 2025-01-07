@@ -17,9 +17,10 @@ jobs:
     uses: ChainSafe/benchmark/.github/workflows/compare-js-runtimes.yml@nh/compare
     with: 
       node-version: 22
+      node-options: --loader ts-node/esm
       bun-version: latest
       deno-version: v2.x
-      command: ./bin/index.js 
+      command: src/cli/cli.ts
       setup: build
       files: test/perf/**/*.test.ts
 
