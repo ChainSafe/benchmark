@@ -136,10 +136,14 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "22"
+          
+      - name: Install Dependencies
+        run: yarn install
 
-      # - name: Install
-      #   run: yarn install --frozen-lockfile
-
+      - name: Run setup command
+        if: inputs.setup != ''
+        run: node --run ${{ inputs.setup }}
+  
       - name: Download all benchmark artifacts
         uses: actions/download-artifact@v4
 
