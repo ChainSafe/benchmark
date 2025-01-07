@@ -3,7 +3,7 @@ import {renderBenchmarkComparisonTable} from "../../utils/render.js";
 
 export function benchmarkComparisonComment(report: BenchmarkComparisonReport): string {
   return `
-## Comparison Report
+## Benchmark Comparison Report
 
 ${renderBenchmarkComparisonTable(report, "html")}
 `;
