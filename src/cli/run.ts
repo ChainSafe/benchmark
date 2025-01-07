@@ -5,13 +5,15 @@ import {validateBenchmark} from "../history/schema.js";
 import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
 import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
 import {parseBranchFromRef, getCurrentCommitInfo, shell, getCurrentBranch, collectFiles} from "../utils/index.js";
-import {computeBenchComparison} from "../compare/compute.js";
-import {postGaCommentSelfComparison} from "../github/comment.js";
+import {computePerformanceReport} from "../compare/compute.js";
+import {postGaComment} from "../github/comments/index.js";
 import {isGaRun} from "../github/context.js";
 import {BenchmarkRunner} from "../benchmark/runner.js";
 import {optionsDefault} from "./options.js";
 import {consoleLog} from "../utils/output.js";
 import {HistoryProviderType} from "../history/provider.js";
+import {performanceReportComment} from "../github/comments/performanceReportComment.js";
+import {GithubCommentTag} from "../github/octokit.js";
 
 export async function run(opts_: FileCollectionOptions & StorageOptions & BenchmarkOpts): Promise<void> {
   const opts = Object.assign({}, optionsDefault, opts_);
@@ -74,10 +76,14 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
     await historyProvider.writeToHistory(currBench);
   }
 
-  const resultsComp = computeBenchComparison(currBench, prevBench, opts.threshold);
+  const resultsComp = computePerformanceReport(currBench, prevBench, opts.threshold);
 
   if (!opts.skipPostComment && isGaRun()) {
-    await postGaCommentSelfComparison(resultsComp);
+    await postGaComment({
+      commentBody: performanceReportComment(resultsComp),
+      tag: GithubCommentTag.PerformanceReport,
+      commentOnPush: resultsComp.someFailed,
+    });
   }
 
   if (resultsComp.someFailed && !opts.noThrow) {

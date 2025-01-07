@@ -1,8 +1,8 @@
 import {getContext} from "./context.js";
 
 export enum GithubCommentTag {
-  BenchmarkResult = "benchmarkbot/action",
-  CrossCompareResult = "benchmarkbot/action/compare",
+  PerformanceReport = "benchmarkbot/action",
+  ComparisonReport = "benchmarkbot/compare",
 }
 
 export async function commentToPrUpdatable(prNumber: number, body: string, tag: GithubCommentTag): Promise<void> {

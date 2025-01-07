@@ -1,17 +1,17 @@
 import {
-  ResultSelfComparison,
-  BenchmarkSelfComparison,
+  PerformanceResult,
+  PerformanceReport,
   Benchmark,
   BenchmarkResult,
-  BenchmarkCrossComparison,
-  ResultCrossComparison,
+  BenchmarkComparisonReport,
+  BenchmarkComparisonResult,
 } from "../types.js";
 
-export function compareBenchmarks(benchmarks: Benchmark[]): BenchmarkCrossComparison {
+export function computeComparisonReport(benchmarks: Benchmark[]): BenchmarkComparisonReport {
   const originBenchmark = benchmarks[0];
   const targetBenchmarks = benchmarks.slice(1);
 
-  const results = new Map<string, ResultCrossComparison[]>();
+  const results = new Map<string, BenchmarkComparisonResult[]>();
   for (const res of originBenchmark.results) {
     results.set(res.id, [
       {...res, targetAverageNs: null, originAverageNs: res.averageNs, isFailed: false, isImproved: false, ratio: 1.0},
@@ -64,11 +64,11 @@ export function compareBenchmarks(benchmarks: Benchmark[]): BenchmarkCrossCompar
   };
 }
 
-export function computeBenchComparison(
+export function computePerformanceReport(
   currBench: Benchmark,
   prevBench: Benchmark | null,
   threshold: number
-): BenchmarkSelfComparison {
+): PerformanceReport {
   const prevResults = new Map<string, BenchmarkResult>();
   if (prevBench) {
     for (const bench of prevBench.results) {
@@ -76,7 +76,7 @@ export function computeBenchComparison(
     }
   }
 
-  const results = currBench.results.map((currBench): ResultSelfComparison => {
+  const results = currBench.results.map((currBench): PerformanceResult => {
     const {id} = currBench;
     const prevBench = prevResults.get(id);
     const thresholdBench = currBench.threshold ?? threshold;

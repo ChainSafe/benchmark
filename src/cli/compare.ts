@@ -2,10 +2,12 @@ import path from "node:path";
 import fs from "node:fs";
 import {LocalHistoryProvider} from "../history/local.js";
 import {consoleLog} from "../utils/output.js";
-import {compareBenchmarks} from "../compare/compute.js";
+import {computeComparisonReport} from "../compare/compute.js";
 import {renderBenchmarkComparisonTable} from "../utils/render.js";
 import {isGaRun} from "../github/context.js";
-import {postGaCommentCrossComparison} from "../github/comment.js";
+import {postGaComment} from "../github/comments/index.js";
+import {benchmarkComparisonComment} from "../github/comments/comparisonReportComment.js";
+import {GithubCommentTag} from "../github/octokit.js";
 
 export async function compare({dirs}: {dirs: string[]}): Promise<void> {
   consoleLog("Comparing benchmarks:");
@@ -32,11 +34,15 @@ export async function compare({dirs}: {dirs: string[]}): Promise<void> {
     }
   }
 
-  const resultsComp = compareBenchmarks(benchmarks);
+  const resultsComp = computeComparisonReport(benchmarks);
 
   consoleLog(renderBenchmarkComparisonTable(resultsComp, "cli"));
 
   if (isGaRun()) {
-    await postGaCommentCrossComparison(resultsComp);
+    await postGaComment({
+      commentBody: benchmarkComparisonComment(resultsComp),
+      tag: GithubCommentTag.ComparisonReport,
+      commentOnPush: true,
+    });
   }
 }

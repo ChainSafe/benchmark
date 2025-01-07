@@ -10,7 +10,7 @@ export class ExtendedTable extends CliTable3 {
    * Render the table as HTML
    */
   toHTML(): string {
-    let html = "<table>\n";
+    let html = "\n<table>\n";
 
     if (this.options.head && this.options.head.length > 0) {
       html += "<thead>\n<tr>\n";

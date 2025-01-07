@@ -114,14 +114,14 @@ export type BenchmarkHistory = {
   };
 };
 
-export type BenchmarkSelfComparison = {
+export type PerformanceReport = {
   currCommitSha: CommitSha;
   prevCommitSha: CommitSha | null;
   someFailed: boolean;
-  results: ResultSelfComparison[];
+  results: PerformanceResult[];
 };
 
-export type ResultSelfComparison = {
+export type PerformanceResult = {
   id: BenchId;
   currAverageNs: number;
   prevAverageNs: number | null;
@@ -130,16 +130,16 @@ export type ResultSelfComparison = {
   isImproved: boolean;
 };
 
-export type BenchmarkCrossComparison = {
+export type BenchmarkComparisonReport = {
   someFailed: boolean;
   // The first element will always contain origin which is used to compare
   commitsShas: (CommitSha | null)[];
   dirNames: string[];
   // The result array contains the origin commit first and then targets
-  results: Map<BenchId, ResultCrossComparison[]>;
+  results: Map<BenchId, BenchmarkComparisonResult[]>;
 };
 
-export type ResultCrossComparison = {
+export type BenchmarkComparisonResult = {
   id: BenchId;
   originAverageNs: number | null;
   targetAverageNs: number | null;
