@@ -25,7 +25,6 @@ export function renderPerformanceTable(
   return output === "cli" ? table.toString() : table.toHTML();
 }
 
-
 export function renderBenchmarkComparisonTable(benchComp: BenchmarkComparisonReport, output: "cli" | "html"): string {
   const keys = [...benchComp.results.keys()];
   const benchmarkSize = benchComp.commitsShas.length;

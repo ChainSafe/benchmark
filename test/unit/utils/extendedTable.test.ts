@@ -8,7 +8,9 @@ describe("table", () => {
       table.push(["Row 1 1", "Row 1 2"]);
       table.push(["Row 2 1", "Row 2 2"]);
 
-      const html = `<table>
+      const html = `
+
+      <table>
       <thead>
       <tr>
       <th>Col1</th>
@@ -25,7 +27,9 @@ describe("table", () => {
       <td>Row 2 2</td> 
       </tr>
       </tbody>
-      </table>`;
+      </table>
+      
+      `;
 
       expect(table.toHTML().replace(/ /g, "")).toEqual(html.replace(/ /g, ""));
     });
@@ -36,7 +40,9 @@ describe("table", () => {
       table.push(["Row 1 1", "Row 1 2"]);
       table.push(["Row 2 1", "Row 2 2"]);
 
-      const html = `<table>
+      const html = `
+
+      <table>
       <tbody>
       <tr>
       <td>Col1</td>
@@ -51,7 +57,9 @@ describe("table", () => {
       <td>Row 2 2</td> 
       </tr>
       </tbody>
-      </table>`;
+      </table>
+
+      `;
 
       expect(table.toHTML().replace(/ /g, "")).toEqual(html.replace(/ /g, ""));
     });
@@ -62,7 +70,9 @@ describe("table", () => {
       table.push(["Row 1 1", "Row 1 2", "Row 1 3"]);
       table.push(["Row 2 1", "Row 2 2", "Row 2 3"]);
 
-      const html = `<table>
+      const html = `
+      
+      <table>
       <tbody>
       <tr>
       <td colspan="2">Col1</td>
@@ -79,7 +89,9 @@ describe("table", () => {
       <td>Row 2 3</td>
       </tr>
       </tbody>
-      </table>`;
+      </table>
+
+      `;
 
       expect(table.toHTML().replace(/^\s+/gm, "")).toEqual(html.replace(/^\s+/gm, ""));
     });
