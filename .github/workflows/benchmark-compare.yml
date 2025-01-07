@@ -20,5 +20,6 @@ jobs:
       bun-version: latest
       deno-version: v2.x
       command: ./bin/index.js 
+      setup: build
       files: test/perf/**/*.test.ts
-      
+
