@@ -26,11 +26,11 @@ export async function compare({dirs}: {dirs: string[]}): Promise<void> {
     try {
       const history = await provider.readHistory();
       if (history.length === 0) {
-        throw Error(`Benchmark directory ${dirPath} does not contain nay history.`);
+        throw Error(`Benchmark directory ${dirPath} does not contain history.`);
       }
       benchmarks.push(history[0]);
     } catch {
-      throw Error(`Benchmark directory ${dirPath} does not contain nay history. Or not a valid benchmark.`);
+      throw Error(`Benchmark directory ${dirPath} does not contain history, nor a valid benchmark.`);
     }
   }
 
