@@ -64,8 +64,11 @@ export type BenchmarkOpts = {
 // Create partial only for specific keys
 export type PartialBy<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
 
+type BenchId = string;
+type CommitSha = string;
+
 export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
-  id: string;
+  id: BenchId;
   fn: (arg: T) => void | Promise<void>;
   before?: () => T2 | Promise<T2>;
   beforeEach?: (arg: T2, i: number) => T | Promise<T>;
@@ -75,7 +78,7 @@ export interface BenchFuncApi {
   <T, T2>(opts: BenchmarkRunOptsWithFn<T, T2>): void;
   <T, T2>(idOrOpts: string | Omit<BenchmarkRunOptsWithFn<T, T2>, "fn">, fn: (arg: T) => void): void;
   <T, T2>(
-    idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
+    idOrOpts: BenchId | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
     fn?: (arg: T) => void | Promise<void>
   ): void;
 }
@@ -89,7 +92,7 @@ export type BenchmarkResults = BenchmarkResult[];
 
 /** Time results for a single benchmark item */
 export type BenchmarkResult = {
-  id: string;
+  id: BenchId;
   averageNs: number;
   runsDone: number;
   totalMs: number;
@@ -99,7 +102,8 @@ export type BenchmarkResult = {
 
 /** Time results for a single benchmark (all items) */
 export type Benchmark = {
-  commitSha: string;
+  commitSha: CommitSha;
+  dirName?: string;
   results: BenchmarkResults;
 };
 
@@ -110,17 +114,35 @@ export type BenchmarkHistory = {
   };
 };
 
-export type BenchmarkComparison = {
-  currCommitSha: string;
-  prevCommitSha: string | null;
+export type PerformanceReport = {
+  currCommitSha: CommitSha;
+  prevCommitSha: CommitSha | null;
   someFailed: boolean;
-  results: ResultComparison[];
+  results: PerformanceResult[];
 };
 
-export type ResultComparison = {
-  id: string;
+export type PerformanceResult = {
+  id: BenchId;
   currAverageNs: number;
   prevAverageNs: number | null;
+  ratio: number | null;
+  isFailed: boolean;
+  isImproved: boolean;
+};
+
+export type BenchmarkComparisonReport = {
+  someFailed: boolean;
+  // The first element will always contain origin which is used to compare
+  commitsShas: (CommitSha | null)[];
+  dirNames: string[];
+  // The result array contains the origin commit first and then targets
+  results: Map<BenchId, BenchmarkComparisonResult[]>;
+};
+
+export type BenchmarkComparisonResult = {
+  id: BenchId;
+  originAverageNs: number | null;
+  targetAverageNs: number | null;
   ratio: number | null;
   isFailed: boolean;
   isImproved: boolean;

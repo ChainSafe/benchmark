@@ -1,9 +1,16 @@
 import * as github from "@actions/github";
-import {BenchmarkComparison} from "../types.js";
-import {commetToPrUpdatable, commentToCommit} from "./octokit.js";
-import {getGithubEventData, GithubActionsEventData, renderComment} from "../utils/index.js";
+import {getGithubEventData, GithubActionsEventData} from "../../utils/index.js";
+import {commentToCommit, commentToPrUpdatable, GithubCommentTag} from "../octokit.js";
 
-export async function postGaComment(resultsComp: BenchmarkComparison): Promise<void> {
+export async function postGaComment({
+  commentBody,
+  tag,
+  commentOnPush,
+}: {
+  commentBody: string;
+  tag: GithubCommentTag;
+  commentOnPush: boolean;
+}): Promise<void> {
   switch (github.context.eventName) {
     case "pull_request": {
       const eventData = getGithubEventData<GithubActionsEventData["pull_request"]>();
@@ -12,17 +19,14 @@ export async function postGaComment(resultsComp: BenchmarkComparison): Promise<v
         throw Error("github event data has no PR number");
       }
 
-      // Build a comment to publish to a PR
-      const commentBody = renderComment(resultsComp);
-      await commetToPrUpdatable(prNumber, commentBody);
+      await commentToPrUpdatable(prNumber, commentBody, tag);
 
       break;
     }
 
     case "push": {
       // Only comment on performance regression
-      if (resultsComp.someFailed) {
-        const commentBody = renderComment(resultsComp);
+      if (commentOnPush) {
         await commentToCommit(github.context.sha, commentBody);
       }
 

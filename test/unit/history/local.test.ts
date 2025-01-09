@@ -5,13 +5,14 @@ import {Benchmark} from "../../../src/types.js";
 import {LocalHistoryProvider} from "../../../src/history/local.js";
 
 describe("benchmark history local", () => {
+  const testDir = fs.mkdtempSync("test_files_");
   const branch = "main";
   const benchmark: Benchmark = {
     commitSha: "010101010101010101010101",
+    dirName: testDir,
     results: [{id: "for loop", averageNs: 16573, runsDone: 1024, totalMs: 465, threshold: 2}],
   };
 
-  const testDir = fs.mkdtempSync("test_files_");
   const historyProvider = new LocalHistoryProvider(testDir);
 
   afterAll(() => {

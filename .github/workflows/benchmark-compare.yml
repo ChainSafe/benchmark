@@ -1,0 +1,26 @@
+name: Compare Benchmark
+
+# only one can tun at a time.
+# Actions access a common cache entry and may corrupt it.
+concurrency: cd-benchmark-compare-${{ github.ref }}
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  compare-js-runtimes: 
+    uses: "ChainSafe/benchmark/.github/workflows/compare-js-runtimes.yml@${{ github.ref }}"
+    with: 
+      node-version: 22
+      node-options: --loader ts-node/esm
+      bun-version: latest
+      deno-version: v2.x
+      command: src/cli/cli.ts
+      setup: build
+      files: test/perf/**/*.test.ts
+

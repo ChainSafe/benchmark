@@ -87,7 +87,7 @@ export class LocalHistoryProvider implements IHistoryProvider {
     const str = fs.readFileSync(filepath, "utf8");
     const {data, metadata} = fromCsv<BenchmarkResults>(str);
     const csvMeta = metadata as unknown as CsvMeta;
-    return {commitSha: csvMeta.commit, results: data};
+    return {commitSha: csvMeta.commit, dirName: path.basename(path.dirname(this.getHistoryDirpath())), results: data};
   }
 
   /** Write result to CSV + metadata as Embedded Metadata */

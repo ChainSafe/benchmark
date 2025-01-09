@@ -29,7 +29,7 @@ export function parseRef(refStr: string): Ref {
  * @param refStr
  * @returns
  */
-export function parseBranchFromRef(refStr: string): string {
+export function parseBranchFromRef(refStr: string, localStorage?: boolean): string {
   const ref = parseRef(refStr);
 
   switch (ref.type) {
@@ -37,6 +37,8 @@ export function parseBranchFromRef(refStr: string): string {
       return ref.name;
 
     case "pull":
+      if (localStorage) return `pull/${ref.name}`;
+      // For S3 and other storage we don't support PR reference, only a valid branch name is required
       throw Error("Merge commit not supported. Make sure to checkout head branch commit");
 
     case "tags":

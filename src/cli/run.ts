@@ -5,12 +5,15 @@ import {validateBenchmark} from "../history/schema.js";
 import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
 import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
 import {parseBranchFromRef, getCurrentCommitInfo, shell, getCurrentBranch, collectFiles} from "../utils/index.js";
-import {computeBenchComparision} from "../compare/compute.js";
-import {postGaComment} from "../github/comment.js";
+import {computePerformanceReport} from "../compare/compute.js";
+import {postGaComment} from "../github/comments/index.js";
 import {isGaRun} from "../github/context.js";
 import {BenchmarkRunner} from "../benchmark/runner.js";
 import {optionsDefault} from "./options.js";
 import {consoleLog} from "../utils/output.js";
+import {HistoryProviderType} from "../history/provider.js";
+import {performanceReportComment} from "../github/comments/performanceReportComment.js";
+import {GithubCommentTag} from "../github/octokit.js";
 
 export async function run(opts_: FileCollectionOptions & StorageOptions & BenchmarkOpts): Promise<void> {
   const opts = Object.assign({}, optionsDefault, opts_);
@@ -60,8 +63,12 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
   const currentBranch = await getCurrentBranch();
   const shouldPersist = await resolveShouldPersist(opts, currentBranch);
   if (shouldPersist === true) {
-    const refStr = github.context.ref || (await shell("git symbolic-ref HEAD"));
-    const branch = parseBranchFromRef(refStr);
+    const branch =
+      currentCommit.branch ??
+      parseBranchFromRef(
+        github.context.ref ?? (await shell("git symbolic-ref HEAD")),
+        historyProvider.type === HistoryProviderType.Local
+      );
     consoleLog(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
     // TODO: prune and limit total entries
     // appendBenchmarkToHistoryAndPrune(history, currBench, branch, opts);
@@ -69,10 +76,14 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
     await historyProvider.writeToHistory(currBench);
   }
 
-  const resultsComp = computeBenchComparision(currBench, prevBench, opts.threshold);
+  const resultsComp = computePerformanceReport(currBench, prevBench, opts.threshold);
 
   if (!opts.skipPostComment && isGaRun()) {
-    await postGaComment(resultsComp);
+    await postGaComment({
+      commentBody: performanceReportComment(resultsComp),
+      tag: GithubCommentTag.PerformanceReport,
+      commentOnPush: resultsComp.someFailed,
+    });
   }
 
   if (resultsComp.someFailed && !opts.noThrow) {

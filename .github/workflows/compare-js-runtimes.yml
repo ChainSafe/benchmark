@@ -1,0 +1,166 @@
+# It is a re-useable workflow. You can use it in your repo and workflow by adding similar jobs. 
+# 
+# jobs:
+#   compare-js-runtimes: 
+#     uses: "ChainSafe/benchmark/.github/workflows/compare-js-runtimes.yml@main
+#     with: 
+#       node-version: 22
+#       node-options: --loader ts-node/esm
+#       bun-version: latest
+#       deno-version: v2.x
+#       setup: build
+#       files: test/perf/**/*.test.ts
+# 
+name: Run and compare benchmarks on different JS runtimes
+
+on:
+  workflow_call:
+    inputs:
+      setup:
+        type: string
+        description: Command to bootstrap or setup the repo
+        required: false
+      command:
+        type: string
+        description: Benchmark command
+        required: false
+        default: "benchmark"
+      files: 
+        type: string
+        description: The glob pattern to match the files
+        required: true
+      node-version:
+        type: string
+        description: Nodejs version
+        required: true
+      node-options: 
+        type: string
+        description: Extra options to run with the node, useful when using different loaders
+        required: false
+      bun-version:
+        type: string
+        description: Bun version, if specified will be used in comparison
+        required: false
+      deno-version:
+        type: string
+        description: Deno version, if specified will be used in comparison
+        required: false
+
+jobs:
+  run-benchmark-nodejs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+
+      - name: Install Dependencies
+        run: yarn install
+  
+      - name: Run setup command
+        if: inputs.setup != ''
+        run: node --run ${{ inputs.setup }}
+
+      - name: Run performance tests on node
+        run: node ${{ inputs.node-options }} ${{ inputs.command }} ${{ inputs.files }} --local ./nodejs-benchmark --persist --noThrow ${{ github.event_name == 'push' }} --skipPostComment 
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+
+      - name: Archive nodejs benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: nodejs-benchmark
+          path: ./nodejs-benchmark
+
+  run-benchmark-bun:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: ${{ inputs.bun-version }}
+
+      - name: Install Dependencies
+        run: bun install
+
+      - name: Run setup command
+        if: inputs.setup != ''
+        run: bun run --bun ${{ inputs.setup }}
+
+      - name: Run performance tests on bun
+        run: bun run --bun ${{ inputs.command }} ${{ inputs.files }} --local ./bun-benchmark --persist --noThrow ${{ github.event_name == 'push' }} --skipPostComment 
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+
+      - name: Archive bun benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: bun-benchmark
+          path: bun-benchmark
+
+  run-benchmark-deno:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: denoland/setup-deno@v2
+        with:
+          deno-version: ${{ inputs.deno-version }}
+
+      - name: Install Dependencies
+        run: deno install
+
+      - name: Run setup command
+        if: inputs.setup != ''
+        run: deno run --unstable-sloppy-imports -A ${{ inputs.setup }}
+        
+      - name: Run performance tests on bun
+        run: deno run --unstable-sloppy-imports -A ${{ inputs.command }} ${{ inputs.files }} --local ./deno-benchmark --persist --noThrow ${{ github.event_name == 'push' }} --skipPostComment 
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+
+      - name: Archive deno benchmark artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: deno-benchmark
+          path: deno-benchmark
+
+  benchmark-compare:
+    runs-on: ubuntu-latest
+    needs: [run-benchmark-deno, run-benchmark-bun, run-benchmark-nodejs]
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          ref: ${{ github.event.pull_request.head.sha }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          
+      - name: Install Dependencies
+        run: yarn install
+
+      - name: Run setup command
+        if: inputs.setup != ''
+        run: node --run ${{ inputs.setup }}
+  
+      - name: Download all benchmark artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Run comparison
+        run: node ${{ inputs.node-options }} ${{ inputs.command }} cmp nodejs-benchmark deno-benchmark bun-benchmark
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}

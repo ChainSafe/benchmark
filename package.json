@@ -5,7 +5,7 @@
   "author": "dapplion <35266934+dapplion@users.noreply.github.com>",
   "license": "MIT",
   "bin": {
-    "benchmark": "./bin/index.cjs"
+    "benchmark": "./bin/index.js"
   },
   "files": [
     "lib/**/*.d.ts",
@@ -65,7 +65,8 @@
     "csv-stringify": "^5.6.2",
     "glob": "^10.4.5",
     "log-symbols": "^7.0.0",
-    "yargs": "^17.7.2"
+    "yargs": "^17.7.2",
+    "cli-table3": "^0.6.5"
   },
   "resolutions": {
     "lru-cache": "10.4.3"
