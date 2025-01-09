@@ -1,3 +1,16 @@
+# It is a re-useable workflow. You can use it in your repo and workflow by adding similar jobs. 
+# 
+# jobs:
+#   compare-js-runtimes: 
+#     uses: "ChainSafe/benchmark/.github/workflows/compare-js-runtimes.yml@main
+#     with: 
+#       node-version: 22
+#       node-options: --loader ts-node/esm
+#       bun-version: latest
+#       deno-version: v2.x
+#       setup: build
+#       files: test/perf/**/*.test.ts
+# 
 name: Run and compare benchmarks on different JS runtimes
 
 on:
