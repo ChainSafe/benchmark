@@ -46,47 +46,52 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
     process.exit(1);
   }
 
-  const runner = new BenchmarkRunner({prevBench, benchmarkOpts: opts});
-  const results = await runner.process(files);
+  try {
+    const runner = new BenchmarkRunner({prevBench, benchmarkOpts: opts});
+    const results = await runner.process(files);
 
-  if (results.length === 0) {
-    throw Error("No benchmark result was produced");
-  }
+    if (results.length === 0) {
+      throw Error("No benchmark result was produced");
+    }
 
-  const currentCommit = await getCurrentCommitInfo();
-  const currBench: Benchmark = {
-    commitSha: currentCommit.commitSha,
-    results,
-  };
+    const currentCommit = await getCurrentCommitInfo();
+    const currBench: Benchmark = {
+      commitSha: currentCommit.commitSha,
+      results,
+    };
 
-  // Persist new benchmark data
-  const currentBranch = await getCurrentBranch();
-  const shouldPersist = await resolveShouldPersist(opts, currentBranch);
-  if (shouldPersist === true) {
-    const branch =
-      currentCommit.branch ??
-      parseBranchFromRef(
-        github.context.ref ?? (await shell("git symbolic-ref HEAD")),
-        historyProvider.type === HistoryProviderType.Local
-      );
-    consoleLog(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
-    // TODO: prune and limit total entries
-    // appendBenchmarkToHistoryAndPrune(history, currBench, branch, opts);
-    await historyProvider.writeLatestInBranch(branch, currBench);
-    await historyProvider.writeToHistory(currBench);
-  }
+    // Persist new benchmark data
+    const currentBranch = await getCurrentBranch();
+    const shouldPersist = await resolveShouldPersist(opts, currentBranch);
+    if (shouldPersist === true) {
+      const branch =
+        currentCommit.branch ??
+        parseBranchFromRef(
+          github.context.ref ?? (await shell("git symbolic-ref HEAD")),
+          historyProvider.type === HistoryProviderType.Local
+        );
+      consoleLog(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
+      // TODO: prune and limit total entries
+      // appendBenchmarkToHistoryAndPrune(history, currBench, branch, opts);
+      await historyProvider.writeLatestInBranch(branch, currBench);
+      await historyProvider.writeToHistory(currBench);
+    }
 
-  const resultsComp = computePerformanceReport(currBench, prevBench, opts.threshold);
+    const resultsComp = computePerformanceReport(currBench, prevBench, opts.threshold);
 
-  if (!opts.skipPostComment && isGaRun()) {
-    await postGaComment({
-      commentBody: performanceReportComment(resultsComp),
-      tag: GithubCommentTag.PerformanceReport,
-      commentOnPush: resultsComp.someFailed,
-    });
-  }
+    if (!opts.skipPostComment && isGaRun()) {
+      await postGaComment({
+        commentBody: performanceReportComment(resultsComp),
+        tag: GithubCommentTag.PerformanceReport,
+        commentOnPush: resultsComp.someFailed,
+      });
+    }
 
-  if (resultsComp.someFailed && !opts.noThrow) {
-    throw Error("Performance regression");
+    if (resultsComp.someFailed && !opts.noThrow) {
+      throw Error("Performance regression");
+    }
+  } catch (err) {
+    consoleLog(`Error processing benchmark files. ${(err as Error).message}`);
+    throw err;
   }
 }
