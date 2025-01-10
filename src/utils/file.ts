@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import path from "node:path";
 import {glob} from "glob";
-import csvParse from "csv-parse/lib/sync.js";
-import csvStringify from "csv-stringify/lib/sync.js";
+import {parse as csvParse} from "csv-parse/sync";
+import {stringify as csvStringify} from "csv-stringify/sync";
 import {FileCollectionOptions} from "../types.js";
 
 type CsvMetadata = Record<string, string>;
