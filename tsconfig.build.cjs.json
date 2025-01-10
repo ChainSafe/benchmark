@@ -4,6 +4,9 @@
   "compilerOptions": {
     "outDir": "./lib/cjs",
 		"esModuleInterop": true,
+    "sourceMap": true,
+    "declaration": true,
+    "declarationMap": true,
 		"module": "commonjs",
 
     // To build for Node 18 the lru-cache package has conflicting types
