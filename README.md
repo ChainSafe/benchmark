@@ -1,5 +1,8 @@
 # Benchmark
 
+> This is an independently maintained fork of [@dapplion/benchmark](https://github.com/dapplion/benchmark).
+ This repo now maintains it's own versioning as `@chainsafe/benchmark` and release schedule.  It was forked from the base of `@dapplion/benchmark@1.0.0` and new functionality was added.
+
 Ensures that new code does not introduce performance regressions with CI. Tracks:
 
 - Do PR against the base branch include a performance regression?
@@ -12,7 +15,7 @@ This tooling provides both a easy to use runner for benchmarking and easy integr
 Create a benchmark test file but use `itBench` instead of `it`
 
 ```ts
-import {itBench, setBenchOpts, describe} from "../../src";
+import {describe, itBench, setBenchOpts} from "@chainsafe/benchmark";
 
 describe("Sum array benchmark", () => {
   itBench("sum array with reduce", () => {

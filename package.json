@@ -1,8 +1,8 @@
 {
-  "name": "@dapplion/benchmark",
-  "version": "1.0.0",
-  "repository": "git@github.com:dapplion/benchmark.git",
-  "author": "dapplion <35266934+dapplion@users.noreply.github.com>",
+  "name": "@chainsafe/benchmark",
+  "version": "1.1.0.rc-0",
+  "repository": "git@github.com:chainsafe/benchmark.git",
+  "author": "ChainSafe Systems",
   "license": "MIT",
   "bin": {
     "benchmark": "./bin/index.js"
