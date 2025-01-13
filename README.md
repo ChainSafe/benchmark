@@ -1,7 +1,7 @@
 # Benchmark
 
 > This is an independently maintained fork of [@dapplion/benchmark](https://github.com/dapplion/benchmark).
- This repo now maintains it's own versioning as `@chainsafe/benchmark` and release schedule.  It was forked from the base of `@dapplion/benchmark@1.0.0` and new functionality was added.
+ This repo now maintains its own versioning as `@chainsafe/benchmark` and release schedule.  It was forked from the base of `@dapplion/benchmark@1.0.0` and new functionality was added.
 
 Ensures that new code does not introduce performance regressions with CI. Tracks:
 
@@ -48,11 +48,11 @@ benchmark 'test/perf/**/*.perf.ts' --s3
 The above command will:
 
 - Read benchmark history from the specified provider (AWS S3)
-- Figure out the prev benchmark based on your option (defaults to latest commit in main branch)
-- Run benchmark comparing with previous
+- Figure out the previous benchmark based on your option (defaults to latest commit in main branch)
+- Run benchmark comparing with previousious
   - Collect benchmark data in-memory while streaming results
 - Add result to benchmark history and persist them to the specified provider (AWS S3)
-- If in CI, post a PR or commit comment with an expandable summary of the benchmark results comparision
+- If in CI, post a PR or commit comment with an expandable summary of the benchmark results comparison
 - If a performance regression was detected, exit 1
 
 ### Track performance in CI
@@ -103,16 +103,16 @@ jobs:
 
 ### Track performance locally
 
-When working on optimizing a function you may want to know if your code is actually faster than the previous implementation.
+When working on optimizing a function you may want to know if your code is actually faster than the previousious implementation.
 
-To do that you can keep a benchmark history file locally and run the benchmark first against previous code
+To do that you can keep a benchmark history file locally and run the benchmark first against previousious code
 
 ```
 git checkout master
 benchmark test/perf/func.perf.ts --local
 ```
 
-- Runs benchmark without comparing with previous
+- Runs benchmark without comparing with previousious
 - Writes single benchmark data to `./benchmark_data`
 
 Then measure performance with the new code
@@ -123,7 +123,7 @@ benchmark test/perf/func.perf.ts --local
 ```
 
 - Reads single benchmark data from `./benchmark_data`
-- Run benchmark comparing with prev
+- Run benchmark comparing with previous
 - Does not write benchmark data
 
 ## Config
@@ -132,7 +132,7 @@ benchmark test/perf/func.perf.ts --local
 
 ### `--defaultBranch`
 
-Provide the default branch of this repository to prevent fetching from Github
+Provide the default branch of this repository to previousent fetching from Github
 
 - type: string
 - default:
@@ -153,7 +153,7 @@ Limit number of benchmarks persisted per branch
 
 ### `--threshold`
 
-Ratio of new average time per run vs previos time per run to consider a failure. Set to 'Infinity' to disable it.
+Ratio of new average time per run vs previousios time per run to consider a failure. Set to 'Infinity' to disable it.
 
 - type: number
 - default: 2
@@ -188,7 +188,7 @@ Force persisting benchmark data in history
 
 ### `--noThrow`
 
-Exit cleanly even if a preformance regression was found
+Exit cleanly even if a performance regression was found
 
 - type: boolean
 - default:
@@ -226,7 +226,7 @@ bench compare --from <branch-name | commit-hash> --to <branch-name | commit-hash
 
 - Retrieves benchmark history
 - Don't run benchmark
-- Print comparision of from benchmark with to benchmark
+- Print comparison of from benchmark with to benchmark
 
 ### Add more providers
 
