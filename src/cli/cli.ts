@@ -1,5 +1,8 @@
 // Must not use `* as yargs`, see https://github.com/yargs/yargs/issues/1131
 import yargs from "yargs";
+import fs from "node:fs";
+import path from "node:path";
+import {parse as parseYaml} from "yaml";
 import {hideBin} from "yargs/helpers";
 
 import {benchmarkOptions, CLIOptions, fileCollectionOptions, storageOptions} from "./options.js";
@@ -33,6 +36,16 @@ void yargs(hideBin(process.argv))
 
       await compare(cliOpts);
     },
+  })
+  .config("config", (configPath): CLIOptions => {
+    const ext = path.extname(configPath);
+    if (ext === ".json") {
+      return JSON.parse(fs.readFileSync(configPath, "utf-8")) as CLIOptions;
+    } else if (ext === ".yaml" || ext === ".yml") {
+      return parseYaml(fs.readFileSync(configPath, "utf8")) as CLIOptions;
+    }
+
+    throw new Error(`Can not recognized file ${configPath}`);
   })
   .parserConfiguration({
     // As of yargs v16.1.0 dot-notation breaks strictOptions()
