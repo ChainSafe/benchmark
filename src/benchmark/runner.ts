@@ -7,6 +7,7 @@ import {
   VitestRunnerConfig,
   VitestRunnerImportSource,
 } from "@vitest/runner";
+import path from "node:path";
 import {Benchmark, BenchmarkOpts, BenchmarkResults} from "../types.js";
 import {BenchmarkReporter} from "./reporter.js";
 import {store} from "./globalState.js";
@@ -25,7 +26,7 @@ export class BenchmarkRunner implements VitestRunner {
       maxConcurrency: 1,
       hookTimeout: 10_0000,
       testTimeout: 10_0000,
-      setupFiles: [],
+      setupFiles: benchmarkOpts.setupFiles ? benchmarkOpts.setupFiles.map((s) => path.resolve(s)) : [],
       retry: 0,
     };
     this.prevBench = prevBench;
