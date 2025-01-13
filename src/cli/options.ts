@@ -179,4 +179,10 @@ export const benchmarkOptions: ICliCommandOptions<CLIBenchmarkOptions> = {
     default: optionsDefault.timeoutBench,
     group: benchmarkGroup,
   },
+  setupFiles: {
+    type: "array",
+    description: "List of setup files to load before the tests",
+    default: [],
+    group: benchmarkGroup,
+  },
 };

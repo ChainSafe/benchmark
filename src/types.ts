@@ -59,6 +59,8 @@ export type BenchmarkOpts = {
 
   only?: boolean;
   skip?: boolean;
+  /** Setup files to load before the test files */
+  setupFiles?: string[];
 };
 
 // Create partial only for specific keys
