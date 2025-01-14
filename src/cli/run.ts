@@ -55,7 +55,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
 
   try {
     const runner = new BenchmarkRunner({prevBench, benchmarkOpts: opts});
-    const results = await runner.process(sortFiles(files));
+    const results = await runner.process(opts.sort ? sortFiles(files) : files);
 
     if (results.length === 0) {
       throw Error("No benchmark result was produced");

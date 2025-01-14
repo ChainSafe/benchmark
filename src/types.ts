@@ -7,6 +7,8 @@ export interface FileCollectionOptions {
   recursive: boolean;
   /** Glob pattern to load spec */
   spec: string[];
+  /** Sort the test files */
+  sort?: boolean;
 }
 
 export type StorageOptions = {

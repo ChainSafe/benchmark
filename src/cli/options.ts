@@ -39,6 +39,12 @@ export const fileCollectionOptions: ICliCommandOptions<CLIFileCollectionOptions>
     default: false,
     group: fileGroup,
   },
+  sort: {
+    description: "Sort the tests",
+    type: "boolean",
+    default: false,
+    group: fileGroup,
+  },
 };
 
 export const storageOptions: ICliCommandOptions<CLIStorageOptions> = {
