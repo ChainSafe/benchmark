@@ -109,3 +109,12 @@ export async function collectFiles({spec, extension, ignore, recursive}: FileCol
     unmatchedFiles,
   };
 }
+
+export function sortFiles(files: string[]): string[] {
+  const collator = new Intl.Collator(undefined, {
+    numeric: true,
+    sensitivity: "base",
+  });
+
+  return files.sort(collator.compare);
+}
