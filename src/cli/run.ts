@@ -4,7 +4,14 @@ import {resolveShouldPersist} from "../history/shouldPersist.js";
 import {validateBenchmark} from "../history/schema.js";
 import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
 import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
-import {parseBranchFromRef, getCurrentCommitInfo, shell, getCurrentBranch, collectFiles} from "../utils/index.js";
+import {
+  parseBranchFromRef,
+  getCurrentCommitInfo,
+  shell,
+  getCurrentBranch,
+  collectFiles,
+  sortFiles,
+} from "../utils/index.js";
 import {computePerformanceReport} from "../compare/compute.js";
 import {postGaComment} from "../github/comments/index.js";
 import {isGaRun} from "../github/context.js";
@@ -48,7 +55,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
 
   try {
     const runner = new BenchmarkRunner({prevBench, benchmarkOpts: opts});
-    const results = await runner.process(files);
+    const results = await runner.process(sortFiles(files));
 
     if (results.length === 0) {
       throw Error("No benchmark result was produced");
