@@ -54,18 +54,36 @@ export class BenchmarkReporter {
         try {
           const result = store.getResult(task.name);
 
-          if (result) {
-            // Render benchmark
-            const prevResult = this.prevResults.get(result.id) ?? null;
-
-            const resultRow = formatResultRow(result, prevResult, result.threshold ?? this.threshold);
-            const fmt = this.indent() + color("checkmark", "  " + symbols.ok) + " " + resultRow;
-            consoleLog(fmt);
-          } else {
+          if (!result) {
             // Render regular test
             const fmt = this.indent() + color("checkmark", "  " + symbols.ok) + color("pass", " %s");
             consoleLog(fmt, task.name);
+            this.passed++;
+            return;
           }
+
+          // Render benchmark
+          const threshold = result.threshold ?? this.threshold;
+          const prevResult = this.prevResults.get(result.id) ?? null;
+          const resultRow = formatResultRow(result, prevResult, threshold);
+
+          if (!prevResult) {
+            const fmt = this.indent() + color("checkmark", "  " + symbols.ok) + " " + resultRow;
+            consoleLog(fmt);
+            this.passed++;
+            return;
+          }
+
+          const ratio = result.averageNs / prevResult.averageNs;
+          if (ratio > threshold) {
+            const fmt = this.indent() + color("fail", "  " + symbols.err) + " " + resultRow;
+            consoleLog(fmt);
+            this.failed++;
+            return;
+          }
+
+          const fmt = this.indent() + color("checkmark", "  " + symbols.ok) + " " + resultRow;
+          consoleLog(fmt);
           this.passed++;
         } catch (e) {
           this.failed++;
