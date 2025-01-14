@@ -63,6 +63,8 @@ export type BenchmarkOpts = {
   skip?: boolean;
   /** Setup files to load before the test files */
   setupFiles?: string[];
+  /** Trigger GC cleanup every test to have consistent memory usage */
+  triggerGC?: boolean;
 };
 
 // Create partial only for specific keys
