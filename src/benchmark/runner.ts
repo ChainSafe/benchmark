@@ -40,6 +40,7 @@ export class BenchmarkRunner implements VitestRunner {
 
   onAfterRunSuite(suite: Suite): void {
     this.reporter.onSuiteFinished(suite);
+    store.removeOptions(suite);
   }
 
   onBeforeRunTask(task: Task): void {
@@ -48,6 +49,7 @@ export class BenchmarkRunner implements VitestRunner {
 
   onAfterRunTask(task: Task): void {
     this.reporter.onTestFinished(task);
+    store.removeOptions(task);
   }
 
   onAfterRunFiles(files: File[]): void {
