@@ -76,7 +76,7 @@ export class BenchmarkReporter {
 
           const ratio = result.averageNs / prevResult.averageNs;
           if (ratio > threshold) {
-            const fmt = this.indent() + color("fail", "  " + symbols.err) + " " + resultRow;
+            const fmt = this.indent() + color("fail", "  " + symbols.bang) + " " + resultRow;
             consoleLog(fmt);
             this.failed++;
             return;

@@ -13,6 +13,7 @@ import {BenchmarkReporter} from "./reporter.js";
 import {store} from "./globalState.js";
 
 export class BenchmarkRunner implements VitestRunner {
+  readonly triggerGC: boolean;
   readonly config: VitestRunnerConfig;
   readonly reporter: BenchmarkReporter;
   readonly prevBench: Benchmark | null;
@@ -29,6 +30,7 @@ export class BenchmarkRunner implements VitestRunner {
       setupFiles: benchmarkOpts.setupFiles ? benchmarkOpts.setupFiles.map((s) => path.resolve(s)) : [],
       retry: 0,
     };
+    this.triggerGC = benchmarkOpts.triggerGC ?? false;
     this.prevBench = prevBench;
     this.benchmarkOpts = benchmarkOpts;
     this.reporter = new BenchmarkReporter({prevBench, benchmarkOpts});
@@ -50,6 +52,12 @@ export class BenchmarkRunner implements VitestRunner {
   onAfterRunTask(task: Task): void {
     this.reporter.onTestFinished(task);
     store.removeOptions(task);
+
+    // To help maintain consistent memory usage patterns
+    // we trigger garbage collection manually
+    if (this.triggerGC && global.gc) {
+      global.gc();
+    }
   }
 
   onAfterRunFiles(files: File[]): void {

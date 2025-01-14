@@ -191,4 +191,10 @@ export const benchmarkOptions: ICliCommandOptions<CLIBenchmarkOptions> = {
     default: [],
     group: benchmarkGroup,
   },
+  triggerGC: {
+    type: "boolean",
+    description: "Trigger GC (if available) after every benchmark",
+    default: false,
+    group: benchmarkGroup,
+  },
 };
