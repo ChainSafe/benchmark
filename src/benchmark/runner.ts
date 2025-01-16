@@ -6,6 +6,7 @@ import {
   VitestRunner,
   VitestRunnerConfig,
   VitestRunnerImportSource,
+  setFn,
 } from "@vitest/runner";
 import path from "node:path";
 import {Benchmark, BenchmarkOpts, BenchmarkResults} from "../types.js";
@@ -49,14 +50,23 @@ export class BenchmarkRunner implements VitestRunner {
     this.reporter.onTestStarted(task);
   }
 
-  onAfterRunTask(task: Task): void {
+  async onAfterRunTask(task: Task): Promise<void> {
     this.reporter.onTestFinished(task);
     store.removeOptions(task);
+
+    if (task.type === "test" || task.type === "custom") {
+      // Clear up the assigned handler to clean the memory
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      setFn(task, null);
+    }
 
     // To help maintain consistent memory usage patterns
     // we trigger garbage collection manually
     if (this.triggerGC && global.gc) {
       global.gc();
+      // Make sure the syn operation is off the event loop
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
   }
 
@@ -64,10 +74,13 @@ export class BenchmarkRunner implements VitestRunner {
     this.reporter.onComplete(files);
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async importFile(filepath: string, _source: VitestRunnerImportSource): Promise<void> {
+  async importFile(filepath: string, source: VitestRunnerImportSource): Promise<void> {
+    let url = filepath;
+    if (source === "setup") {
+      url = `${url}?key=${Date.now()}`;
+    }
     // TODO: Implement file caching mechanism later
-    await import(filepath);
+    await import(url);
   }
 
   async process(files: string[]): Promise<BenchmarkResults> {
