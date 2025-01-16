@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import {getCurrentSuite} from "@vitest/runner";
+import {getCurrentSuite, setFn} from "@vitest/runner";
 import {createChainable} from "@vitest/runner/utils";
 import {store} from "./globalState.js";
 import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.js";
@@ -29,6 +29,31 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
     timeout = minMs * 1.5;
   }
 
+  async function handler(): Promise<void> {
+    // Ensure bench id is unique
+    if (store.getResult(opts.id) && !opts.skip) {
+      throw Error(`test titles must be unique, duplicated: '${opts.id}'`);
+    }
+
+    // Persist full results if requested. dir is created in `beforeAll`
+    const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
+    const persistRunsNs = Boolean(benchmarkResultsCsvDir);
+
+    const {result, runsNs} = await runBenchFn({...options, fn: benchTask}, persistRunsNs);
+
+    // Store result for:
+    // - to persist benchmark data latter
+    // - to render with the custom reporter
+    store.setResult(opts.id, result);
+
+    if (benchmarkResultsCsvDir) {
+      fs.mkdirSync(benchmarkResultsCsvDir, {recursive: true});
+      const filename = `${result.id}.csv`;
+      const filepath = path.join(benchmarkResultsCsvDir, filename);
+      fs.writeFileSync(filepath, runsNs.join("\n"));
+    }
+  }
+
   const task = currentSuite.task(opts.id, {
     skip: opts.skip ?? this.skip,
     only: opts.only ?? this.only,
@@ -38,32 +63,9 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
     meta: {
       "chainsafe/benchmark": true,
     },
-    async handler() {
-      // Ensure bench id is unique
-      if (store.getResult(opts.id) && !opts.skip) {
-        throw Error(`test titles must be unique, duplicated: '${opts.id}'`);
-      }
-
-      // Persist full results if requested. dir is created in `beforeAll`
-      const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
-      const persistRunsNs = Boolean(benchmarkResultsCsvDir);
-
-      const {result, runsNs} = await runBenchFn({...options, fn: benchTask}, persistRunsNs);
-
-      // Store result for:
-      // - to persist benchmark data latter
-      // - to render with the custom reporter
-      store.setResult(opts.id, result);
-
-      if (benchmarkResultsCsvDir) {
-        fs.mkdirSync(benchmarkResultsCsvDir, {recursive: true});
-        const filename = `${result.id}.csv`;
-        const filepath = path.join(benchmarkResultsCsvDir, filename);
-        fs.writeFileSync(filepath, runsNs.join("\n"));
-      }
-    },
   });
 
+  setFn(task, handler);
   store.setOptions(task, opts);
 });
 
@@ -85,7 +87,7 @@ function coerceToOptsObj<T, T2>(
 
   if (typeof idOrOpts === "string") {
     if (!fn) throw Error("fn arg must be set");
-    opts = {id: idOrOpts, fn, threshold: optionsDefault.threshold};
+    opts = {id: idOrOpts, fn};
   } else {
     if (fn) {
       opts = {...idOrOpts, fn};
