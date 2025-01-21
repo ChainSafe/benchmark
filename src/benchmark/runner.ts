@@ -43,24 +43,26 @@ export class BenchmarkRunner implements VitestRunner {
 
   onAfterRunSuite(suite: Suite): void {
     this.reporter.onSuiteFinished(suite);
-    store.removeOptions(suite);
   }
 
   onBeforeRunTask(task: Task): void {
     this.reporter.onTestStarted(task);
   }
 
-  async onAfterRunTask(task: Task): Promise<void> {
+  async onTaskFinished(task: Task): Promise<void> {
     this.reporter.onTestFinished(task);
-    store.removeOptions(task);
 
-    if (task.type === "test" || task.type === "custom") {
-      // Clear up the assigned handler to clean the memory
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      setFn(task, null);
+    // To help maintain consistent memory usage patterns
+    // we trigger garbage collection manually
+    if (this.triggerGC && global.gc) {
+      global.gc();
+      // Make sure the syn operation is off the event loop
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
+  }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async onAfterRunTask(task: Task): Promise<void> {
     // To help maintain consistent memory usage patterns
     // we trigger garbage collection manually
     if (this.triggerGC && global.gc) {
