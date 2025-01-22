@@ -90,14 +90,14 @@ export class BenchmarkRunner implements VitestRunner {
   async process(files: string[]): Promise<BenchmarkResults> {
     store.setGlobalOptions(this.benchmarkOpts);
 
-    debug("Starting tests %O", files);
+    debug("starting tests %O", files);
     const res = await startTests(files, this);
 
     const passed = res.filter((r) => r.result?.state == "pass");
     const skipped = res.filter((r) => r.result?.state == "skip");
     const failed = res.filter((r) => r.result?.state == "fail");
 
-    debug("Finished tests. passed: %i, skipped: %i, failed: %i", passed.length, skipped.length, failed.length);
+    debug("finished tests. passed: %i, skipped: %i, failed: %i", passed.length, skipped.length, failed.length);
 
     if (failed.length > 0) {
       throw failed[0].result?.errors;
