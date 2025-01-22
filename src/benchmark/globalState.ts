@@ -24,6 +24,7 @@ export const store = {
     return results.get(id);
   },
   setResult(id: string, result: BenchmarkResult): void {
+    debug("setting result for %o", id);
     results.set(id, result);
   },
   getAllResults(): BenchmarkResults {
@@ -35,8 +36,7 @@ export const store = {
   setOptions(suite: Task | Suite | SuiteCollector, opts: BenchmarkOpts): void {
     if (Object.keys(opts).length === 0) return;
 
-    debug("setting options for %o with name %o", suite.type, suite.name);
-    debug(opts);
+    debug("setting options for %o with name %o %O", suite.type, suite.name, opts);
     optsMap.set(suite, opts);
   },
   removeOptions(suite: Task | Suite | SuiteCollector): void {
@@ -44,7 +44,7 @@ export const store = {
     optsMap.delete(suite);
   },
   setGlobalOptions(opts: Partial<BenchmarkOpts>): void {
-    debug("setting global options %o", opts);
+    debug("setting global options %O", opts);
     globalOpts = opts;
   },
   getGlobalOptions(): BenchmarkOpts | undefined {

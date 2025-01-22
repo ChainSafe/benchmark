@@ -2,8 +2,11 @@
 import yargs from "yargs";
 import fs from "node:fs";
 import path from "node:path";
+import Debug from "debug";
 import {parse as parseYaml} from "yaml";
 import {hideBin} from "yargs/helpers";
+
+const debug = Debug("@chainsafe/benchmark/cli");
 
 import {benchmarkOptions, CLIOptions, fileCollectionOptions, storageOptions} from "./options.js";
 import {run} from "./run.js";
@@ -20,6 +23,7 @@ void yargs(hideBin(process.argv))
     },
     handler: async (argv) => {
       const cliOpts = {...argv} as unknown as CLIOptions & {spec: string[]};
+      debug("Executing command run with %O", cliOpts);
 
       await run(cliOpts);
     },
@@ -33,6 +37,7 @@ void yargs(hideBin(process.argv))
     },
     handler: async (argv) => {
       const cliOpts = {...argv} as unknown as {dirs: string[]};
+      debug("Executing command compare with %O", cliOpts);
 
       await compare(cliOpts);
     },
