@@ -6,12 +6,14 @@ import {
   VitestRunner,
   VitestRunnerConfig,
   VitestRunnerImportSource,
-  setFn,
 } from "@vitest/runner";
 import path from "node:path";
+import Debug from "debug";
 import {Benchmark, BenchmarkOpts, BenchmarkResults} from "../types.js";
 import {BenchmarkReporter} from "./reporter.js";
 import {store} from "./globalState.js";
+
+const debug = Debug("@chainsafe/benchmark/runner");
 
 export class BenchmarkRunner implements VitestRunner {
   readonly triggerGC: boolean;
@@ -43,24 +45,26 @@ export class BenchmarkRunner implements VitestRunner {
 
   onAfterRunSuite(suite: Suite): void {
     this.reporter.onSuiteFinished(suite);
-    store.removeOptions(suite);
   }
 
   onBeforeRunTask(task: Task): void {
     this.reporter.onTestStarted(task);
   }
 
-  async onAfterRunTask(task: Task): Promise<void> {
+  async onTaskFinished(task: Task): Promise<void> {
     this.reporter.onTestFinished(task);
-    store.removeOptions(task);
 
-    if (task.type === "test" || task.type === "custom") {
-      // Clear up the assigned handler to clean the memory
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      setFn(task, null);
+    // To help maintain consistent memory usage patterns
+    // we trigger garbage collection manually
+    if (this.triggerGC && global.gc) {
+      global.gc();
+      // Make sure the syn operation is off the event loop
+      await new Promise((resolve) => setTimeout(resolve, 0));
     }
+  }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async onAfterRunTask(task: Task): Promise<void> {
     // To help maintain consistent memory usage patterns
     // we trigger garbage collection manually
     if (this.triggerGC && global.gc) {
@@ -86,11 +90,14 @@ export class BenchmarkRunner implements VitestRunner {
   async process(files: string[]): Promise<BenchmarkResults> {
     store.setGlobalOptions(this.benchmarkOpts);
 
+    debug("starting tests %O", files);
     const res = await startTests(files, this);
 
     const passed = res.filter((r) => r.result?.state == "pass");
     const skipped = res.filter((r) => r.result?.state == "skip");
     const failed = res.filter((r) => r.result?.state == "fail");
+
+    debug("finished tests. passed: %i, skipped: %i, failed: %i", passed.length, skipped.length, failed.length);
 
     if (failed.length > 0) {
       throw failed[0].result?.errors;

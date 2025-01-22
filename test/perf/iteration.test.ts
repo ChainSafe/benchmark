@@ -35,8 +35,8 @@ describe("Array iteration", () => {
   bench({
     id: "sum array with reduce beforeEach",
     beforeEach: () => Array.from({length: 1e4}, (_, i) => i),
-    fn: () => {
-      arr.reduce((total, curr) => total + curr, 0);
+    fn: (arrayFromBeforeEach) => {
+      arrayFromBeforeEach.reduce((total, curr) => total + curr, 0);
 
       // Uncomment below to cause a guaranteed performance regression
       // arr.reduce((total, curr) => total + curr, 0);
@@ -47,9 +47,9 @@ describe("Array iteration", () => {
   bench({
     id: "sum array with reduce before beforeEach",
     before: () => Array.from({length: 1e4}, (_, i) => i),
-    beforeEach: (arr) => arr.slice(0),
-    fn: () => {
-      arr.reduce((total, curr) => total + curr, 0);
+    beforeEach: (arrFromBefore) => arrFromBefore.slice(0),
+    fn: (arrayFromBeforeEach) => {
+      arrayFromBeforeEach.reduce((total, curr) => total + curr, 0);
 
       // Uncomment below to cause a guaranteed performance regression
       // arr.reduce((total, curr) => total + curr, 0);
@@ -57,16 +57,7 @@ describe("Array iteration", () => {
     },
   });
 
-  bench.skip("sum array with reduce", () => {
-    arr.reduce((total, curr) => total + curr, 0);
-  });
-
-  // bench.only("sum array with reduce", () => {
-  //   arr.reduce((total, curr) => total + curr, 0);
-  // });
-
   // Reporter options
-
   bench({
     id: "sum array with reduce high threshold",
     threshold: 5,

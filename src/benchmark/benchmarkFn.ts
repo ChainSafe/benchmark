@@ -65,8 +65,21 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
     },
   });
 
+  const {id: _, ...optionsWithoutId} = opts;
   setFn(task, handler);
-  store.setOptions(task, opts);
+  store.setOptions(task, optionsWithoutId);
+
+  task.onFinished = [
+    () => {
+      store.removeOptions(task);
+    },
+    () => {
+      // Clear up the assigned handler to clean the memory
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      setFn(task, null);
+    },
+  ];
 });
 
 function createBenchmarkFunction(
@@ -123,7 +136,12 @@ function coerceToOptsObj<T, T2>(
  * ```
  */
 export function setBenchOpts(opts: BenchmarkOpts): void {
-  store.setOptions(getCurrentSuite(), opts);
+  const suite = getCurrentSuite();
+  store.setOptions(suite, opts);
+
+  suite.on("afterAll", () => {
+    store.removeOptions(suite);
+  });
 }
 
 export const setBenchmarkOptions = setBenchOpts;

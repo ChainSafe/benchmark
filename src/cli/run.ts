@@ -1,4 +1,5 @@
 import * as github from "@actions/github";
+import Debug from "debug";
 import {getHistoryProvider} from "../history/index.js";
 import {resolveShouldPersist} from "../history/shouldPersist.js";
 import {validateBenchmark} from "../history/schema.js";
@@ -21,6 +22,8 @@ import {consoleLog} from "../utils/output.js";
 import {HistoryProviderType} from "../history/provider.js";
 import {performanceReportComment} from "../github/comments/performanceReportComment.js";
 import {GithubCommentTag} from "../github/octokit.js";
+
+const debug = Debug("@chainsafe/benchmark/cli");
 
 export async function run(opts_: FileCollectionOptions & StorageOptions & BenchmarkOpts): Promise<void> {
   const opts = Object.assign({}, optionsDefault, opts_);
@@ -70,6 +73,8 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
     // Persist new benchmark data
     const currentBranch = await getCurrentBranch();
     const shouldPersist = await resolveShouldPersist(opts, currentBranch);
+
+    debug("detecting to persist results. found: %o", shouldPersist);
     if (shouldPersist === true) {
       const branch =
         currentCommit.branch ??
@@ -86,6 +91,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
 
     const resultsComp = computePerformanceReport(currBench, prevBench, opts.threshold);
 
+    debug("detecting to post comment. skipPostComment: %o, isGaRun: %o", !opts.skipPostComment, isGaRun());
     if (!opts.skipPostComment && isGaRun()) {
       await postGaComment({
         commentBody: performanceReportComment(resultsComp),
