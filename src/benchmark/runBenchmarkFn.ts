@@ -43,9 +43,9 @@ export async function runBenchFn<T, T2>(
   const inputAll = opts.before ? await opts.before() : (undefined as unknown as T2);
 
   while (true) {
-    const ellapsedMs = Date.now() - startRunMs;
-    const mustStop = ellapsedMs >= maxMs || runIdx >= maxRuns;
-    const mayStop = ellapsedMs > minMs && runIdx > minRuns;
+    const elapsedMs = Date.now() - startRunMs;
+    const mustStop = elapsedMs >= maxMs || runIdx >= maxRuns;
+    const mayStop = elapsedMs > minMs && runIdx > minRuns;
     // Exceeds limits, must stop now
     if (mustStop) {
       break;
@@ -70,7 +70,7 @@ export async function runBenchFn<T, T2>(
       totalWarmUpNs += runNs;
 
       // On any warm-up finish condition, mark isWarmUp = true to prevent having to check them again
-      if (totalWarmUpNs >= maxWarmUpNs || totalWarmUpRuns >= maxWarmUpRuns || ellapsedMs / maxMs >= maxWarmUpRatio) {
+      if (totalWarmUpNs >= maxWarmUpNs || totalWarmUpRuns >= maxWarmUpRuns || elapsedMs / maxMs >= maxWarmUpRatio) {
         isWarmUp = false;
       }
     } else {
@@ -80,7 +80,7 @@ export async function runBenchFn<T, T2>(
       // If the caller wants the exact times of all runs, persist them
       if (persistRunsNs) runsNs.push(runNs);
 
-      // When is a good time to stop a benchmark? A naive answer is after N miliseconds or M runs.
+      // When is a good time to stop a benchmark? A naive answer is after N milliseconds or M runs.
       // This code aims to stop the benchmark when the average fn run time has converged at a value
       // within a given convergence factor. To prevent doing expensive math to often for fast fn,
       // it only takes samples every `sampleEveryMs`. It stores two past values to be able to compute
@@ -96,11 +96,11 @@ export async function runBenchFn<T, T2>(
 
         // Only do convergence math if it may stop
         if (mayStop) {
-          // Aprox linear convergence
+          // Approx linear convergence
           const convergence1 = Math.abs(c - a);
-          // Aprox quadratic convergence
+          // Approx quadratic convergence
           const convergence2 = Math.abs(b - (a + c) / 2);
-          // Take the greater of both to enfore linear and quadratic are below convergeFactor
+          // Take the greater of both to enforce linear and quadratic are below convergeFactor
           const convergence = Math.max(convergence1, convergence2) / a;
 
           // Okay to stop + has converged, stop now
