@@ -25,9 +25,14 @@ export class BenchmarkReporter {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  onTestStarted(_task: Task): void {
-    // this.log(task.name, "started");
+  onTestStarted(task: Task): void {
+    if (task.mode === "skip") {
+      this.skipped++;
+      consoleLog(`${this.indent()}${color("pending", "  - %s")}`, task.name);
+    } else if (task.mode === "todo") {
+      this.skipped++;
+      consoleLog(`${this.indent()}${color("pending", "  - %s")}`, task.name);
+    }
   }
 
   onTestFinished(task: Task): void {
@@ -46,8 +51,9 @@ export class BenchmarkReporter {
       }
       case "fail": {
         this.failed++;
-        consoleLog(this.indent() + color("fail", "  %d) %s"), ++this.failed, task.name);
-        consoleLog(task.result?.errors);
+        const fmt = this.indent() + color("fail", "  " + symbols.err) + color("fail", " %s");
+        consoleLog(fmt, task.name);
+        consoleLog(task.result?.errors?.map((e) => e.stackStr).join("\n"));
         break;
       }
       case "pass": {
