@@ -8,7 +8,7 @@ import {bench, describe, setBenchOpts} from "../../src/index.js";
 // byteArrayEquals with valueOf()                                         853971.0 ops/s      1.171000 us/op 9963051 runs    16.07 s
 
 describe("Array iteration", () => {
-  setBenchOpts({maxMs: 60 * 1000, convergeFactor: 0.1 / 100});
+  setBenchOpts({maxMs: 60 * 1000, convergeFactor: 1 / 100});
 
   // nonce = 5
   const n = 1e6;

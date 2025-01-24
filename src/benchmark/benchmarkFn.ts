@@ -25,20 +25,20 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
       throw Error(`test titles must be unique, duplicated: '${opts.id}'`);
     }
 
-    // Persist full results if requested. dir is created in `beforeAll`
-    const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
-    const persistRunsNs = Boolean(benchmarkResultsCsvDir);
-
-    const {result, runsNs} = await runBenchFn<T, T2>(
-      {...options, fn: benchTask, before, beforeEach} as BenchmarkRunOptsWithFn<T, T2>,
-      persistRunsNs
-    );
+    const {result, runsNs} = await runBenchFn<T, T2>({
+      ...options,
+      fn: benchTask,
+      before,
+      beforeEach,
+    } as BenchmarkRunOptsWithFn<T, T2>);
 
     // Store result for:
     // - to persist benchmark data latter
     // - to render with the custom reporter
     store.setResult(opts.id, result);
 
+    // Persist full results if requested. dir is created in `beforeAll`
+    const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
     if (benchmarkResultsCsvDir) {
       fs.mkdirSync(benchmarkResultsCsvDir, {recursive: true});
       const filename = `${result.id}.csv`;

@@ -1,6 +1,6 @@
 import {BenchmarkResult, BenchmarkOpts} from "../types.js";
 import {getBenchmarkOptionsWithDefaults} from "./options.js";
-import {createConvergenceCriteria} from "./termination.js";
+import {createCVConvergenceCriteria} from "./termination.js";
 
 export type BenchmarkRunOpts = BenchmarkOpts & {
   id: string;
@@ -14,8 +14,7 @@ export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
 };
 
 export async function runBenchFn<T, T2>(
-  opts: BenchmarkRunOptsWithFn<T, T2>,
-  persistRunsNs?: boolean
+  opts: BenchmarkRunOptsWithFn<T, T2>
 ): Promise<{result: BenchmarkResult; runsNs: bigint[]}> {
   const {id, before, beforeEach, fn, ...rest} = opts;
   const benchOptions = getBenchmarkOptionsWithDefaults(rest);
@@ -36,7 +35,7 @@ export async function runBenchFn<T, T2>(
   const runsNs: bigint[] = [];
   const startRunMs = Date.now();
 
-  const shouldTerminate = createConvergenceCriteria(startRunMs, benchOptions);
+  const shouldTerminate = createCVConvergenceCriteria(startRunMs, benchOptions);
 
   let runIdx = 0;
   let totalNs = BigInt(0);
@@ -79,13 +78,11 @@ export async function runBenchFn<T, T2>(
     // Persist results
     runIdx += 1;
     totalNs += runNs;
+    runsNs.push(runNs);
 
-    if (shouldTerminate(runIdx, totalNs)) {
+    if (shouldTerminate(runIdx, totalNs, runsNs)) {
       break;
     }
-
-    // If the caller wants the exact times of all runs, persist them
-    if (persistRunsNs) runsNs.push(runNs);
   }
 
   if (runIdx === 0) {

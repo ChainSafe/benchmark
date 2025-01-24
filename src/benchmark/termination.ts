@@ -1,8 +1,9 @@
 import {BenchmarkOpts} from "../types.js";
+import {calcMean, calcMedian, calcVariance, filterOutliers, OutlierSensitivity, sortData} from "../utils/math.js";
 
-export type TerminationCriteria = (runIdx: number, totalNs: bigint) => boolean;
+export type TerminationCriteria = (runIdx: number, totalNs: bigint, runNs: bigint[]) => boolean;
 
-export function createConvergenceCriteria(
+export function createLinearConvergenceCriteria(
   startMs: number,
   {maxMs, maxRuns, minRuns, minMs, convergeFactor}: Required<BenchmarkOpts>
 ): TerminationCriteria {
@@ -11,7 +12,8 @@ export function createConvergenceCriteria(
   let lastConvergenceSample = startMs;
   const sampleEveryMs = 100;
 
-  return function canTerminate(runIdx: number, totalNs: bigint): boolean {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  return function canTerminate(runIdx: number, totalNs: bigint, _runNs: bigint[]): boolean {
     const currentMs = Date.now();
     const elapsedMs = currentMs - startMs;
     const mustStop = elapsedMs >= maxMs || runIdx >= maxRuns;
@@ -49,6 +51,51 @@ export function createConvergenceCriteria(
 
     prevAvg0 = prevAvg1;
     prevAvg1 = avg;
+    return false;
+  };
+}
+
+export function createCVConvergenceCriteria(
+  startMs: number,
+  {maxMs, maxRuns, minRuns, minMs, convergeFactor}: Required<BenchmarkOpts>
+): TerminationCriteria {
+  let lastConvergenceSample = startMs;
+  const sampleEveryMs = 100;
+  const minSamples = minRuns > 5 ? minRuns : 5;
+  const maxSamplesForCV = 1000;
+
+  return function canTerminate(runIdx: number, totalNs: bigint, runsNs: bigint[]): boolean {
+    const currentMs = Date.now();
+    const elapsedMs = currentMs - startMs;
+    const mustStop = elapsedMs >= maxMs || runIdx >= maxRuns;
+    const mayStop = elapsedMs >= minMs && runIdx >= minRuns && runIdx > minSamples;
+
+    // Must stop
+    if (mustStop) return true;
+
+    if (Date.now() - lastConvergenceSample <= sampleEveryMs) return false;
+
+    if (mayStop) {
+      lastConvergenceSample = currentMs;
+
+      const mean = calcMean(runsNs);
+      const variance = calcVariance(runsNs, mean);
+      const cv = Math.sqrt(Number(variance)) / Number(mean);
+
+      if (cv < convergeFactor) return true;
+
+      // If CV does not stabilize we fallback to the median approach
+      if (runsNs.length > maxSamplesForCV) {
+        const sorted = sortData(runsNs);
+        const cleanedRunsNs = filterOutliers(sorted, true, OutlierSensitivity.Mild);
+        const median = calcMedian(cleanedRunsNs, true);
+        const mean = calcMean(cleanedRunsNs);
+        const medianFactor = Math.abs(Number(mean - median)) / Number(median);
+
+        if (medianFactor < convergeFactor) return true;
+      }
+    }
+
     return false;
   };
 }
