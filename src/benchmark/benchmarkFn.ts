@@ -12,11 +12,11 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
   idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
   fn?: (arg: T) => void | Promise<void>
 ) {
-  const {fn: benchTask, ...opts} = coerceToOptsObj(idOrOpts, fn);
+  const {fn: benchTask, before, beforeEach, ...opts} = coerceToOptsObj(idOrOpts, fn);
   const currentSuite = getCurrentSuite();
 
   const globalOptions = store.getGlobalOptions() ?? {};
-  const parentOptions = store.getOptions(getCurrentSuite()) ?? {};
+  const parentOptions = store.getOptions(currentSuite) ?? {};
   const options = {...globalOptions, ...parentOptions, ...opts};
   const {timeoutBench, maxMs, minMs} = options;
 
@@ -39,7 +39,7 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
     const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
     const persistRunsNs = Boolean(benchmarkResultsCsvDir);
 
-    const {result, runsNs} = await runBenchFn({...options, fn: benchTask}, persistRunsNs);
+    const {result, runsNs} = await runBenchFn({...options, fn: benchTask, before, beforeEach}, persistRunsNs);
 
     // Store result for:
     // - to persist benchmark data latter
@@ -65,21 +65,19 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
     },
   });
 
-  const {id: _, ...optionsWithoutId} = opts;
   setFn(task, handler);
-  store.setOptions(task, optionsWithoutId);
+  store.setOptions(task, opts);
 
-  task.onFinished = [
-    () => {
-      store.removeOptions(task);
-    },
-    () => {
-      // Clear up the assigned handler to clean the memory
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      setFn(task, null);
-    },
-  ];
+  const cleanup = (): void => {
+    store.removeOptions(task);
+    // Clear up the assigned handler to clean the memory
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    setFn(task, null);
+  };
+
+  task.onFailed = [cleanup];
+  task.onFinished = [cleanup];
 });
 
 function createBenchmarkFunction(
