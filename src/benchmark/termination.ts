@@ -25,7 +25,7 @@ export function createConvergenceCriteria(
     // within a given convergence factor. To prevent doing expensive math to often for fast fn,
     // it only takes samples every `sampleEveryMs`. It stores two past values to be able to compute
     // a very rough linear and quadratic convergence.a
-    if (currentMs - lastConvergenceSample <= sampleEveryMs) return false;
+    if (Date.now() - lastConvergenceSample <= sampleEveryMs) return false;
 
     lastConvergenceSample = currentMs;
     const avg = Number(totalNs / BigInt(runIdx));
@@ -52,12 +52,3 @@ export function createConvergenceCriteria(
     return false;
   };
 }
-
-// test/perf/iteration.test.ts
-//   Array iteration
-//     ✔ sum array with raw for loop                                         1573.007 ops/s    635.7250 us/op        -       4765 runs   3.53 s
-//     ✔ sum array with reduce                                               176.6890 ops/s    5.659663 ms/op        -        271 runs   2.04 s
-//     ✔ sum array with reduce beforeEach                                    214638.3 ops/s    4.659000 us/op        -     102478 runs   25.6 s
-//     ✔ sum array with reduce before beforeEach                             269251.5 ops/s    3.714000 us/op        -     997136 runs   5.66 s
-//     ✔ sum array with reduce high threshold                                176.4852 ops/s    5.666196 ms/op        -        109 runs   1.12 s
-//     ✔ sum array with reduce no threshold                                  177.5273 ops/s    5.632938 ms/op        -         73 runs  0.915 s
