@@ -22,6 +22,7 @@ import {consoleLog} from "../utils/output.js";
 import {HistoryProviderType} from "../history/provider.js";
 import {performanceReportComment} from "../github/comments/performanceReportComment.js";
 import {GithubCommentTag} from "../github/octokit.js";
+import {defaultBenchmarkOptions} from "../benchmark/options.js";
 
 const debug = Debug("@chainsafe/benchmark/cli");
 
@@ -89,7 +90,11 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
       await historyProvider.writeToHistory(currBench);
     }
 
-    const resultsComp = computePerformanceReport(currBench, prevBench, opts.threshold);
+    const resultsComp = computePerformanceReport(
+      currBench,
+      prevBench,
+      opts.threshold ?? defaultBenchmarkOptions.threshold
+    );
 
     debug("detecting to post comment. skipPostComment: %o, isGaRun: %o", !opts.skipPostComment, isGaRun());
     if (!opts.skipPostComment && isGaRun()) {

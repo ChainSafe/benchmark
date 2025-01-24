@@ -3,7 +3,7 @@ import {color, consoleLog, symbols} from "../utils/output.js";
 import {store} from "./globalState.js";
 import {Benchmark, BenchmarkOpts, BenchmarkResult} from "../types.js";
 import {formatResultRow} from "./format.js";
-import {optionsDefault} from "../cli/options.js";
+import {defaultBenchmarkOptions} from "./options.js";
 
 export class BenchmarkReporter {
   indents = 0;
@@ -16,7 +16,7 @@ export class BenchmarkReporter {
 
   constructor({prevBench, benchmarkOpts}: {prevBench: Benchmark | null; benchmarkOpts: BenchmarkOpts}) {
     this.prevResults = new Map<string, BenchmarkResult>();
-    this.threshold = benchmarkOpts.threshold ?? optionsDefault.threshold;
+    this.threshold = benchmarkOpts.threshold ?? defaultBenchmarkOptions.threshold;
 
     if (prevBench) {
       for (const bench of prevBench.results) {

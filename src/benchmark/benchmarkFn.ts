@@ -5,7 +5,7 @@ import {createChainable} from "@vitest/runner/utils";
 import {store} from "./globalState.js";
 import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.js";
 import {runBenchFn} from "./runBenchmarkFn.js";
-import {optionsDefault} from "../cli/options.js";
+import {getBenchmarkOptionsWithDefaults} from "./options.js";
 
 export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
   this: Record<"skip" | "only", boolean | undefined>,
@@ -17,17 +17,7 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
 
   const globalOptions = store.getGlobalOptions() ?? {};
   const parentOptions = store.getOptions(currentSuite) ?? {};
-  const options = {...globalOptions, ...parentOptions, ...opts};
-  const {timeoutBench, maxMs, minMs} = options;
-
-  let timeout = timeoutBench ?? optionsDefault.timeoutBench;
-  if (maxMs && maxMs > timeout) {
-    timeout = maxMs * 1.5;
-  }
-
-  if (minMs && minMs > timeout) {
-    timeout = minMs * 1.5;
-  }
+  const options = getBenchmarkOptionsWithDefaults({...globalOptions, ...parentOptions, ...opts});
 
   async function handler(): Promise<void> {
     // Ensure bench id is unique
@@ -39,7 +29,10 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
     const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
     const persistRunsNs = Boolean(benchmarkResultsCsvDir);
 
-    const {result, runsNs} = await runBenchFn({...options, fn: benchTask, before, beforeEach}, persistRunsNs);
+    const {result, runsNs} = await runBenchFn<T, T2>(
+      {...options, fn: benchTask, before, beforeEach} as BenchmarkRunOptsWithFn<T, T2>,
+      persistRunsNs
+    );
 
     // Store result for:
     // - to persist benchmark data latter
@@ -59,7 +52,7 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
     only: opts.only ?? this.only,
     sequential: true,
     concurrent: false,
-    timeout,
+    timeout: options.timeoutBench,
     meta: {
       "chainsafe/benchmark": true,
     },
