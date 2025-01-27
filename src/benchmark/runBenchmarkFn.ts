@@ -1,4 +1,5 @@
 import {BenchmarkResult, BenchmarkOpts} from "../types.js";
+import {calcSum, filterOutliers, OutlierSensitivity} from "../utils/math.js";
 import {getBenchmarkOptionsWithDefaults} from "./options.js";
 import {createCVConvergenceCriteria, createLinearConvergenceCriteria} from "./termination.js";
 
@@ -23,7 +24,8 @@ export async function runBenchFn<T, T2>(
 ): Promise<{result: BenchmarkResult; runsNs: bigint[]}> {
   const {id, before, beforeEach, fn, ...rest} = opts;
   const benchOptions = getBenchmarkOptionsWithDefaults(rest);
-  const {maxMs, maxRuns, maxWarmUpMs, maxWarmUpRuns, runsFactor, threshold, convergence} = benchOptions;
+  const {maxMs, maxRuns, maxWarmUpMs, maxWarmUpRuns, runsFactor, threshold, convergence, averageCalculation} =
+    benchOptions;
 
   if (maxWarmUpMs >= maxMs) {
     throw new Error(`Warmup time must be lower than max run time. maxWarmUpMs: ${maxWarmUpMs}, maxMs: ${maxMs}`);
@@ -33,16 +35,20 @@ export async function runBenchFn<T, T2>(
     throw new Error(`Warmup runs must be lower than max runs. maxWarmUpRuns: ${maxWarmUpRuns}, maxRuns: ${maxRuns}`);
   }
 
+  if (averageCalculation !== "simple" && averageCalculation !== "clean-outliers") {
+    throw new Error(`Average calculation logic is not defined. ${averageCalculation}`);
+  }
+
+  if (convergence !== "linear" && convergence !== "cv") {
+    throw new Error(`Unknown convergence value ${convergence}`);
+  }
+
   // Ratio of maxMs that the warmup is allow to take from elapsedMs
   const maxWarmUpRatio = 0.5;
   const maxWarmUpNs = BigInt(benchOptions.maxWarmUpMs) * BigInt(1e6);
 
   const runsNs: bigint[] = [];
   const startRunMs = Date.now();
-
-  if (convergence !== "linear" && convergence !== "cv") {
-    throw new Error(`Unknown convergence value ${convergence}`);
-  }
 
   const shouldTerminate = convergenceCriteria[convergence](startRunMs, benchOptions);
 
@@ -114,7 +120,16 @@ either the before(), beforeEach() or fn() functions are too slow.
     }
   }
 
-  const averageNs = Number(totalNs / BigInt(runIdx)) / runsFactor;
+  let averageNs!: number;
+
+  if (averageCalculation === "simple") {
+    averageNs = Number(totalNs / BigInt(runIdx)) / runsFactor;
+  }
+
+  if (averageCalculation === "clean-outliers") {
+    const cleanData = filterOutliers(runsNs, false, OutlierSensitivity.Mild);
+    averageNs = Number(calcSum(cleanData) / BigInt(cleanData.length)) / runsFactor;
+  }
 
   return {
     result: {

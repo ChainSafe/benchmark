@@ -67,6 +67,8 @@ export type BenchmarkOpts = {
   triggerGC?: boolean;
   /** The algorithm to detect the convergence to stop the benchmark function runs */
   convergence?: "linear" | "cv";
+  /** Use simple average of all runs or clean the outliers before calculating average */
+  averageCalculation?: "simple" | "clean-outliers";
 };
 
 // Create partial only for specific keys

@@ -18,6 +18,7 @@ export const defaultBenchmarkOptions: Required<BenchmarkOpts> = {
   only: false,
   threshold: 2,
   convergence: "linear",
+  averageCalculation: "simple",
 };
 
 export function getBenchmarkOptionsWithDefaults(opts: BenchmarkOpts): Required<BenchmarkOpts> {

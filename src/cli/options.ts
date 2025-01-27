@@ -212,4 +212,11 @@ export const benchmarkOptions: ICliCommandOptions<CLIBenchmarkOptions> = {
     choices: ["linear", "cv"],
     group: benchmarkGroup,
   },
+  averageCalculation: {
+    type: "string",
+    description: "Use simple average of all runs or clean the outliers before calculating average",
+    default: defaultBenchmarkOptions.averageCalculation,
+    choices: ["simple", "clean-outliers"],
+    group: benchmarkGroup,
+  },
 };
