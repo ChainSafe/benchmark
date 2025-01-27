@@ -83,7 +83,13 @@ export function calcQuartile(arr: bigint[], sorted: boolean, percentile: number)
  * - Strict: Only filters extreme deviations (e.g., measurement errors)
  */
 export enum OutlierSensitivity {
+  /**
+   * A standard multiplier for detecting mild outliers. Captures ~99.3% of normally distributed data.
+   */
   Mild = 1.5,
+  /**
+   * A stricter multiplier for detecting extreme outliers. Captures ~99.99% of normally distributed data.
+   */
   Strict = 3.0,
 }
 
@@ -91,6 +97,14 @@ export enum OutlierSensitivity {
  * Isolates the core dataset by excluding values far from the central cluster.
  * Uses quartile ranges to establish inclusion boundaries, preserving data integrity
  * while eliminating measurement noise. Sorting can be bypassed for pre-processed data.
+ *
+ * We use the `IQR` Interquartile Range method to detect the outliers. IQR is distribution
+ * of difference of Q3 - Q1 and represents the middle 50% of the data.:
+ * - Q1 (First Quartile): The 25th percentile (25% of the data is below this value).
+ * - Q3 (Third Quartile): The 75th percentile (75% of the data is below this value).
+ *
+ * The `OutlierSensitivity` is scaling factors applied to the IQR to determine how far data points
+ * can deviate from the quartiles before being considered outliers.
  */
 export function filterOutliers(arr: bigint[], sorted: boolean, sensitivity: OutlierSensitivity): bigint[] {
   if (arr.length < 4) return arr; // Too few data points
