@@ -65,6 +65,8 @@ export type BenchmarkOpts = {
   setupFiles?: string[];
   /** Trigger GC cleanup every test to have consistent memory usage */
   triggerGC?: boolean;
+  /** The algorithm to detect the convergence to stop the benchmark function runs */
+  convergence?: "linear" | "cv";
 };
 
 // Create partial only for specific keys

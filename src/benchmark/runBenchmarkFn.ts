@@ -1,6 +1,11 @@
 import {BenchmarkResult, BenchmarkOpts} from "../types.js";
 import {getBenchmarkOptionsWithDefaults} from "./options.js";
-import {createCVConvergenceCriteria} from "./termination.js";
+import {createCVConvergenceCriteria, createLinearConvergenceCriteria} from "./termination.js";
+
+const convergenceCriteria = {
+  ["linear"]: createLinearConvergenceCriteria,
+  ["cv"]: createCVConvergenceCriteria,
+};
 
 export type BenchmarkRunOpts = BenchmarkOpts & {
   id: string;
@@ -18,7 +23,7 @@ export async function runBenchFn<T, T2>(
 ): Promise<{result: BenchmarkResult; runsNs: bigint[]}> {
   const {id, before, beforeEach, fn, ...rest} = opts;
   const benchOptions = getBenchmarkOptionsWithDefaults(rest);
-  const {maxMs, maxRuns, maxWarmUpMs, maxWarmUpRuns, runsFactor, threshold} = benchOptions;
+  const {maxMs, maxRuns, maxWarmUpMs, maxWarmUpRuns, runsFactor, threshold, convergence} = benchOptions;
 
   if (maxWarmUpMs >= maxMs) {
     throw new Error(`Warmup time must be lower than max run time. maxWarmUpMs: ${maxWarmUpMs}, maxMs: ${maxMs}`);
@@ -35,7 +40,11 @@ export async function runBenchFn<T, T2>(
   const runsNs: bigint[] = [];
   const startRunMs = Date.now();
 
-  const shouldTerminate = createCVConvergenceCriteria(startRunMs, benchOptions);
+  if (convergence !== "linear" && convergence !== "cv") {
+    throw new Error(`Unknown convergence value ${convergence}`);
+  }
+
+  const shouldTerminate = convergenceCriteria[convergence](startRunMs, benchOptions);
 
   let runIdx = 0;
   let totalNs = BigInt(0);

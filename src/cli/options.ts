@@ -205,4 +205,11 @@ export const benchmarkOptions: ICliCommandOptions<CLIBenchmarkOptions> = {
     default: defaultBenchmarkOptions.triggerGC,
     group: benchmarkGroup,
   },
+  convergence: {
+    type: "string",
+    description: "The algorithm used to detect the convergence to stop benchmark runs",
+    default: defaultBenchmarkOptions.convergence,
+    choices: ["linear", "cv"],
+    group: benchmarkGroup,
+  },
 };
