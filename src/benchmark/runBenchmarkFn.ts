@@ -1,4 +1,12 @@
 import {BenchmarkResult, BenchmarkOpts} from "../types.js";
+import {calcSum, filterOutliers, OutlierSensitivity} from "../utils/math.js";
+import {getBenchmarkOptionsWithDefaults} from "./options.js";
+import {createCVConvergenceCriteria, createLinearConvergenceCriteria} from "./termination.js";
+
+const convergenceCriteria = {
+  ["linear"]: createLinearConvergenceCriteria,
+  ["cv"]: createCVConvergenceCriteria,
+};
 
 export type BenchmarkRunOpts = BenchmarkOpts & {
   id: string;
@@ -12,49 +20,54 @@ export type BenchmarkRunOptsWithFn<T, T2> = BenchmarkOpts & {
 };
 
 export async function runBenchFn<T, T2>(
-  opts: BenchmarkRunOptsWithFn<T, T2>,
-  persistRunsNs?: boolean
+  opts: BenchmarkRunOptsWithFn<T, T2>
 ): Promise<{result: BenchmarkResult; runsNs: bigint[]}> {
-  const minRuns = opts.minRuns || 1;
-  const maxRuns = opts.maxRuns || Infinity;
-  const maxMs = opts.maxMs || Infinity;
-  const minMs = opts.minMs || 100;
-  const maxWarmUpMs = opts.maxWarmUpMs !== undefined ? opts.maxWarmUpMs : 500;
-  const maxWarmUpRuns = opts.maxWarmUpRuns !== undefined ? opts.maxWarmUpRuns : 1000;
-  // Ratio of maxMs that the warmup is allow to take from ellapsedMs
+  const {id, before, beforeEach, fn, ...rest} = opts;
+  const benchOptions = getBenchmarkOptionsWithDefaults(rest);
+  const {maxMs, maxRuns, maxWarmUpMs, maxWarmUpRuns, runsFactor, threshold, convergence, averageCalculation} =
+    benchOptions;
+
+  if (maxWarmUpMs >= maxMs) {
+    throw new Error(`Warmup time must be lower than max run time. maxWarmUpMs: ${maxWarmUpMs}, maxMs: ${maxMs}`);
+  }
+
+  if (maxWarmUpRuns >= maxRuns) {
+    throw new Error(`Warmup runs must be lower than max runs. maxWarmUpRuns: ${maxWarmUpRuns}, maxRuns: ${maxRuns}`);
+  }
+
+  if (averageCalculation !== "simple" && averageCalculation !== "clean-outliers") {
+    throw new Error(`Average calculation logic is not defined. ${averageCalculation}`);
+  }
+
+  if (convergence !== "linear" && convergence !== "cv") {
+    throw new Error(`Unknown convergence value ${convergence}`);
+  }
+
+  // Ratio of maxMs that the warmup is allow to take from elapsedMs
   const maxWarmUpRatio = 0.5;
-  const convergeFactor = opts.convergeFactor || 0.5 / 100; // 0.5%
-  const runsFactor = opts.runsFactor || 1;
-  const maxWarmUpNs = BigInt(maxWarmUpMs) * BigInt(1e6);
-  const sampleEveryMs = 100;
+  const maxWarmUpNs = BigInt(benchOptions.maxWarmUpMs) * BigInt(1e6);
 
   const runsNs: bigint[] = [];
   const startRunMs = Date.now();
 
+  const shouldTerminate = convergenceCriteria[convergence](startRunMs, benchOptions);
+
   let runIdx = 0;
   let totalNs = BigInt(0);
+
   let totalWarmUpNs = BigInt(0);
   let totalWarmUpRuns = 0;
-  let prevAvg0 = 0;
-  let prevAvg1 = 0;
-  let lastConvergenceSample = startRunMs;
-  let isWarmUp = maxWarmUpNs > 0 && maxWarmUpRuns > 0;
+  let isWarmUpPhase = maxWarmUpNs > 0 && maxWarmUpRuns > 0;
 
-  const inputAll = opts.before ? await opts.before() : (undefined as unknown as T2);
+  const inputAll = before ? await before() : (undefined as unknown as T2);
 
   while (true) {
-    const ellapsedMs = Date.now() - startRunMs;
-    const mustStop = ellapsedMs >= maxMs || runIdx >= maxRuns;
-    const mayStop = ellapsedMs > minMs && runIdx > minRuns;
-    // Exceeds limits, must stop now
-    if (mustStop) {
-      break;
-    }
+    const elapsedMs = Date.now() - startRunMs;
 
-    const input = opts.beforeEach ? await opts.beforeEach(inputAll, runIdx) : (undefined as unknown as T);
+    const input = beforeEach ? await beforeEach(inputAll, runIdx) : (undefined as unknown as T);
 
     const startNs = process.hrtime.bigint();
-    await opts.fn(input);
+    await fn(input);
     const endNs = process.hrtime.bigint();
 
     const runNs = endNs - startNs;
@@ -64,54 +77,26 @@ export async function runBenchFn<T, T2>(
       await new Promise((r) => setTimeout(r, 0));
     }
 
-    if (isWarmUp) {
+    if (isWarmUpPhase) {
       // Warm-up, do not count towards results
       totalWarmUpRuns += 1;
       totalWarmUpNs += runNs;
 
       // On any warm-up finish condition, mark isWarmUp = true to prevent having to check them again
-      if (totalWarmUpNs >= maxWarmUpNs || totalWarmUpRuns >= maxWarmUpRuns || ellapsedMs / maxMs >= maxWarmUpRatio) {
-        isWarmUp = false;
+      if (totalWarmUpNs >= maxWarmUpNs || totalWarmUpRuns >= maxWarmUpRuns || elapsedMs / maxMs >= maxWarmUpRatio) {
+        isWarmUpPhase = false;
       }
-    } else {
-      // Persist results
-      runIdx += 1;
-      totalNs += runNs;
-      // If the caller wants the exact times of all runs, persist them
-      if (persistRunsNs) runsNs.push(runNs);
 
-      // When is a good time to stop a benchmark? A naive answer is after N miliseconds or M runs.
-      // This code aims to stop the benchmark when the average fn run time has converged at a value
-      // within a given convergence factor. To prevent doing expensive math to often for fast fn,
-      // it only takes samples every `sampleEveryMs`. It stores two past values to be able to compute
-      // a very rough linear and quadratic convergence.
-      if (Date.now() - lastConvergenceSample > sampleEveryMs) {
-        lastConvergenceSample = Date.now();
-        const avg = Number(totalNs / BigInt(runIdx));
+      continue;
+    }
 
-        // Compute convergence (1st order + 2nd order)
-        const a = prevAvg0;
-        const b = prevAvg1;
-        const c = avg;
+    // Persist results
+    runIdx += 1;
+    totalNs += runNs;
+    runsNs.push(runNs);
 
-        // Only do convergence math if it may stop
-        if (mayStop) {
-          // Aprox linear convergence
-          const convergence1 = Math.abs(c - a);
-          // Aprox quadratic convergence
-          const convergence2 = Math.abs(b - (a + c) / 2);
-          // Take the greater of both to enfore linear and quadratic are below convergeFactor
-          const convergence = Math.max(convergence1, convergence2) / a;
-
-          // Okay to stop + has converged, stop now
-          if (convergence < convergeFactor) {
-            break;
-          }
-        }
-
-        prevAvg0 = prevAvg1;
-        prevAvg1 = avg;
-      }
+    if (shouldTerminate(runIdx, totalNs, runsNs)) {
+      break;
     }
   }
 
@@ -135,15 +120,24 @@ either the before(), beforeEach() or fn() functions are too slow.
     }
   }
 
-  const averageNs = Number(totalNs / BigInt(runIdx)) / runsFactor;
+  let averageNs!: number;
+
+  if (averageCalculation === "simple") {
+    averageNs = Number(totalNs / BigInt(runIdx)) / runsFactor;
+  }
+
+  if (averageCalculation === "clean-outliers") {
+    const cleanData = filterOutliers(runsNs, false, OutlierSensitivity.Mild);
+    averageNs = Number(calcSum(cleanData) / BigInt(cleanData.length)) / runsFactor;
+  }
 
   return {
     result: {
-      id: opts.id,
+      id: id,
       averageNs,
       runsDone: runIdx,
       totalMs: Date.now() - startRunMs,
-      threshold: opts.noThreshold === true ? Infinity : opts.threshold,
+      threshold,
     },
     runsNs,
   };

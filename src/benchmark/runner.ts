@@ -99,11 +99,7 @@ export class BenchmarkRunner implements VitestRunner {
 
     debug("finished tests. passed: %i, skipped: %i, failed: %i", passed.length, skipped.length, failed.length);
 
-    if (failed.length > 0) {
-      throw failed[0].result?.errors;
-    }
-
-    if (passed.length + skipped.length === res.length) {
+    if (passed.length + skipped.length + failed.length === res.length) {
       return store.getAllResults();
     }
 

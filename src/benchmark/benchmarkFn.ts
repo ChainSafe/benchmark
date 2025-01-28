@@ -5,29 +5,19 @@ import {createChainable} from "@vitest/runner/utils";
 import {store} from "./globalState.js";
 import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.js";
 import {runBenchFn} from "./runBenchmarkFn.js";
-import {optionsDefault} from "../cli/options.js";
+import {getBenchmarkOptionsWithDefaults} from "./options.js";
 
 export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
   this: Record<"skip" | "only", boolean | undefined>,
   idOrOpts: string | PartialBy<BenchmarkRunOptsWithFn<T, T2>, "fn">,
   fn?: (arg: T) => void | Promise<void>
 ) {
-  const {fn: benchTask, ...opts} = coerceToOptsObj(idOrOpts, fn);
+  const {fn: benchTask, before, beforeEach, ...opts} = coerceToOptsObj(idOrOpts, fn);
   const currentSuite = getCurrentSuite();
 
   const globalOptions = store.getGlobalOptions() ?? {};
-  const parentOptions = store.getOptions(getCurrentSuite()) ?? {};
-  const options = {...globalOptions, ...parentOptions, ...opts};
-  const {timeoutBench, maxMs, minMs} = options;
-
-  let timeout = timeoutBench ?? optionsDefault.timeoutBench;
-  if (maxMs && maxMs > timeout) {
-    timeout = maxMs * 1.5;
-  }
-
-  if (minMs && minMs > timeout) {
-    timeout = minMs * 1.5;
-  }
+  const parentOptions = store.getOptions(currentSuite) ?? {};
+  const options = getBenchmarkOptionsWithDefaults({...globalOptions, ...parentOptions, ...opts});
 
   async function handler(): Promise<void> {
     // Ensure bench id is unique
@@ -35,17 +25,20 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
       throw Error(`test titles must be unique, duplicated: '${opts.id}'`);
     }
 
-    // Persist full results if requested. dir is created in `beforeAll`
-    const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
-    const persistRunsNs = Boolean(benchmarkResultsCsvDir);
-
-    const {result, runsNs} = await runBenchFn({...options, fn: benchTask}, persistRunsNs);
+    const {result, runsNs} = await runBenchFn<T, T2>({
+      ...options,
+      fn: benchTask,
+      before,
+      beforeEach,
+    } as BenchmarkRunOptsWithFn<T, T2>);
 
     // Store result for:
     // - to persist benchmark data latter
     // - to render with the custom reporter
     store.setResult(opts.id, result);
 
+    // Persist full results if requested. dir is created in `beforeAll`
+    const benchmarkResultsCsvDir = process.env.BENCHMARK_RESULTS_CSV_DIR;
     if (benchmarkResultsCsvDir) {
       fs.mkdirSync(benchmarkResultsCsvDir, {recursive: true});
       const filename = `${result.id}.csv`;
@@ -59,27 +52,25 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
     only: opts.only ?? this.only,
     sequential: true,
     concurrent: false,
-    timeout,
+    timeout: options.timeoutBench,
     meta: {
       "chainsafe/benchmark": true,
     },
   });
 
-  const {id: _, ...optionsWithoutId} = opts;
   setFn(task, handler);
-  store.setOptions(task, optionsWithoutId);
+  store.setOptions(task, opts);
 
-  task.onFinished = [
-    () => {
-      store.removeOptions(task);
-    },
-    () => {
-      // Clear up the assigned handler to clean the memory
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      setFn(task, null);
-    },
-  ];
+  const cleanup = (): void => {
+    store.removeOptions(task);
+    // Clear up the assigned handler to clean the memory
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
+    setFn(task, null);
+  };
+
+  task.onFailed = [cleanup];
+  task.onFinished = [cleanup];
 });
 
 function createBenchmarkFunction(

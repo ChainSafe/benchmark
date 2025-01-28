@@ -65,6 +65,14 @@ export type BenchmarkOpts = {
   setupFiles?: string[];
   /** Trigger GC cleanup every test to have consistent memory usage */
   triggerGC?: boolean;
+  /**
+   * The algorithm to detect the convergence to stop the benchmark function runs.
+   *  linear - Calculate the moving average among last 3 runs average and compare through quadratic formula
+   *  cv - Coefficient Variance is a statistical tool which calculates data pattern on all runs and calculate median
+   * */
+  convergence?: "linear" | "cv";
+  /** Use simple average of all runs or clean the outliers before calculating average */
+  averageCalculation?: "simple" | "clean-outliers";
 };
 
 // Create partial only for specific keys

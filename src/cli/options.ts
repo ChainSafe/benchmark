@@ -1,9 +1,8 @@
 import {Options} from "yargs";
 import {StorageOptions, BenchmarkOpts, FileCollectionOptions} from "../types.js";
+import {defaultBenchmarkOptions} from "../benchmark/options.js";
 
 export const optionsDefault = {
-  threshold: 2,
-  timeoutBench: 10_000,
   historyLocalPath: "./benchmark_data",
   historyCacheKey: "benchmark_data",
 };
@@ -127,74 +126,97 @@ export const benchmarkOptions: ICliCommandOptions<CLIBenchmarkOptions> = {
     description:
       "Ratio of new average time per run vs previos time per run to consider a failure. Set to 'Infinity' to disable it.",
     type: "number",
-    default: optionsDefault.threshold,
+    default: defaultBenchmarkOptions.threshold,
     group: benchmarkGroup,
   },
   maxRuns: {
     type: "number",
     description: "Max number of fn() runs, after which the benchmark stops",
+    default: defaultBenchmarkOptions.maxRuns,
     group: benchmarkGroup,
   },
   minRuns: {
     type: "number",
     description: "Min number of fn() runs before considering stopping the benchmark after converging",
+    default: defaultBenchmarkOptions.minRuns,
     group: benchmarkGroup,
   },
   maxMs: {
     type: "number",
     description: "Max total miliseconds of runs, after which the benchmark stops",
+    default: defaultBenchmarkOptions.maxMs,
     group: benchmarkGroup,
   },
   minMs: {
     type: "number",
     description: "Min total miiliseconds of runs before considering stopping the benchmark after converging",
+    default: defaultBenchmarkOptions.minMs,
     group: benchmarkGroup,
   },
   maxWarmUpMs: {
     type: "number",
     description:
       "Maximum real benchmark function run time before starting to count towards results. Set to 0 to not warm-up. May warm up for less ms if the `maxWarmUpRuns` condition is met first.",
+    default: defaultBenchmarkOptions.maxWarmUpMs,
     group: benchmarkGroup,
   },
   maxWarmUpRuns: {
     type: "number",
     description:
       "Maximum benchmark function runs before starting to count towards results. Set to 0 to not warm-up. May warm up for less ms if the `maxWarmUpMs` condition is met first.",
+    default: defaultBenchmarkOptions.maxWarmUpRuns,
     group: benchmarkGroup,
   },
   convergeFactor: {
     type: "number",
     description: "Convergance factor (0,1) at which the benchmark automatically stops. Set to 1 to disable",
+    default: defaultBenchmarkOptions.convergeFactor,
     group: benchmarkGroup,
   },
   runsFactor: {
     type: "number",
     description:
       "If fn() contains a foor loop repeating a task N times, you may set runsFactor = N to scale down the results.",
+    default: defaultBenchmarkOptions.runsFactor,
     group: benchmarkGroup,
   },
   yieldEventLoopAfterEach: {
     type: "boolean",
     description:
       "Run `sleep(0)` after each fn() call. Use when the event loop needs to tick to free resources created by fn()",
+    default: defaultBenchmarkOptions.yieldEventLoopAfterEach,
     group: benchmarkGroup,
   },
   timeoutBench: {
     type: "number",
     description: "Hard timeout for each benchmark",
-    default: optionsDefault.timeoutBench,
+    default: defaultBenchmarkOptions.timeoutBench,
     group: benchmarkGroup,
   },
   setupFiles: {
     type: "array",
     description: "List of setup files to load before the tests",
-    default: [],
+    default: defaultBenchmarkOptions.setupFiles,
     group: benchmarkGroup,
   },
   triggerGC: {
     type: "boolean",
     description: "Trigger GC (if available) after every benchmark",
-    default: false,
+    default: defaultBenchmarkOptions.triggerGC,
+    group: benchmarkGroup,
+  },
+  convergence: {
+    type: "string",
+    description: "The algorithm used to detect the convergence to stop benchmark runs",
+    default: defaultBenchmarkOptions.convergence,
+    choices: ["linear", "cv"],
+    group: benchmarkGroup,
+  },
+  averageCalculation: {
+    type: "string",
+    description: "Use simple average of all runs or clean the outliers before calculating average",
+    default: defaultBenchmarkOptions.averageCalculation,
+    choices: ["simple", "clean-outliers"],
     group: benchmarkGroup,
   },
 };
