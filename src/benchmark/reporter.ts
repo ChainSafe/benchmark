@@ -104,6 +104,29 @@ export class BenchmarkReporter {
   onSuiteStarted(suite: Suite): void {
     this.indents++;
     consoleLog(color("suite", "%s%s"), this.indent(), suite.name);
+
+    if (suite.result?.state === "fail") {
+      consoleLog("Error loading suit.", suite.result?.errors);
+
+      --this.indents;
+      consoleLog();
+      return;
+    }
+
+    // If the suit contains only skipped tests then runner does not start the test tasks at all
+    if (suite.tasks.filter((t) => t.mode !== "skip" && t.mode !== "todo").length === 0) {
+      for (const task of suite.tasks) {
+        if (task.type === "suite") {
+          this.onSuiteStarted(task);
+        } else {
+          this.skipped++;
+          consoleLog(`${this.indent()}${color("pending", "  - %s")}`, task.name);
+        }
+      }
+
+      --this.indents;
+      consoleLog();
+    }
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
