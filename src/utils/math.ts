@@ -1,13 +1,20 @@
+export const MAX_FRACTION = 8;
+
+export function roundDecimal(n: number): number {
+  return Number(n.toFixed(MAX_FRACTION));
+}
+
 /**
  * Computes the total of all values in the array by sequentially adding each element.
  * Handles both positive and negative BigInt values without precision loss.
  */
-export function calcSum(arr: bigint[]): bigint {
+export function calcSum<T extends number | bigint>(arr: T[]): bigint {
   let s = BigInt(0);
 
   for (const n of arr) {
-    s += n;
+    s = s + BigInt(n);
   }
+
   return s;
 }
 
@@ -15,30 +22,51 @@ export function calcSum(arr: bigint[]): bigint {
  * Determines the central tendency by dividing the total sum by the number of elements.
  * Uses integer division that naturally truncates decimal remainders.
  */
-export function calcMean(arr: bigint[]): bigint {
-  return BigInt(calcSum(arr) / BigInt(arr.length));
+export function calcMean<T extends number | bigint>(arr: T[]): number {
+  if (arr.length < 1) throw new Error("Can not find mean of any empty array");
+
+  return roundDecimal(Number(calcSum(arr)) / arr.length);
 }
 
 /**
  * Quantifies data spread by averaging squared deviations from the mean.
  * A value of zero indicates identical values, larger values show greater dispersion.
  */
-export function calcVariance(arr: bigint[], mean: bigint): bigint {
-  let base = BigInt(0);
+export function calcVariance<T extends number | bigint>(arr: T[], mean: number): number {
+  if (arr.length === 0) throw new Error("Can not find variance of an empty array");
+  let base = 0;
 
   for (const n of arr) {
-    const diff = n - mean;
+    const diff = Number(n) - mean;
     base += diff * diff;
   }
 
-  return base / BigInt(arr.length);
+  return roundDecimal(base / arr.length);
+}
+
+/**
+ * Quantifies data spread by averaging squared deviations from the mean.
+ * A value of zero indicates identical values, larger values show greater dispersion.
+ */
+export function calcUnbiasedVariance<T extends number | bigint>(arr: T[], mean: number): number {
+  if (arr.length === 0) throw new Error("Can not find variance of an empty array");
+  let base = 0;
+
+  for (const n of arr) {
+    const diff = Number(n) - mean;
+    base += diff * diff;
+  }
+
+  if (arr.length < 2) return roundDecimal(base);
+
+  return roundDecimal(base / arr.length - 1);
 }
 
 /**
  * Organizes values from smallest to largest while preserving the original array.
  * Essential for percentile-based calculations like median and quartiles.
  */
-export function sortData(arr: bigint[]): bigint[] {
+export function sortData<T extends bigint | number>(arr: T[]): T[] {
   return [...arr].sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
 }
 
@@ -46,16 +74,18 @@ export function sortData(arr: bigint[]): bigint[] {
  * Identifies the middle value that separates higher and lower halves of the dataset.
  * For even-sized arrays, averages the two central values to find the midpoint.
  */
-export function calcMedian(arr: bigint[], sorted: boolean): bigint {
+export function calcMedian<T extends bigint | number>(arr: T[], sorted: boolean): number {
+  if (arr.length === 0) throw new Error("Can not calculate median for empty values");
+
   // 1. Sort the BigInt array
   const data = sorted ? arr : sortData(arr);
 
   // 3. Calculate median
   const mid = Math.floor(data.length / 2);
   if (data.length % 2 === 0) {
-    return (data[mid - 1] + data[mid]) / BigInt(2); // Average two middle values
+    return roundDecimal((Number(data[mid - 1]) + Number(data[mid])) / 2); // Average two middle values
   } else {
-    return data[mid]; // Single middle value
+    return roundDecimal(Number(data[mid])); // Single middle value
   }
 }
 
@@ -63,7 +93,7 @@ export function calcMedian(arr: bigint[], sorted: boolean): bigint {
  * Determines cutoff points that divide data into four equal-frequency segments.
  * Uses linear interpolation to estimate values between actual data points.
  */
-export function calcQuartile(arr: bigint[], sorted: boolean, percentile: number): number {
+export function calcQuartile<T extends number | bigint>(arr: T[], sorted: boolean, percentile: number): number {
   const sortedData = sorted ? arr : sortData(arr);
 
   const index = (sortedData.length - 1) * percentile;
@@ -71,10 +101,12 @@ export function calcQuartile(arr: bigint[], sorted: boolean, percentile: number)
   const fraction = index - floor;
 
   if (sortedData[floor + 1] !== undefined) {
-    return Number(sortedData[floor]) + fraction * Number(sortedData[floor + 1] - sortedData[floor]);
+    const base = Number(sortedData[floor]);
+    const next = Number(sortedData[floor + 1]);
+    return roundDecimal(base + fraction * (next - base));
   }
 
-  return Number(sortedData[floor]);
+  return roundDecimal(Number(sortedData[floor]));
 }
 
 /**
@@ -106,7 +138,11 @@ export enum OutlierSensitivity {
  * The `OutlierSensitivity` is scaling factors applied to the IQR to determine how far data points
  * can deviate from the quartiles before being considered outliers.
  */
-export function filterOutliers(arr: bigint[], sorted: boolean, sensitivity: OutlierSensitivity): bigint[] {
+export function filterOutliers<T extends number | bigint>(
+  arr: T[],
+  sorted: boolean,
+  sensitivity: OutlierSensitivity
+): T[] {
   if (arr.length < 4) return arr; // Too few data points
 
   const data = sorted ? arr : sortData(arr);
