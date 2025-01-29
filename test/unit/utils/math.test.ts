@@ -36,60 +36,65 @@ describe("math utility functions", () => {
 
   describe("calcMean", () => {
     it("should throw or behave predictably for an empty array", () => {
-      // By default, dividing by BigInt(0) will throw in JavaScript.
-      // If you want a different behavior, you can wrap your function or catch errors here.
       expect(() => calcMean([])).toThrow();
     });
 
     it("should correctly calculate the mean of a single-element array", () => {
       const arr = [5n];
-      expect(calcMean(arr)).toBe(5n);
+      expect(calcMean(arr)).toBe(5);
     });
 
     it("should correctly calculate the mean of multiple BigInts", () => {
       const arr = [2n, 4n, 6n];
       // sum=12, length=3 => mean=4
-      expect(calcMean(arr)).toBe(4n);
+      expect(calcMean(arr)).toBe(4);
     });
 
     it("should handle negative values correctly", () => {
       const arr = [-5n, -15n, 10n];
       // sum=-10, length=3 => mean=-3.333..., but truncated to BigInt => -3n if using integer division
-      expect(calcMean(arr)).toBe(-3n);
+      expect(calcMean(arr)).toBe(-3.33333333);
     });
   });
 
   describe("calcVariance", () => {
     it("should compute variance for a small sample of integers", () => {
       const arr = [2n, 4n, 4n, 6n, 8n];
-      // mean = (2+4+4+6+8)/5 = 24/5 = 4.8 => truncated to 4n if using integer division
-      // If mean=4n, diffs = (-2,0,0,2,4), squares = (4,0,0,4,16), sum=24 => var=24/5=4.8 => truncated to 4n
+      // sum = 24, length = 5
+      // mean = 4.8
+      // diffs = (-2.8, -0.7999, -0.7999, 1.2, 3.2)
+      // squares = (7.839999999999999, 0.6399999999999997, 0.6399999999999997, 1.4400000000000004, 10.240000000000002) = 20.8
+      // var = 20.8 / 5 = 4.16
       const meanBigInt = calcMean(arr);
       const varianceBigInt = calcVariance(arr, meanBigInt);
-      expect(varianceBigInt).toBe(4n);
+      expect(varianceBigInt).toBe(4.16);
     });
 
     it("should handle a single-element array (variance=0)", () => {
       const arr = [100n];
       const mean = calcMean(arr); // 100n
       const variance = calcVariance(arr, mean);
-      expect(variance).toBe(0n);
+      expect(variance).toBe(0);
     });
 
     it("should handle negative values", () => {
       const arr = [-10n, -4n, -2n];
-      // sum = -16, length=3 => mean = floor(-16/3) = -5n
-      // diffs = (-5,1,3), squares=(25,1,9)=35 => var=35/3=11 => 11n
+      // sum = -16, length=3
+      // mean = -16/3 = 5.333333333333333
+      // diffs = (-4.666666666666667, 1.333333333333333, 3.333333333333333),
+      // squares = (21.777777777777782, 1.777777777777777, 11.111111111111109) = 34.66666666666667
+      // var = 34.66666666666667 / 3 = 11.555555555555557
       const mean = calcMean(arr);
+      console.log(mean);
       const variance = calcVariance(arr, mean);
-      expect(variance).toBe(11n);
+      expect(variance).toBe(11.55555556);
     });
 
     it("should return 0 for an array of identical values", () => {
       const arr = [5n, 5n, 5n];
       const mean = calcMean(arr);
       const variance = calcVariance(arr, mean);
-      expect(variance).toBe(0n);
+      expect(variance).toBe(0);
     });
   });
 
@@ -125,20 +130,20 @@ describe("math utility functions", () => {
     it("should return the middle element when the array length is odd", () => {
       const arr = [3n, 1n, 2n];
       // sorted = [1n, 2n, 3n], median = 2n
-      expect(calcMedian(arr, false)).toBe(2n);
+      expect(calcMedian(arr, false)).toBe(2);
     });
 
     it("should return the average of two middle elements when the array length is even", () => {
       const arr = [3n, 1n, 2n, 4n];
       // sorted = [1n, 2n, 3n, 4n]
-      // middle indices = 1,2 => average => (2n+3n)/2n=2n
-      expect(calcMedian(arr, false)).toBe(2n);
+      // middle indices = 1,2 => average => (2+3)/2=2.5
+      expect(calcMedian(arr, false)).toBe(2.5);
     });
 
     it("should skip re-sorting if 'sorted=true' is provided", () => {
       // already sorted
       const arr = [1n, 2n, 3n, 4n];
-      expect(calcMedian(arr, true)).toBe(2n); // middle indices => 1n,2n => average=2n
+      expect(calcMedian(arr, true)).toBe(2.5);
     });
   });
 
@@ -146,12 +151,10 @@ describe("math utility functions", () => {
     const sortedData = sortData([1n, 2n, 4n, 10n, 20n, 100n]);
 
     it("should return the first quartile (Q1) => percentile=0.25", () => {
-      // sorted array = [1n, 2n, 4n, 10n, 20n, 100n]
-      // length=6 => index = (6-1)*0.25=1.25 => floor=1 => fraction=0.25
-      // base=2n, next=4n => difference=2n => fraction=0.25 => 2 + 0.25*2=2.5 => ~ BigInt(2.5)
-      // Because we must do BigInt arithmetic carefully, the function does Number(...) inside
-      // => the result = 2n + 0.25*(4-2)=2n + 0.5=2.5 => cast => 2n if trunc
-      // But the function does => BigInt(2 + fraction*(4-2)) => 2 + 0.25*2 => 2.5
+      // sorted array = [1n, 2n, 4n, 10n, 20n, 100n], length=6
+      // index = (6-1)*0.25=1.25, floor=1, fraction=0.25
+      // base=2, next=4, difference=2
+      // result = 2 + 0.25 * (4 - 2) = 2.5
       const q1 = calcQuartile(sortedData, true, 0.25);
       expect(q1).toBe(2.5);
     });

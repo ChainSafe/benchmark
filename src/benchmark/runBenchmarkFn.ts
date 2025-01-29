@@ -1,12 +1,17 @@
-import {BenchmarkResult, BenchmarkOpts} from "../types.js";
+import Debug from "debug";
+import {BenchmarkResult, BenchmarkOpts, Convergence, ConvergenceCheckFn} from "../types.js";
 import {calcSum, filterOutliers, OutlierSensitivity} from "../utils/math.js";
 import {getBenchmarkOptionsWithDefaults} from "./options.js";
-import {createCVConvergenceCriteria, createLinearConvergenceCriteria} from "./termination.js";
+import {createLinearConvergenceCriteria} from "./convergence/linearAverage.js";
+import {createCVConvergenceCriteria} from "./convergence/coefficientOfVariance.js";
 
-const convergenceCriteria = {
-  ["linear"]: createLinearConvergenceCriteria,
-  ["cv"]: createCVConvergenceCriteria,
-};
+const debug = Debug("@chainsafe/benchmark/run");
+
+const convergenceCriteria: Record<Convergence, (startMs: number, opts: Required<BenchmarkOpts>) => ConvergenceCheckFn> =
+  {
+    [Convergence.Linear]: createLinearConvergenceCriteria,
+    [Convergence.CV]: createCVConvergenceCriteria,
+  };
 
 export type BenchmarkRunOpts = BenchmarkOpts & {
   id: string;
@@ -23,6 +28,7 @@ export async function runBenchFn<T, T2>(
   opts: BenchmarkRunOptsWithFn<T, T2>
 ): Promise<{result: BenchmarkResult; runsNs: bigint[]}> {
   const {id, before, beforeEach, fn, ...rest} = opts;
+  debug("running %o", id);
   const benchOptions = getBenchmarkOptionsWithDefaults(rest);
   const {maxMs, maxRuns, maxWarmUpMs, maxWarmUpRuns, runsFactor, threshold, convergence, averageCalculation} =
     benchOptions;
@@ -39,8 +45,8 @@ export async function runBenchFn<T, T2>(
     throw new Error(`Average calculation logic is not defined. ${averageCalculation}`);
   }
 
-  if (convergence !== "linear" && convergence !== "cv") {
-    throw new Error(`Unknown convergence value ${convergence}`);
+  if (!Object.values(Convergence).includes(convergence)) {
+    throw new Error(`Unknown convergence value ${convergence}. Valid values are ${Object.values(Convergence)}`);
   }
 
   // Ratio of maxMs that the warmup is allow to take from elapsedMs
@@ -59,12 +65,17 @@ export async function runBenchFn<T, T2>(
   let totalWarmUpRuns = 0;
   let isWarmUpPhase = maxWarmUpNs > 0 && maxWarmUpRuns > 0;
 
+  debug("starting before");
   const inputAll = before ? await before() : (undefined as unknown as T2);
+  debug("finished before");
 
   while (true) {
+    debug("executing individual run isWarmUpPhase=%o", isWarmUpPhase);
     const elapsedMs = Date.now() - startRunMs;
 
+    debug("starting beforeEach");
     const input = beforeEach ? await beforeEach(inputAll, runIdx) : (undefined as unknown as T);
+    debug("finished beforeEach");
 
     const startNs = process.hrtime.bigint();
     await fn(input);
