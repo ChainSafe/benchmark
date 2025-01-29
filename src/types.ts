@@ -203,6 +203,29 @@ export enum Convergence {
    *   can cause an instant (potentially premature) stop.
    */
   CV = "cv",
+
+  /**
+   * **Confidence Interval**:
+   *
+   * Uses a statistical confidence-interval-based check (often at the 95% level)
+   * to decide when the sample mean is accurately estimated. The basic steps are:
+   * - Compute mean (μ) and standard error of the mean (SEM = σ/√N).
+   * - Determine the half-width of the confidence interval (e.g., 1.96 * SEM).
+   * - Stop if that half-width is below some fraction of the mean (relative check)
+   *   or an absolute threshold (in nanoseconds, microseconds, etc.).
+   *
+   * Strengths:
+   * - Gives a clear statistical meaning: “We’re 95% confident the true mean
+   *   lies in this interval.”
+   * - Adapts naturally to increasing sample size (the SEM shrinks as N grows).
+   *
+   * Limitations:
+   * - For extremely noisy or heavily skewed data, you might need more runs
+   *   to narrow the interval. For extremely tiny runtimes (in the realm of
+   *   nanoseconds), floating-point precision and system jitter may introduce
+   *   difficulties.
+   */
+  ConfidenceInternal = "confidence-interval",
 }
 
 /** How to calculate average for output */

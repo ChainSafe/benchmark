@@ -3,6 +3,7 @@ import {BenchmarkResult, BenchmarkOpts, Convergence, ConvergenceCheckFn} from ".
 import {calcSum, filterOutliers, OutlierSensitivity} from "../utils/math.js";
 import {getBenchmarkOptionsWithDefaults} from "./options.js";
 import {createLinearConvergenceCriteria} from "./convergence/linearAverage.js";
+import {createConfidenceIntervalConvergenceCriteria} from "./convergence/confidenceInternal.js";
 import {createCVConvergenceCriteria} from "./convergence/coefficientOfVariance.js";
 
 const debug = Debug("@chainsafe/benchmark/run");
@@ -10,6 +11,7 @@ const debug = Debug("@chainsafe/benchmark/run");
 const convergenceCriteria: Record<Convergence, (startMs: number, opts: Required<BenchmarkOpts>) => ConvergenceCheckFn> =
   {
     [Convergence.Linear]: createLinearConvergenceCriteria,
+    [Convergence.ConfidenceInternal]: createConfidenceIntervalConvergenceCriteria,
     [Convergence.CV]: createCVConvergenceCriteria,
   };
 
