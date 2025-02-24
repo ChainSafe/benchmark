@@ -13,7 +13,7 @@ function getRuntime(): Runtime {
 function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
   if (runtime === "node") {
     return {
-      pool: "threads",
+      pool: "vitest-in-process-pool",
       poolOptions: {
         threads: {
           singleThread: true,
@@ -26,6 +26,7 @@ function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
 
   return {
     pool: "vitest-in-process-pool",
+    reporters: [["default", {summary: false}]],
   };
 }
 
