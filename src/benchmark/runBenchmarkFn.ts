@@ -30,8 +30,16 @@ export async function runBenchFn<T, T2>(
   const {id, before, beforeEach, fn, ...rest} = opts;
   debug("running %o", id);
   const benchOptions = getBenchmarkOptionsWithDefaults(rest);
-  const {maxMs, maxRuns, maxWarmUpMs, maxWarmUpRuns, runsFactor, threshold, convergence, averageCalculation} =
-    benchOptions;
+  const {
+    maxMs,
+    maxRuns,
+    maxWarmUpMs,
+    maxWarmUpRuns,
+    runsFactor,
+    threshold,
+    convergence: convergenceLocal,
+    averageCalculation,
+  } = benchOptions;
 
   if (maxWarmUpMs >= maxMs) {
     throw new Error(`Warmup time must be lower than max run time. maxWarmUpMs: ${maxWarmUpMs}, maxMs: ${maxMs}`);
@@ -45,7 +53,7 @@ export async function runBenchFn<T, T2>(
     throw new Error(`Average calculation logic is not defined. ${averageCalculation}`);
   }
 
-  if (!Object.values(convergence).includes(convergence)) {
+  if (!Object.values(convergence).includes(convergenceLocal)) {
     throw new Error(`Unknown convergence value ${convergence}. Valid values are ${Object.values(convergence)}`);
   }
 
@@ -56,7 +64,7 @@ export async function runBenchFn<T, T2>(
   const runsNs: bigint[] = [];
   const startRunMs = Date.now();
 
-  const shouldTerminate = convergenceCriteria[convergence](startRunMs, benchOptions);
+  const shouldTerminate = convergenceCriteria[convergenceLocal](startRunMs, benchOptions);
 
   let runIdx = 0;
   let totalNs = BigInt(0);
