@@ -1,4 +1,4 @@
-import {AverageCalculation, BenchmarkOpts, Convergence} from "../types.js";
+import {AverageCalculation, BenchmarkOpts, Convergence} from "../types.ts";
 
 export const defaultBenchmarkOptions: Required<BenchmarkOpts> = {
   minRuns: 1,

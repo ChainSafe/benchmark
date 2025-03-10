@@ -33,5 +33,6 @@ function getPoolOptions(runtime: Runtime): ViteUserConfig["test"] {
 export default defineConfig({
   test: {
     ...getPoolOptions(getRuntime()),
+    reporters: [["default", {summary: false}]],
   },
 });

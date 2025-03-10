@@ -1,1 +1,1 @@
-export * from "./benchmarkFn.js";
+export * from "./benchmarkFn.ts";

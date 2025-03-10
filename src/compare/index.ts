@@ -1,9 +1,9 @@
 import * as github from "@actions/github";
-import {Benchmark, StorageOptions} from "../types.js";
-import {getGithubEventData, GithubActionsEventData, parseBranchFromRef, getDefaultBranch} from "../utils/index.js";
-import {isGaRun} from "../github/context.js";
-import {IHistoryProvider} from "../history/provider.js";
-import {validateBenchmark} from "../history/schema.js";
+import {Benchmark, StorageOptions} from "../types.ts";
+import {getGithubEventData, GithubActionsEventData, parseBranchFromRef, getDefaultBranch} from "../utils/index.ts";
+import {isGaRun} from "../github/context.ts";
+import {IHistoryProvider} from "../history/provider.ts";
+import {validateBenchmark} from "../history/schema.ts";
 
 enum CompareWithType {
   latestCommitInBranch = "latestCommitInBranch",

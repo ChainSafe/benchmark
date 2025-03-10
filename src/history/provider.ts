@@ -1,4 +1,4 @@
-import {Benchmark} from "../types.js";
+import {Benchmark} from "../types.ts";
 
 export enum HistoryProviderType {
   Local = "Local",

@@ -1,5 +1,5 @@
-import {BenchmarkComparisonReport} from "../../types.js";
-import {renderBenchmarkComparisonTable} from "../../utils/render.js";
+import {BenchmarkComparisonReport} from "../../types.ts";
+import {renderBenchmarkComparisonTable} from "../../utils/render.ts";
 
 export function benchmarkComparisonComment(report: BenchmarkComparisonReport): string {
   return `

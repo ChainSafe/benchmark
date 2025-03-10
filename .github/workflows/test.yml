@@ -19,8 +19,6 @@ jobs:
       - name: Install
         run: yarn install --frozen-lockfile
       # </common-build>
-      - name: Build
-        run: yarn build
       - name: Lint
         run: yarn lint
       - name: Unit tests
@@ -40,8 +38,6 @@ jobs:
           deno-version: v2.x
       - name: Install
         run: yarn install --frozen-lockfile
-      - name: Build
-        run: deno run build
       - name: Unit tests
         run: deno run -A test:unit
 
@@ -59,7 +55,5 @@ jobs:
           bun-version: latest
       - name: Install
         run: yarn install --frozen-lockfile
-      - name: Build
-        run: bun run --bun build
       - name: Unit tests
         run: bun run --bun test:unit

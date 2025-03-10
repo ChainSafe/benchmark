@@ -1,4 +1,4 @@
-import {Benchmark, BenchmarkHistory, StorageOptions} from "../types.js";
+import {Benchmark, BenchmarkHistory, StorageOptions} from "../types.ts";
 
 export function appendBenchmarkToHistoryAndPrune(
   history: BenchmarkHistory,

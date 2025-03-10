@@ -1,10 +1,10 @@
 import * as github from "@actions/github";
 import Debug from "debug";
-import {getHistoryProvider} from "../history/index.js";
-import {resolveShouldPersist} from "../history/shouldPersist.js";
-import {validateBenchmark} from "../history/schema.js";
-import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
-import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
+import {getHistoryProvider} from "../history/index.ts";
+import {resolveShouldPersist} from "../history/shouldPersist.ts";
+import {validateBenchmark} from "../history/schema.ts";
+import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.ts";
+import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.ts";
 import {
   parseBranchFromRef,
   getCurrentCommitInfo,
@@ -12,17 +12,17 @@ import {
   getCurrentBranch,
   collectFiles,
   sortFiles,
-} from "../utils/index.js";
-import {computePerformanceReport} from "../compare/compute.js";
-import {postGaComment} from "../github/comments/index.js";
-import {isGaRun} from "../github/context.js";
-import {BenchmarkRunner} from "../benchmark/runner.js";
-import {optionsDefault} from "./options.js";
-import {consoleLog} from "../utils/output.js";
-import {HistoryProviderType} from "../history/provider.js";
-import {performanceReportComment} from "../github/comments/performanceReportComment.js";
-import {GithubCommentTag} from "../github/octokit.js";
-import {defaultBenchmarkOptions} from "../benchmark/options.js";
+} from "../utils/index.ts";
+import {computePerformanceReport} from "../compare/compute.ts";
+import {postGaComment} from "../github/comments/index.ts";
+import {isGaRun} from "../github/context.ts";
+import {BenchmarkRunner} from "../benchmark/runner.ts";
+import {optionsDefault} from "./options.ts";
+import {consoleLog} from "../utils/output.ts";
+import {HistoryProviderType} from "../history/provider.ts";
+import {performanceReportComment} from "../github/comments/performanceReportComment.ts";
+import {GithubCommentTag} from "../github/octokit.ts";
+import {defaultBenchmarkOptions} from "../benchmark/options.ts";
 
 const debug = Debug("@chainsafe/benchmark/cli");
 

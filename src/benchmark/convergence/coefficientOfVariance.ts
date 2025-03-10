@@ -1,6 +1,6 @@
 import Debug from "debug";
-import {BenchmarkOpts, ConvergenceCheckFn} from "../../types.js";
-import {calcMean, calcMedian, calcVariance, filterOutliers, OutlierSensitivity, sortData} from "../../utils/math.js";
+import {BenchmarkOpts, ConvergenceCheckFn} from "../../types.ts";
+import {calcMean, calcMedian, calcVariance, filterOutliers, OutlierSensitivity, sortData} from "../../utils/math.ts";
 
 const debug = Debug("@chainsafe/benchmark/convergence");
 
