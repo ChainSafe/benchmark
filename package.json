@@ -5,33 +5,18 @@
   "author": "ChainSafe Systems",
   "license": "MIT",
   "bin": {
-    "benchmark": "./bin/index.js"
+    "benchmark": "./src/bin/index.ts"
   },
-  "files": [
-    "lib/**/*.d.ts",
-    "lib/**/*.d.ts.map",
-    "lib/**/*.js",
-    "lib/**/*.js.map",
-    "lib/**/package.json",
-    "*.d.ts",
-    "*.js",
-    "bin"
-  ],
   "type": "module",
-  "main": "./lib/cjs/index.js",
-  "module": "./lib/esm/index.js",
   "exports": {
-    ".": {
-      "import": "./lib/esm/index.js",
-      "require": "./lib/cjs/index.js"
-    }
+    ".": "./src/index.ts"
   },
   "scripts": {
-    "build": "yarn build:esm && yarn build:cjs",
-    "build:esm": "tsc -p tsconfig.build.esm.json && echo '{\"type\": \"module\"}' > ./lib/esm/package.json",
-    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
+    "build:npm": "yarn build:esm && yarn build:cjs",
+    "build:jsr": "yarn build:esm && yarn build:cjs",
     "test:unit": "vitest run test/unit/**/*.test.ts",
     "lint": "biome check",
+    "check-types": "tsc --noEmit",
     "lint:fix": "biome check --write",
     "prepublishOnly": "yarn build",
     "benchmark": "node --loader ts-node/esm ./src/cli/cli.ts 'test/perf/**/@(!(errors)).test.ts'",

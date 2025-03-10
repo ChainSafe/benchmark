@@ -1,7 +1,7 @@
 import {beforeAll, describe, expect, it, vi} from "vitest";
-import {isGaRun} from "../../../src/github/context.js";
-import {getGaCacheHistoryProvider} from "../../../src/history/gaCache.js";
-import {Benchmark} from "../../../src/types.js";
+import {isGaRun} from "../../../src/github/context.ts";
+import {getGaCacheHistoryProvider} from "../../../src/history/gaCache.ts";
+import {Benchmark} from "../../../src/types.ts";
 
 // Currently fails with
 //

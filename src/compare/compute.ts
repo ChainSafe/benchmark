@@ -5,7 +5,7 @@ import {
   BenchmarkResult,
   PerformanceReport,
   PerformanceResult,
-} from "../types.js";
+} from "../types.ts";
 
 export function computeComparisonReport(benchmarks: Benchmark[]): BenchmarkComparisonReport {
   const originBenchmark = benchmarks[0];

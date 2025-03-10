@@ -1,5 +1,5 @@
-import {StorageOptions} from "../types.js";
-import {getDefaultBranch} from "../utils/defaultBranch.js";
+import {StorageOptions} from "../types.ts";
+import {getDefaultBranch} from "../utils/defaultBranch.ts";
 
 export async function resolveShouldPersist(opts: StorageOptions, branch: string): Promise<boolean> {
   // Force persist

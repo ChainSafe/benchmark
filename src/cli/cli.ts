@@ -8,10 +8,10 @@ import {hideBin} from "yargs/helpers";
 
 const debug = Debug("@chainsafe/benchmark/cli");
 
-import {consoleLog} from "../utils/output.js";
-import {compare} from "./compare.js";
-import {CLIOptions, benchmarkOptions, fileCollectionOptions, storageOptions} from "./options.js";
-import {run} from "./run.js";
+import {consoleLog} from "../utils/output.ts";
+import {compare} from "./compare.ts";
+import {CLIOptions, benchmarkOptions, fileCollectionOptions, storageOptions} from "./options.ts";
+import {run} from "./run.ts";
 
 void yargs(hideBin(process.argv))
   .env("BENCHMARK")

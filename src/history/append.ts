@@ -1,5 +1,5 @@
-import {Benchmark, BenchmarkHistory, StorageOptions} from "../types.js";
-import {consoleLog} from "../utils/output.js";
+import {Benchmark, BenchmarkHistory, StorageOptions} from "../types.ts";
+import {consoleLog} from "../utils/output.ts";
 
 export function appendBenchmarkToHistoryAndPrune(
   history: BenchmarkHistory,

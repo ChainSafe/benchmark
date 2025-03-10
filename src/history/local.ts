@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import {Benchmark, BenchmarkResults} from "../types.js";
-import {fromCsv, toCsv} from "../utils/file.js";
-import {FsError} from "../utils/index.js";
-import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.js";
+import {Benchmark, BenchmarkResults} from "../types.ts";
+import {fromCsv, toCsv} from "../utils/file.ts";
+import {FsError} from "../utils/index.ts";
+import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.ts";
 
 const extension = ".csv";
 const historyDir = "history";

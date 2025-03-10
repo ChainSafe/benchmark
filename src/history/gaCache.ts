@@ -1,8 +1,8 @@
 import fs from "node:fs";
 import * as cache from "@actions/cache";
-import {Benchmark} from "../types.js";
-import {LocalHistoryProvider} from "./local.js";
-import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.js";
+import {Benchmark} from "../types.ts";
+import {LocalHistoryProvider} from "./local.ts";
+import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.ts";
 
 /**
  * Persist results in CSV, one benchmark result per file

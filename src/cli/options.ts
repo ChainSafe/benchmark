@@ -1,12 +1,14 @@
 import {Options} from "yargs";
-import {defaultBenchmarkOptions} from "../benchmark/options.js";
+import {defaultBenchmarkOptions} from "../benchmark/options.ts";
 import {
+  AverageCalculation,
   AverageCalculationEnum,
   BenchmarkOpts,
+  Convergence,
   ConvergenceEnum,
   FileCollectionOptions,
   StorageOptions,
-} from "../types.js";
+} from "../types.ts";
 
 export const optionsDefault = {
   historyLocalPath: "./benchmark_data",
