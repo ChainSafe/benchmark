@@ -1,6 +1,6 @@
 import * as github from "@actions/github";
-import {getGithubEventData, GithubActionsEventData} from "../../utils/index.js";
-import {commentToCommit, commentToPrUpdatable, GithubCommentTag} from "../octokit.js";
+import {getGithubEventData, GithubActionsEventData} from "../../utils/index.ts";
+import {commentToCommit, commentToPrUpdatable, GithubCommentTag} from "../octokit.ts";
 
 export async function postGaComment({
   commentBody,

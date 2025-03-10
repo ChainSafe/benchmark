@@ -1,5 +1,5 @@
 import Ajv from "ajv";
-import {BenchmarkHistory, Benchmark} from "../types.js";
+import {BenchmarkHistory, Benchmark} from "../types.ts";
 
 export const emptyBenchmarkHistory: BenchmarkHistory = {benchmarks: {}};
 

@@ -8,7 +8,7 @@ import {
   calcQuartile,
   OutlierSensitivity,
   filterOutliers,
-} from "../../../src/utils/math.js";
+} from "../../../src/utils/math.ts";
 
 describe("math utility functions", () => {
   describe("calcSum", () => {

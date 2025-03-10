@@ -1,5 +1,5 @@
 import {expect, describe, it} from "vitest";
-import {toCsv, fromCsv} from "../../../src/utils/index.js";
+import {toCsv, fromCsv} from "../../../src/utils/index.ts";
 
 describe("utils / file - csv", () => {
   it("Convert to and from CSV", () => {

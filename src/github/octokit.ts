@@ -1,4 +1,4 @@
-import {getContext} from "./context.js";
+import {getContext} from "./context.ts";
 
 export enum GithubCommentTag {
   PerformanceReport = "benchmarkbot/action",

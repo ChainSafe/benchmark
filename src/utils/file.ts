@@ -3,7 +3,7 @@ import path from "node:path";
 import {glob} from "glob";
 import {parse as csvParse} from "csv-parse/sync";
 import {stringify as csvStringify} from "csv-stringify/sync";
-import {FileCollectionOptions} from "../types.js";
+import {FileCollectionOptions} from "../types.ts";
 
 type CsvMetadata = Record<string, string>;
 // eslint-disable-next-line @typescript-eslint/no-explicit-any

@@ -1,7 +1,7 @@
 import {expect, describe, it, vi, beforeAll, afterAll} from "vitest";
-import S3 from "aws-sdk/clients/s3.js";
-import {Benchmark} from "../../../src/types.js";
-import {S3HistoryProvider} from "../../../src/history/s3.js";
+import S3 from "aws-sdk/clients/s3";
+import {Benchmark} from "../../../src/types.ts";
+import {S3HistoryProvider} from "../../../src/history/s3.ts";
 import dotenv from "dotenv";
 dotenv.config();
 

@@ -2,10 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import {getCurrentSuite, setFn} from "@vitest/runner";
 import {createChainable} from "@vitest/runner/utils";
-import {store} from "./globalState.js";
-import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.js";
-import {runBenchFn} from "./runBenchmarkFn.js";
-import {getBenchmarkOptionsWithDefaults} from "./options.js";
+import {store} from "./globalState.ts";
+import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.ts";
+import {runBenchFn} from "./runBenchmarkFn.ts";
+import {getBenchmarkOptionsWithDefaults} from "./options.ts";
 
 export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
   this: Record<"skip" | "only", boolean | undefined>,

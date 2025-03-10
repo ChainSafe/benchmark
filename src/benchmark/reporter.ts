@@ -1,9 +1,9 @@
 import {Task, Suite, File} from "@vitest/runner";
-import {color, consoleLog, symbols} from "../utils/output.js";
-import {store} from "./globalState.js";
-import {Benchmark, BenchmarkOpts, BenchmarkResult} from "../types.js";
-import {formatResultRow} from "./format.js";
-import {defaultBenchmarkOptions} from "./options.js";
+import {color, consoleLog, symbols} from "../utils/output.ts";
+import {store} from "./globalState.ts";
+import {Benchmark, BenchmarkOpts, BenchmarkResult} from "../types.ts";
+import {formatResultRow} from "./format.ts";
+import {defaultBenchmarkOptions} from "./options.ts";
 
 export class BenchmarkReporter {
   indents = 0;

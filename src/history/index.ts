@@ -1,10 +1,10 @@
-import {StorageOptions} from "../types.js";
-import {resolveHistoryLocation} from "./location.js";
-import {LocalHistoryProvider} from "./local.js";
-import {getGaCacheHistoryProvider} from "./gaCache.js";
-import {IHistoryProvider} from "./provider.js";
-import {optionsDefault} from "../cli/options.js";
-import {S3HistoryProvider} from "./s3.js";
+import {StorageOptions} from "../types.ts";
+import {resolveHistoryLocation} from "./location.ts";
+import {LocalHistoryProvider} from "./local.ts";
+import {getGaCacheHistoryProvider} from "./gaCache.ts";
+import {IHistoryProvider} from "./provider.ts";
+import {optionsDefault} from "../cli/options.ts";
+import {S3HistoryProvider} from "./s3.ts";
 export {resolveHistoryLocation};
 
 export function getHistoryProvider(opts: StorageOptions): IHistoryProvider {
