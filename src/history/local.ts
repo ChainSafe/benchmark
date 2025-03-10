@@ -1,6 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
-import {HistoryProviderType, IHistoryProvider} from "./provider.js";
+import {historyProviderType, HistoryProviderType, IHistoryProvider} from "./provider.js";
 import {Benchmark, BenchmarkResults} from "../types.js";
 import {fromCsv, toCsv} from "../utils/file.js";
 import {FsError} from "../utils/index.js";
@@ -33,8 +33,12 @@ interface CsvMeta {
  * ```
  */
 export class LocalHistoryProvider implements IHistoryProvider {
-  readonly type: HistoryProviderType = HistoryProviderType.Local;
-  constructor(private readonly dirpath: string) {}
+  readonly type: HistoryProviderType = historyProviderType.Local;
+  private dirpath: string;
+
+  constructor(dirpath: string) {
+    this.dirpath = dirpath;
+  }
 
   providerInfo(): string {
     return `LocalHistoryProvider, dirpath ${this.dirpath}`;

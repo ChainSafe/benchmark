@@ -19,9 +19,9 @@ import {isGaRun} from "../github/context.js";
 import {BenchmarkRunner} from "../benchmark/runner.js";
 import {optionsDefault} from "./options.js";
 import {consoleLog} from "../utils/output.js";
-import {HistoryProviderType} from "../history/provider.js";
+import {historyProviderType} from "../history/provider.js";
 import {performanceReportComment} from "../github/comments/performanceReportComment.js";
-import {GithubCommentTag} from "../github/octokit.js";
+import {githubCommentTag} from "../github/octokit.js";
 import {defaultBenchmarkOptions} from "../benchmark/options.js";
 
 const debug = Debug("@chainsafe/benchmark/cli");
@@ -81,7 +81,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
         currentCommit.branch ??
         parseBranchFromRef(
           github.context.ref ?? (await shell("git symbolic-ref HEAD")),
-          historyProvider.type === HistoryProviderType.Local
+          historyProvider.type === historyProviderType.Local
         );
       consoleLog(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
       // TODO: prune and limit total entries
@@ -100,7 +100,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
     if (!opts.skipPostComment && isGaRun()) {
       await postGaComment({
         commentBody: performanceReportComment(resultsComp),
-        tag: GithubCommentTag.PerformanceReport,
+        tag: githubCommentTag.PerformanceReport,
         commentOnPush: resultsComp.someFailed,
       });
     }

@@ -1,6 +1,6 @@
 import Debug from "debug";
-import {BenchmarkResult, BenchmarkOpts, Convergence, ConvergenceCheckFn} from "../types.js";
-import {calcSum, filterOutliers, OutlierSensitivity} from "../utils/math.js";
+import {BenchmarkResult, BenchmarkOpts, Convergence, ConvergenceCheckFn, convergence} from "../types.js";
+import {calcSum, filterOutliers, outlierSensitivity} from "../utils/math.js";
 import {getBenchmarkOptionsWithDefaults} from "./options.js";
 import {createLinearConvergenceCriteria} from "./convergence/linearAverage.js";
 import {createCVConvergenceCriteria} from "./convergence/coefficientOfVariance.js";
@@ -9,8 +9,8 @@ const debug = Debug("@chainsafe/benchmark/run");
 
 const convergenceCriteria: Record<Convergence, (startMs: number, opts: Required<BenchmarkOpts>) => ConvergenceCheckFn> =
   {
-    [Convergence.Linear]: createLinearConvergenceCriteria,
-    [Convergence.CV]: createCVConvergenceCriteria,
+    [convergence.Linear]: createLinearConvergenceCriteria,
+    [convergence.CV]: createCVConvergenceCriteria,
   };
 
 export type BenchmarkRunOpts = BenchmarkOpts & {
@@ -45,8 +45,8 @@ export async function runBenchFn<T, T2>(
     throw new Error(`Average calculation logic is not defined. ${averageCalculation}`);
   }
 
-  if (!Object.values(Convergence).includes(convergence)) {
-    throw new Error(`Unknown convergence value ${convergence}. Valid values are ${Object.values(Convergence)}`);
+  if (!Object.values(convergence).includes(convergence)) {
+    throw new Error(`Unknown convergence value ${convergence}. Valid values are ${Object.values(convergence)}`);
   }
 
   // Ratio of maxMs that the warmup is allow to take from elapsedMs
@@ -138,7 +138,7 @@ either the before(), beforeEach() or fn() functions are too slow.
   }
 
   if (averageCalculation === "clean-outliers") {
-    const cleanData = filterOutliers(runsNs, false, OutlierSensitivity.Mild);
+    const cleanData = filterOutliers(runsNs, false, outlierSensitivity.Mild);
     averageNs = Number(calcSum(cleanData) / BigInt(cleanData.length)) / runsFactor;
   }
 

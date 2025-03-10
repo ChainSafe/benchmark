@@ -1,10 +1,11 @@
-import {Benchmark} from "../types.js";
+import {Benchmark, EnumLike} from "../types.js";
 
-export enum HistoryProviderType {
-  Local = "Local",
-  GaCache = "GaCache",
-  S3 = "S3",
-}
+export const historyProviderType = {
+  Local: "Local",
+  GaCache: "GaCache",
+  S3: "S3",
+} as const;
+export type HistoryProviderType = EnumLike<typeof historyProviderType>;
 
 /**
  * How to organize data?

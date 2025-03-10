@@ -7,7 +7,7 @@ import {renderBenchmarkComparisonTable} from "../utils/render.js";
 import {isGaRun} from "../github/context.js";
 import {postGaComment} from "../github/comments/index.js";
 import {benchmarkComparisonComment} from "../github/comments/comparisonReportComment.js";
-import {GithubCommentTag} from "../github/octokit.js";
+import {githubCommentTag} from "../github/octokit.js";
 
 export async function compare({dirs}: {dirs: string[]}): Promise<void> {
   consoleLog("Comparing benchmarks:");
@@ -41,7 +41,7 @@ export async function compare({dirs}: {dirs: string[]}): Promise<void> {
   if (isGaRun()) {
     await postGaComment({
       commentBody: benchmarkComparisonComment(resultsComp),
-      tag: GithubCommentTag.ComparisonReport,
+      tag: githubCommentTag.ComparisonReport,
       commentOnPush: true,
     });
   }
