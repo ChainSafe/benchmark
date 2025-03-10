@@ -8,17 +8,17 @@ on:
         description: "The version to release. The version should be the same as version in package.json. For example, 1.0.0"
         required: true    
 jobs:
-  build:
+  publish-jsr:
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write # The OIDC ID token is used for authentication with JSR.
     steps:
       - uses: actions/checkout@v4
         if: github.event_name == 'workflow_dispatch'
         with: 
           fetch-tags: true
           ref: ${{ inputs.version }}
-
-      - uses: actions/checkout@v4
-        if: github.event_name != 'workflow_dispatch'
 
       # Setup .npmrc file to publish to npm
       - uses: actions/setup-node@v4
@@ -29,11 +29,8 @@ jobs:
       - uses: denoland/setup-deno@v2
         with:
           deno-version: v2.x
-
-      - name: Build npm
-        run: deno task build:npm
   
-      - run: yarn publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-        working-directory: npm
+      - name: Build jsr
+        run: deno task build:jsr
+  
+      - run: deno publish
