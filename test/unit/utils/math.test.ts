@@ -85,7 +85,6 @@ describe("math utility functions", () => {
       // squares = (21.777777777777782, 1.777777777777777, 11.111111111111109) = 34.66666666666667
       // var = 34.66666666666667 / 3 = 11.555555555555557
       const mean = calcMean(arr);
-      console.log(mean);
       const variance = calcVariance(arr, mean);
       expect(variance).toBe(11.55555556);
     });
