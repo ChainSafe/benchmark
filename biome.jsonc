@@ -1,0 +1,15 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "defaultBranch": "master"
+  },
+  "extends": [
+    "@chainsafe/biomejs-config",
+    "@chainsafe/biomejs-config/recommended",
+    "@chainsafe/biomejs-config/esm",
+    "@chainsafe/biomejs-config/eraseable-syntax"
+  ],
+  "files": {
+    "include": ["src/**/*.ts", "test/**/*.ts"]
+  }
+}
