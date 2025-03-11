@@ -31,7 +31,8 @@
     "build:esm": "tsc -p tsconfig.build.esm.json && echo '{\"type\": \"module\"}' > ./lib/esm/package.json",
     "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
     "test:unit": "vitest run test/unit/**/*.test.ts",
-    "lint": "eslint --color src/ test/",
+    "lint": "biome check",
+    "lint:fix": "biome check --write",
     "prepublishOnly": "yarn build",
     "benchmark": "node --loader ts-node/esm ./src/cli/cli.ts 'test/perf/**/@(!(errors)).test.ts'",
     "writeDocs": "node --loader ts-node/esm scripts/writeOptionsMd.ts"
@@ -42,18 +43,13 @@
     "@types/yargs": "^17.0.33",
     "@types/debug": "^4.1.12",
     "dotenv": "^10.0.0",
-    "eslint": "^9.15.0",
-    "eslint-config-prettier": "^9.1.0",
-    "eslint-import-resolver-typescript": "^3.6.3",
-    "eslint-plugin-import": "^2.31.0",
-    "eslint-plugin-prettier": "^5.2.1",
-    "prettier": "^3.4.0",
     "rimraf": "^5.0.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
-    "typescript-eslint": "^8.16.0",
     "vitest": "^3.0.6",
-    "vitest-in-process-pool": "^2.0.0"
+    "vitest-in-process-pool": "^2.0.0",
+    "@biomejs/biome": "^1.9.4",
+    "@chainsafe/biomejs-config": "/Users/nazar/Hub/Lodestar/dev/biomejs-config"
   },
   "dependencies": {
     "@actions/cache": "^4.0.0",
