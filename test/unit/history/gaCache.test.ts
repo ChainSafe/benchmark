@@ -1,7 +1,7 @@
-import {expect, describe, it, vi, beforeAll} from "vitest";
-import {Benchmark} from "../../../src/types.js";
-import {getGaCacheHistoryProvider} from "../../../src/history/gaCache.js";
+import {beforeAll, describe, expect, it, vi} from "vitest";
 import {isGaRun} from "../../../src/github/context.js";
+import {getGaCacheHistoryProvider} from "../../../src/history/gaCache.js";
+import {Benchmark} from "../../../src/types.js";
 
 // Currently fails with
 //
@@ -10,7 +10,7 @@ import {isGaRun} from "../../../src/github/context.js";
 // See:
 //  - https://github.com/nektos/act/issues/329
 //  - https://github.com/nektos/act/issues/285
-describe.skip("benchmark history gaCache", function () {
+describe.skip("benchmark history gaCache", () => {
   vi.setConfig({testTimeout: 60 * 1000});
 
   const branch = "main";

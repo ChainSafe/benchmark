@@ -86,9 +86,9 @@ export function calcMedian<T extends bigint | number>(arr: T[], sorted: boolean)
   const mid = Math.floor(data.length / 2);
   if (data.length % 2 === 0) {
     return roundDecimal((Number(data[mid - 1]) + Number(data[mid])) / 2); // Average two middle values
-  } else {
-    return roundDecimal(Number(data[mid])); // Single middle value
   }
+
+  return roundDecimal(Number(data[mid])); // Single middle value
 }
 
 /**

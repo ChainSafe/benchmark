@@ -1,9 +1,9 @@
 import fs from "node:fs";
 import path from "node:path";
-import {HistoryProviderEnum, HistoryProvider, IHistoryProvider} from "./provider.js";
 import {Benchmark, BenchmarkResults} from "../types.js";
 import {fromCsv, toCsv} from "../utils/file.js";
 import {FsError} from "../utils/index.js";
+import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.js";
 
 const extension = ".csv";
 const historyDir = "history";
@@ -61,7 +61,8 @@ export class LocalHistoryProvider implements IHistoryProvider {
       files = fs.readdirSync(historyDirpath);
     } catch (e) {
       if ((e as FsError).code === "ENOENT") return [];
-      else throw e;
+
+      throw e;
     }
 
     return files.map((file) => this.readBenchFile(path.join(historyDirpath, file)));
@@ -82,7 +83,8 @@ export class LocalHistoryProvider implements IHistoryProvider {
       return this.readBenchFile(filepath);
     } catch (e) {
       if ((e as FsError).code === "ENOENT") return null;
-      else throw e;
+
+      throw e;
     }
   }
 
@@ -91,7 +93,11 @@ export class LocalHistoryProvider implements IHistoryProvider {
     const str = fs.readFileSync(filepath, "utf8");
     const {data, metadata} = fromCsv<BenchmarkResults>(str);
     const csvMeta = metadata as unknown as CsvMeta;
-    return {commitSha: csvMeta.commit, dirName: path.basename(path.dirname(this.getHistoryDirpath())), results: data};
+    return {
+      commitSha: csvMeta.commit,
+      dirName: path.basename(path.dirname(this.getHistoryDirpath())),
+      results: data,
+    };
   }
 
   /** Write result to CSV + metadata as Embedded Metadata */

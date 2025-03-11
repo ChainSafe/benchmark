@@ -1,12 +1,12 @@
 import fs from "node:fs";
 import path from "node:path";
-import {glob} from "glob";
 import {parse as csvParse} from "csv-parse/sync";
 import {stringify as csvStringify} from "csv-stringify/sync";
+import {glob} from "glob";
 import {FileCollectionOptions} from "../types.js";
 
 type CsvMetadata = Record<string, string>;
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// biome-ignore lint/suspicious/noExplicitAny: We need to use any type here
 type CsvData = any[];
 
 export function readJson<T>(filepath: string): T {
@@ -43,9 +43,9 @@ export function toCsv<T extends CsvData>(data: T, metadata?: CsvMetadata): strin
   if (metadata) {
     const metadataStr = toCsvMetadata(metadata);
     return `${metadataStr}\n${csv}`;
-  } else {
-    return csv;
   }
+
+  return csv;
 }
 
 // CSV metadata

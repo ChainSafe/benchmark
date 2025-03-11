@@ -2,10 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import {getCurrentSuite, setFn} from "@vitest/runner";
 import {createChainable} from "@vitest/runner/utils";
-import {store} from "./globalState.js";
 import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.js";
-import {runBenchFn} from "./runBenchmarkFn.js";
+import {store} from "./globalState.js";
 import {getBenchmarkOptionsWithDefaults} from "./options.js";
+import {runBenchFn} from "./runBenchmarkFn.js";
 
 export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
   this: Record<"skip" | "only", boolean | undefined>,
@@ -64,7 +64,6 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
   const cleanup = (): void => {
     store.removeOptions(task);
     // Clear up the assigned handler to clean the memory
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-expect-error
     setFn(task, null);
   };

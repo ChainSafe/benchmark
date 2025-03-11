@@ -17,7 +17,7 @@ export async function commentToPrUpdatable(prNumber: number, body: string, tag: 
     ...repo,
     issue_number: prNumber,
   });
-  const prevComment = comments.data.find((c) => c.body && c.body.includes(tag));
+  const prevComment = comments.data.find((c) => c.body?.includes(tag));
 
   if (prevComment) {
     // Update

@@ -1,17 +1,17 @@
-import {expect, describe, it, vi, beforeAll, afterAll} from "vitest";
 import S3 from "aws-sdk/clients/s3.js";
-import {Benchmark} from "../../../src/types.js";
-import {S3HistoryProvider} from "../../../src/history/s3.js";
 import dotenv from "dotenv";
+import {afterAll, beforeAll, describe, expect, it, vi} from "vitest";
+import {S3HistoryProvider} from "../../../src/history/s3.js";
+import {Benchmark} from "../../../src/types.js";
 dotenv.config();
 
 describe("benchmark history S3 paths", () => {
-  const Bucket = "myproject-benchmark-data";
+  const bucket = "myproject-benchmark-data";
   const keyPrefix = "myorg/myproject/Linux";
 
   let historyProvider: S3HistoryProvider;
   beforeAll(() => {
-    historyProvider = new S3HistoryProvider({Bucket, keyPrefix});
+    historyProvider = new S3HistoryProvider({Bucket: bucket, keyPrefix});
   });
 
   it("getLatestInBranchKey", () => {
@@ -31,7 +31,7 @@ describe("benchmark history S3 paths", () => {
   });
 });
 
-describe.skip("benchmark history S3", function () {
+describe.skip("benchmark history S3", () => {
   vi.setConfig({testTimeout: 60 * 1000});
 
   const branch = "main";
@@ -45,20 +45,20 @@ describe.skip("benchmark history S3", function () {
     historyProvider = S3HistoryProvider.fromEnv();
   });
 
-  it("writeLatestInBranch", async function () {
+  it("writeLatestInBranch", async () => {
     await historyProvider.writeLatestInBranch(branch, benchmark);
   });
 
-  it("readLatestInBranch", async function () {
+  it("readLatestInBranch", async () => {
     const benchRead = await historyProvider.readLatestInBranch(branch);
     expect(benchRead).toEqual(benchmark);
   });
 
-  it("writeToHistory", async function () {
+  it("writeToHistory", async () => {
     await historyProvider.writeToHistory(benchmark);
   });
 
-  it("readHistory", async function () {
+  it("readHistory", async () => {
     const benchmarks = await historyProvider.readHistory();
     expect(benchmarks).toEqual([benchmark]);
   });

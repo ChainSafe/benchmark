@@ -1,17 +1,17 @@
+import path from "node:path";
 import {
   File,
-  startTests,
   Suite,
   Task,
   VitestRunner,
   VitestRunnerConfig,
   VitestRunnerImportSource,
+  startTests,
 } from "@vitest/runner";
-import path from "node:path";
 import Debug from "debug";
 import {Benchmark, BenchmarkOpts, BenchmarkResults} from "../types.js";
-import {BenchmarkReporter} from "./reporter.js";
 import {store} from "./globalState.js";
+import {BenchmarkReporter} from "./reporter.js";
 
 const debug = Debug("@chainsafe/benchmark/runner");
 
@@ -63,8 +63,7 @@ export class BenchmarkRunner implements VitestRunner {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  async onAfterRunTask(task: Task): Promise<void> {
+  async onAfterRunTask(_task: Task): Promise<void> {
     // To help maintain consistent memory usage patterns
     // we trigger garbage collection manually
     if (this.triggerGC && global.gc) {
@@ -93,9 +92,9 @@ export class BenchmarkRunner implements VitestRunner {
     debug("starting tests %O", files);
     const res = await startTests(files, this);
 
-    const passed = res.filter((r) => r.result?.state == "pass");
-    const skipped = res.filter((r) => r.result?.state == "skip");
-    const failed = res.filter((r) => r.result?.state == "fail");
+    const passed = res.filter((r) => r.result?.state === "pass");
+    const skipped = res.filter((r) => r.result?.state === "skip");
+    const failed = res.filter((r) => r.result?.state === "fail");
 
     debug("finished tests. passed: %i, skipped: %i, failed: %i", passed.length, skipped.length, failed.length);
 
