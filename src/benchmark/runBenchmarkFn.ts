@@ -1,17 +1,19 @@
 import Debug from "debug";
-import {BenchmarkResult, BenchmarkOpts, Convergence, ConvergenceCheckFn, convergence} from "../types.js";
-import {calcSum, filterOutliers, outlierSensitivity} from "../utils/math.js";
+import {BenchmarkResult, BenchmarkOpts, ConvergenceType, ConvergenceCheckFn, Convergence} from "../types.js";
+import {calcSum, filterOutliers, OutlierSensitivity} from "../utils/math.js";
 import {getBenchmarkOptionsWithDefaults} from "./options.js";
 import {createLinearConvergenceCriteria} from "./convergence/linearAverage.js";
 import {createCVConvergenceCriteria} from "./convergence/coefficientOfVariance.js";
 
 const debug = Debug("@chainsafe/benchmark/run");
 
-const convergenceCriteria: Record<Convergence, (startMs: number, opts: Required<BenchmarkOpts>) => ConvergenceCheckFn> =
-  {
-    [convergence.Linear]: createLinearConvergenceCriteria,
-    [convergence.CV]: createCVConvergenceCriteria,
-  };
+const convergenceCriteria: Record<
+  ConvergenceType,
+  (startMs: number, opts: Required<BenchmarkOpts>) => ConvergenceCheckFn
+> = {
+  [Convergence.Linear]: createLinearConvergenceCriteria,
+  [Convergence.CV]: createCVConvergenceCriteria,
+};
 
 export type BenchmarkRunOpts = BenchmarkOpts & {
   id: string;
@@ -53,8 +55,8 @@ export async function runBenchFn<T, T2>(
     throw new Error(`Average calculation logic is not defined. ${averageCalculation}`);
   }
 
-  if (!Object.values(convergence).includes(convergenceLocal)) {
-    throw new Error(`Unknown convergence value ${convergence}. Valid values are ${Object.values(convergence)}`);
+  if (!Object.values(Convergence).includes(convergenceLocal)) {
+    throw new Error(`Unknown convergence value ${Convergence}. Valid values are ${Object.values(Convergence)}`);
   }
 
   // Ratio of maxMs that the warmup is allow to take from elapsedMs
@@ -146,7 +148,7 @@ either the before(), beforeEach() or fn() functions are too slow.
   }
 
   if (averageCalculation === "clean-outliers") {
-    const cleanData = filterOutliers(runsNs, false, outlierSensitivity.Mild);
+    const cleanData = filterOutliers(runsNs, false, OutlierSensitivity.Mild);
     averageNs = Number(calcSum(cleanData) / BigInt(cleanData.length)) / runsFactor;
   }
 

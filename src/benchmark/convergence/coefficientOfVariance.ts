@@ -1,6 +1,6 @@
 import Debug from "debug";
 import {BenchmarkOpts, ConvergenceCheckFn} from "../../types.js";
-import {calcMean, calcMedian, calcVariance, filterOutliers, outlierSensitivity, sortData} from "../../utils/math.js";
+import {calcMean, calcMedian, calcVariance, filterOutliers, OutlierSensitivity, sortData} from "../../utils/math.js";
 
 const debug = Debug("@chainsafe/benchmark/convergence");
 
@@ -43,7 +43,7 @@ export function createCVConvergenceCriteria(
     if (timeSinceLastCheck < sampleEveryMs) return false;
     lastConvergenceSample = currentMs;
     // For all statistical calculations we don't want to loose the precision so have to convert to numbers first
-    const samples = filterOutliers(sortData(runsNs.map((n) => Number(n))), true, outlierSensitivity.Mild);
+    const samples = filterOutliers(sortData(runsNs.map((n) => Number(n))), true, OutlierSensitivity.Mild);
 
     // If CV does not stabilize we fallback to the median approach
     if (runsNs.length > maxSamplesForCV) {

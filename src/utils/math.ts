@@ -116,7 +116,7 @@ export function calcQuartile<T extends number | bigint>(arr: T[], sorted: boolea
  * - Mild: Removes typical anomalies (e.g., temporary CPU spikes)
  * - Strict: Only filters extreme deviations (e.g., measurement errors)
  */
-export const outlierSensitivity = {
+export const OutlierSensitivity = {
   /**
    * A standard multiplier for detecting mild outliers. Captures ~99.3% of normally distributed data.
    */
@@ -126,7 +126,7 @@ export const outlierSensitivity = {
    */
   Strict: 3.0,
 } as const;
-export type OutlierSensitivity = EnumLike<typeof outlierSensitivity>;
+export type OutlierSensitivityType = EnumLike<typeof OutlierSensitivity>;
 
 /**
  * Isolates the core dataset by excluding values far from the central cluster.
@@ -144,7 +144,7 @@ export type OutlierSensitivity = EnumLike<typeof outlierSensitivity>;
 export function filterOutliers<T extends number | bigint>(
   arr: T[],
   sorted: boolean,
-  sensitivity: OutlierSensitivity
+  sensitivity: OutlierSensitivityType
 ): T[] {
   if (arr.length < 4) return arr; // Too few data points
 

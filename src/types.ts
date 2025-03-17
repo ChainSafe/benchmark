@@ -70,9 +70,9 @@ export type BenchmarkOpts = {
   /**
    * The algorithm to detect the convergence to stop the benchmark function runs.
    * */
-  convergence?: Convergence;
+  convergence?: ConvergenceType;
   /** Use simple average of all runs or clean the outliers before calculating average */
-  averageCalculation?: AverageCalculation;
+  averageCalculation?: AverageCalculationType;
 };
 
 // Create partial only for specific keys
@@ -163,7 +163,7 @@ export type BenchmarkComparisonResult = {
 };
 
 /** Algorithms to detect when to stop the benchmark runs */
-export const convergence = {
+export const Convergence = {
   /**
    * **Linear**:
    *
@@ -206,15 +206,15 @@ export const convergence = {
    */
   CV: "cv",
 } as const;
-export type Convergence = EnumLike<typeof convergence>;
+export type ConvergenceType = EnumLike<typeof Convergence>;
 
 /** How to calculate average for output */
-export const averageCalculation = {
+export const AverageCalculation = {
   /** Calculate simple average */
   Simple: "simple",
   /** Clean the outliers first then calculate the average */
   CleanOutliers: "clean-outliers",
 } as const;
-export type AverageCalculation = EnumLike<typeof averageCalculation>;
+export type AverageCalculationType = EnumLike<typeof AverageCalculation>;
 
 export type ConvergenceCheckFn = (runIdx: number, totalNs: bigint, runNs: bigint[]) => boolean;
