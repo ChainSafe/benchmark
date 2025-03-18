@@ -1,13 +1,13 @@
 import {EnumLike} from "../types.js";
 import {getContext} from "./context.js";
 
-export const githubCommentTag = {
+export const GithubCommentTag = {
   PerformanceReport: "benchmarkbot/action",
   ComparisonReport: "benchmarkbot/compare",
 } as const;
-export type GithubCommentTag = EnumLike<typeof githubCommentTag>;
+export type GithubCommentTagType = EnumLike<typeof GithubCommentTag>;
 
-export async function commentToPrUpdatable(prNumber: number, body: string, tag: GithubCommentTag): Promise<void> {
+export async function commentToPrUpdatable(prNumber: number, body: string, tag: GithubCommentTagType): Promise<void> {
   const {repo, octokit} = getContext();
 
   // Append tag so the comment is findable latter

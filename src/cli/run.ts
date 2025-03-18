@@ -21,7 +21,7 @@ import {optionsDefault} from "./options.js";
 import {consoleLog} from "../utils/output.js";
 import {HistoryProviderStore} from "../history/provider.js";
 import {performanceReportComment} from "../github/comments/performanceReportComment.js";
-import {githubCommentTag} from "../github/octokit.js";
+import {GithubCommentTag} from "../github/octokit.js";
 import {defaultBenchmarkOptions} from "../benchmark/options.js";
 
 const debug = Debug("@chainsafe/benchmark/cli");
@@ -100,7 +100,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
     if (!opts.skipPostComment && isGaRun()) {
       await postGaComment({
         commentBody: performanceReportComment(resultsComp),
-        tag: githubCommentTag.PerformanceReport,
+        tag: GithubCommentTag.PerformanceReport,
         commentOnPush: resultsComp.someFailed,
       });
     }
