@@ -48,7 +48,7 @@ export async function runBenchFn<T, T2>(
   }
 
   if (!Object.values(Convergence).includes(convergence)) {
-    throw new Error(`Unknown convergence value ${Convergence}. Valid values are ${Object.values(Convergence)}`);
+    throw new Error(`Unknown convergence value ${convergence}. Valid values are ${Object.values(Convergence)}`);
   }
 
   // Ratio of maxMs that the warmup is allow to take from elapsedMs
