@@ -1,6 +1,6 @@
 import * as github from "@actions/github";
 import {getGithubEventData, GithubActionsEventData} from "../../utils/index.js";
-import {commentToCommit, commentToPrUpdatable, GithubCommentTagType} from "../octokit.js";
+import {commentToCommit, commentToPrUpdatable, GithubCommentTag} from "../octokit.js";
 
 export async function postGaComment({
   commentBody,
@@ -8,7 +8,7 @@ export async function postGaComment({
   commentOnPush,
 }: {
   commentBody: string;
-  tag: GithubCommentTagType;
+  tag: GithubCommentTag;
   commentOnPush: boolean;
 }): Promise<void> {
   switch (github.context.eventName) {
