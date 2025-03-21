@@ -7,7 +7,7 @@ import {
   calcMedian,
   calcQuartile,
   filterOutliers,
-  OutlierSensitivity,
+  OutlierSensitivityEnum,
 } from "../../../src/utils/math.js";
 
 describe("math utility functions", () => {
@@ -188,7 +188,7 @@ describe("math utility functions", () => {
   describe("filterOutliers", () => {
     it("should return the same array if length < 4", () => {
       const arr = [1n, 100n];
-      expect(filterOutliers(arr, false, OutlierSensitivity.Mild)).toEqual([1n, 100n]);
+      expect(filterOutliers(arr, false, OutlierSensitivityEnum.Mild)).toEqual([1n, 100n]);
     });
 
     it("should remove outliers using the Mild (1.5x IQR) approach", () => {
@@ -197,7 +197,7 @@ describe("math utility functions", () => {
       // Q1=2n, Q3=20n => iqr=18 => mild => +/- 1.5*18=27 => lower=2-27=-25 => upper=20+27=47
       // So any element outside -25..47 is out => 100n is out
       const arr = [20n, 100n, 2n, 10n, 1n, 4n];
-      const filtered = filterOutliers(arr, false, OutlierSensitivity.Mild);
+      const filtered = filterOutliers(arr, false, OutlierSensitivityEnum.Mild);
       expect(filtered).toEqual([1n, 2n, 4n, 10n, 20n]);
     });
 
@@ -205,7 +205,7 @@ describe("math utility functions", () => {
       // same array => Q1=2n, Q3=20n => iqr=18 => strict => +/- 3.0*18=54 => lower=-52 => upper=74
       // 100 is outside => filter it out
       const arr = [20n, 100n, 2n, 10n, 1n, 4n];
-      const filtered = filterOutliers(arr, false, OutlierSensitivity.Strict);
+      const filtered = filterOutliers(arr, false, OutlierSensitivityEnum.Strict);
       expect(filtered).toEqual([1n, 2n, 4n, 10n, 20n]);
     });
 
@@ -213,14 +213,14 @@ describe("math utility functions", () => {
       // e.g. [-100n, -10n, -5n, -2n, -1n, 0n, 1n, 5n, 6n]
       // We'll skip the exact math here, but we test that they are sorted and outliers removed
       const arr = [-10n, 6n, -2n, -100n, -5n, 1n, -1n, 5n, 0n];
-      const filtered = filterOutliers(arr, false, OutlierSensitivity.Mild);
+      const filtered = filterOutliers(arr, false, OutlierSensitivityEnum.Mild);
       // We can check that -100n is probably an outlier
       expect(filtered).not.toContain(-100n);
     });
 
     it("should not filter anything if all values are within the mild IQR range", () => {
       const arr = [10n, 12n, 11n, 9n, 8n, 10n, 10n];
-      const filtered = filterOutliers(arr, false, OutlierSensitivity.Mild);
+      const filtered = filterOutliers(arr, false, OutlierSensitivityEnum.Mild);
       // all within a small range => no outliers
       expect(filtered).toEqual(sortData(arr));
     });

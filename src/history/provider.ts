@@ -1,11 +1,11 @@
 import {Benchmark, EnumLike} from "../types.js";
 
-export const HistoryProviderStore = {
+export const HistoryProviderTypeEnum = {
   Local: "Local",
   GaCache: "GaCache",
   S3: "S3",
 } as const;
-export type HistoryProviderStoreType = EnumLike<typeof HistoryProviderStore>;
+export type HistoryProviderType = EnumLike<typeof HistoryProviderTypeEnum>;
 
 /**
  * How to organize data?
@@ -30,7 +30,7 @@ export type HistoryProviderStoreType = EnumLike<typeof HistoryProviderStore>;
  * In history you can ONLY track a single branch, which should be the main branch.
  */
 export interface IHistoryProvider {
-  readonly type: HistoryProviderStoreType;
+  readonly type: HistoryProviderType;
   providerInfo(): string;
   readLatestInBranch(branch: string): Promise<Benchmark | null>;
   writeLatestInBranch(branch: string, benchmark: Benchmark): Promise<void>;
