@@ -1,3 +1,5 @@
+import {EnumLike} from "../types.js";
+
 export const MAX_FRACTION = 8;
 
 export function roundDecimal(n: number): number {
@@ -114,16 +116,17 @@ export function calcQuartile<T extends number | bigint>(arr: T[], sorted: boolea
  * - Mild: Removes typical anomalies (e.g., temporary CPU spikes)
  * - Strict: Only filters extreme deviations (e.g., measurement errors)
  */
-export enum OutlierSensitivity {
+export const OutlierSensitivityEnum = {
   /**
    * A standard multiplier for detecting mild outliers. Captures ~99.3% of normally distributed data.
    */
-  Mild = 1.5,
+  Mild: 1.5,
   /**
    * A stricter multiplier for detecting extreme outliers. Captures ~99.99% of normally distributed data.
    */
-  Strict = 3.0,
-}
+  Strict: 3.0,
+} as const;
+export type OutlierSensitivity = EnumLike<typeof OutlierSensitivityEnum>;
 
 /**
  * Isolates the core dataset by excluding values far from the central cluster.

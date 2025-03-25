@@ -2,7 +2,7 @@ import path from "node:path";
 import S3 from "aws-sdk/clients/s3.js";
 import {Benchmark, BenchmarkResults} from "../types.js";
 import {fromCsv, toCsv, extendError, AwsError} from "../utils/index.js";
-import {HistoryProviderType, IHistoryProvider} from "./provider.js";
+import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.js";
 
 export type S3Config = Pick<S3.Types.ClientConfiguration, "accessKeyId" | "secretAccessKey" | "region" | "endpoint"> & {
   Bucket: string;
@@ -19,10 +19,12 @@ interface CsvMeta {
 }
 
 export class S3HistoryProvider implements IHistoryProvider {
-  readonly type = HistoryProviderType.S3;
+  readonly type: HistoryProvider = HistoryProviderEnum.S3;
   private s3: S3;
+  private config: S3Config;
 
-  constructor(private readonly config: S3Config) {
+  constructor(config: S3Config) {
+    this.config = config;
     this.s3 = new S3(config);
   }
 

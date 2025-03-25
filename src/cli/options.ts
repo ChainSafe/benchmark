@@ -1,5 +1,11 @@
 import {Options} from "yargs";
-import {StorageOptions, BenchmarkOpts, FileCollectionOptions, Convergence, AverageCalculation} from "../types.js";
+import {
+  StorageOptions,
+  BenchmarkOpts,
+  FileCollectionOptions,
+  AverageCalculationEnum,
+  ConvergenceEnum,
+} from "../types.js";
 import {defaultBenchmarkOptions} from "../benchmark/options.js";
 
 export const optionsDefault = {
@@ -209,14 +215,14 @@ export const benchmarkOptions: ICliCommandOptions<CLIBenchmarkOptions> = {
     type: "string",
     description: "The algorithm used to detect the convergence to stop benchmark runs",
     default: defaultBenchmarkOptions.convergence,
-    choices: Object.values(Convergence),
+    choices: Object.values(ConvergenceEnum),
     group: benchmarkGroup,
   },
   averageCalculation: {
     type: "string",
     description: "Use simple average of all runs or clean the outliers before calculating average",
     default: defaultBenchmarkOptions.averageCalculation,
-    choices: Object.values(AverageCalculation),
+    choices: Object.values(AverageCalculationEnum),
     group: benchmarkGroup,
   },
 };

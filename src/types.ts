@@ -1,3 +1,5 @@
+export type EnumLike<T> = T[keyof T];
+
 export interface FileCollectionOptions {
   /** File extensions to use */
   extension: string[];
@@ -161,7 +163,7 @@ export type BenchmarkComparisonResult = {
 };
 
 /** Algorithms to detect when to stop the benchmark runs */
-export enum Convergence {
+export const ConvergenceEnum = {
   /**
    * **Linear**:
    *
@@ -179,7 +181,7 @@ export enum Convergence {
    * high noise or if runs are extremely fast (on the nanosecond scale),
    * you might see premature stopping or extended run times.
    */
-  Linear = "linear",
+  Linear: "linear",
 
   /**
    * **Coefficient of Variation (CV)**:
@@ -202,15 +204,17 @@ export enum Convergence {
    *   convergence may never be triggered. Conversely, extremely uniform runs
    *   can cause an instant (potentially premature) stop.
    */
-  CV = "cv",
-}
+  CV: "cv",
+} as const;
+export type Convergence = EnumLike<typeof ConvergenceEnum>;
 
 /** How to calculate average for output */
-export enum AverageCalculation {
+export const AverageCalculationEnum = {
   /** Calculate simple average */
-  Simple = "simple",
+  Simple: "simple",
   /** Clean the outliers first then calculate the average */
-  CleanOutliers = "clean-outliers",
-}
+  CleanOutliers: "clean-outliers",
+} as const;
+export type AverageCalculation = EnumLike<typeof AverageCalculationEnum>;
 
 export type ConvergenceCheckFn = (runIdx: number, totalNs: bigint, runNs: bigint[]) => boolean;

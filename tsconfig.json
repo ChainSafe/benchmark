@@ -23,6 +23,7 @@
     "esModuleInterop": true,
     // Babel builds source, Typescript is used only for .d.ts files
     "incremental": true,
-    "preserveWatchOutput": true
+    "preserveWatchOutput": true,
+    "erasableSyntaxOnly": true
   }
 }
