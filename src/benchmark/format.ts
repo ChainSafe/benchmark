@@ -49,6 +49,7 @@ function getRatioRow(result: BenchmarkResult, prevResult: BenchmarkResult | null
   if (ratio < 1 / threshold) {
     return `\u001b[92m${str}\u001b[0m`; // green
   }
+
   return str;
 }
 
