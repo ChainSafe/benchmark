@@ -7,7 +7,7 @@
     "@chainsafe/biomejs-config",
     "@chainsafe/biomejs-config/recommended",
     "@chainsafe/biomejs-config/esm",
-    "@chainsafe/biomejs-config/eraseable-syntax"
+    "@chainsafe/biomejs-config/erasable-syntax"
   ],
   "files": {
     "include": ["src/**/*.ts", "test/**/*.ts"]
