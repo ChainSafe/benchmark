@@ -2,9 +2,9 @@ import {AverageCalculationEnum, BenchmarkOpts, ConvergenceEnum} from "../types.j
 
 export const defaultBenchmarkOptions: Required<BenchmarkOpts> = {
   minRuns: 1,
-  maxRuns: Number.POSITIVE_INFINITY,
+  maxRuns: Infinity,
   minMs: 100,
-  maxMs: Number.POSITIVE_INFINITY,
+  maxMs: Infinity,
   maxWarmUpRuns: 1000,
   maxWarmUpMs: 500,
   convergeFactor: 0.5 / 100, // 0.5%
@@ -25,7 +25,7 @@ export function getBenchmarkOptionsWithDefaults(opts: BenchmarkOpts): Required<B
   const options = Object.assign({}, defaultBenchmarkOptions, opts);
 
   if (options.noThreshold) {
-    options.threshold = Number.POSITIVE_INFINITY;
+    options.threshold = Infinity;
   }
 
   if (options.maxMs && options.maxMs > options.timeoutBench) {

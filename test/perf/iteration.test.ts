@@ -68,7 +68,7 @@ describe("Array iteration", () => {
 
   bench({
     id: "sum array with reduce no threshold",
-    threshold: Number.POSITIVE_INFINITY,
+    threshold: Infinity,
     fn: () => {
       arr.reduce((total, curr) => total + curr, 0);
     },
