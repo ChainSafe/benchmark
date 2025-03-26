@@ -1,4 +1,5 @@
 import {Benchmark, BenchmarkHistory, StorageOptions} from "../types.js";
+import {consoleLog} from "../utils/output.js";
 
 export function appendBenchmarkToHistoryAndPrune(
   history: BenchmarkHistory,
@@ -38,12 +39,10 @@ function addBenchmarkToHistory(history: BenchmarkHistory, newBench: Benchmark, b
   // Ensure there are no duplicates for the same commit
   history.benchmarks[branch] = history.benchmarks[branch].filter((bench) => {
     if (bench.commitSha === newBench.commitSha) {
-      // eslint-disable-next-line no-console
-      console.log("Deleting previous benchmark for the same commit");
+      consoleLog("Deleting previous benchmark for the same commit");
       return false;
-    } else {
-      return true;
     }
+    return true;
   });
 
   history.benchmarks[branch].push(newBench);

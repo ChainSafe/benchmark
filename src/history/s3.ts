@@ -1,7 +1,7 @@
 import path from "node:path";
 import S3 from "aws-sdk/clients/s3.js";
 import {Benchmark, BenchmarkResults} from "../types.js";
-import {fromCsv, toCsv, extendError, AwsError} from "../utils/index.js";
+import {AwsError, extendError, fromCsv, toCsv} from "../utils/index.js";
 import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.js";
 
 export type S3Config = Pick<S3.Types.ClientConfiguration, "accessKeyId" | "secretAccessKey" | "region" | "endpoint"> & {
@@ -124,9 +124,9 @@ export class S3HistoryProvider implements IHistoryProvider {
       // NoSuchKey: Error on getObject latest/main: null
       if ((e as AwsError).code === "NoSuchKey") {
         return null;
-      } else {
-        throw e;
       }
+
+      throw e;
     }
   }
 

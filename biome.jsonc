@@ -1,0 +1,52 @@
+{
+  "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "vcs": {
+    "defaultBranch": "master"
+  },
+  "extends": [
+    "@chainsafe/biomejs-config",
+    "@chainsafe/biomejs-config/recommended",
+    "@chainsafe/biomejs-config/esm",
+    "@chainsafe/biomejs-config/erasable-syntax"
+  ],
+  "files": {
+    "include": ["src/**/*.ts", "test/**/*.ts"]
+  },
+  "linter": {
+    "rules": {
+      "style": {
+        // We use `+` operator for string concatenation a lot
+        "useTemplate": "off",
+        // We use to export types and object without differentiating
+        "useExportType": "off",
+        // We use to import types and object without differentiating
+        "useImportType": "off"
+      }
+    }
+  },
+  "overrides": [
+    // TODO: Due to enum change disabling this for now
+    // Will bring it back as we update the base config
+    {
+      "include": ["*"],
+      "linter": {
+        "rules": {
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
+    },
+    {
+      "include": ["src/utils/gaContext.ts", "src/github/octokit.ts"],
+      "linter": {
+        "rules": {
+          "style": {
+            // This file using `snake_case` a lot due to Github Api
+            "useNamingConvention": "off"
+          }
+        }
+      }
+    }
+  ]
+}

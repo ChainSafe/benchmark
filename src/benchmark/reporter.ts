@@ -1,8 +1,8 @@
-import {Task, Suite, File} from "@vitest/runner";
-import {color, consoleLog, symbols} from "../utils/output.js";
-import {store} from "./globalState.js";
+import {File, Suite, Task} from "@vitest/runner";
 import {Benchmark, BenchmarkOpts, BenchmarkResult} from "../types.js";
+import {color, consoleLog, symbols} from "../utils/output.js";
 import {formatResultRow} from "./format.js";
+import {store} from "./globalState.js";
 import {defaultBenchmarkOptions} from "./options.js";
 
 export class BenchmarkReporter {
@@ -129,7 +129,6 @@ export class BenchmarkReporter {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onSuiteFinished(_suite: Suite): void {
     --this.indents;
 
@@ -138,7 +137,6 @@ export class BenchmarkReporter {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onComplete(_files: File[]): void {
     consoleLog();
     this.indents += 2;

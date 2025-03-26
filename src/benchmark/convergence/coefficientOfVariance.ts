@@ -1,11 +1,11 @@
 import Debug from "debug";
 import {BenchmarkOpts, ConvergenceCheckFn} from "../../types.js";
 import {
+  OutlierSensitivityEnum,
   calcMean,
   calcMedian,
   calcVariance,
   filterOutliers,
-  OutlierSensitivityEnum,
   sortData,
 } from "../../utils/math.js";
 
@@ -20,7 +20,7 @@ export function createCVConvergenceCriteria(
   const minSamples = Math.max(5, minRuns);
   const maxSamplesForCV = 1000;
 
-  return function canTerminate(runIdx: number, totalNs: bigint, runsNs: bigint[]): boolean {
+  return function canTerminate(runIdx: number, _totalNs: bigint, runsNs: bigint[]): boolean {
     const currentMs = Date.now();
     const elapsedMs = currentMs - startMs;
     const timeSinceLastCheck = currentMs - lastConvergenceSample;

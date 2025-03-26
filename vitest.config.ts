@@ -1,4 +1,3 @@
-// eslint-disable-next-line import/no-extraneous-dependencies
 import {defineConfig, ViteUserConfig} from "vitest/config";
 
 type Runtime = "node" | "deno" | "bun";

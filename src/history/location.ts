@@ -1,6 +1,6 @@
+import {optionsDefault} from "../cli/options.js";
 import {isGaRun} from "../github/context.js";
 import {StorageOptions} from "../types.js";
-import {optionsDefault} from "../cli/options.js";
 
 export type HistoryLocation = {type: "local"; path: string} | {type: "ga-cache"; key: string};
 
@@ -23,7 +23,7 @@ export function resolveHistoryLocation(opts: StorageOptions): HistoryLocation {
 
   if (isGaRun()) {
     return {type: "ga-cache", key: optionsDefault.historyCacheKey};
-  } else {
-    return {type: "local", path: optionsDefault.historyLocalPath};
   }
+
+  return {type: "local", path: optionsDefault.historyLocalPath};
 }

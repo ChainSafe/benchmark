@@ -1,6 +1,6 @@
 import * as github from "@actions/github";
-import {getGithubEventData, GithubActionsEventData, parseBranchFromRef} from "../utils/index.js";
 import {isGaRun} from "../github/context.js";
+import {GithubActionsEventData, getGithubEventData, parseBranchFromRef} from "../utils/index.js";
 import {shell} from "./shell.js";
 
 export async function getCurrentBranch(): Promise<string> {

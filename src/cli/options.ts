@@ -1,12 +1,12 @@
 import {Options} from "yargs";
-import {
-  StorageOptions,
-  BenchmarkOpts,
-  FileCollectionOptions,
-  AverageCalculationEnum,
-  ConvergenceEnum,
-} from "../types.js";
 import {defaultBenchmarkOptions} from "../benchmark/options.js";
+import {
+  AverageCalculationEnum,
+  BenchmarkOpts,
+  ConvergenceEnum,
+  FileCollectionOptions,
+  StorageOptions,
+} from "../types.js";
 
 export const optionsDefault = {
   historyLocalPath: "./benchmark_data",
@@ -16,7 +16,7 @@ export const optionsDefault = {
 type CLIFileCollectionOptions = Omit<FileCollectionOptions, "spec">;
 type CLIStorageOptions = StorageOptions;
 type CLIBenchmarkOptions = Omit<BenchmarkOpts, "only" | "skip" | "noThreshold">;
-type ICliCommandOptions<OwnArgs> = Required<{[key in keyof OwnArgs]: Options}>;
+type ICliCommandOptions<OwnArgs> = Required<{[K in keyof OwnArgs]: Options}>;
 
 export type CLIOptions = CLIFileCollectionOptions & CLIStorageOptions & CLIBenchmarkOptions;
 

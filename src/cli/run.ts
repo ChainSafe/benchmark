@@ -1,28 +1,28 @@
 import * as github from "@actions/github";
 import Debug from "debug";
-import {getHistoryProvider} from "../history/index.js";
-import {resolveShouldPersist} from "../history/shouldPersist.js";
-import {validateBenchmark} from "../history/schema.js";
-import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
+import {defaultBenchmarkOptions} from "../benchmark/options.js";
+import {BenchmarkRunner} from "../benchmark/runner.js";
+import {computePerformanceReport} from "../compare/compute.js";
 import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
+import {postGaComment} from "../github/comments/index.js";
+import {performanceReportComment} from "../github/comments/performanceReportComment.js";
+import {isGaRun} from "../github/context.js";
+import {GithubCommentTagEnum} from "../github/octokit.js";
+import {getHistoryProvider} from "../history/index.js";
+import {HistoryProviderEnum} from "../history/provider.js";
+import {validateBenchmark} from "../history/schema.js";
+import {resolveShouldPersist} from "../history/shouldPersist.js";
+import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
 import {
-  parseBranchFromRef,
-  getCurrentCommitInfo,
-  shell,
-  getCurrentBranch,
   collectFiles,
+  getCurrentBranch,
+  getCurrentCommitInfo,
+  parseBranchFromRef,
+  shell,
   sortFiles,
 } from "../utils/index.js";
-import {computePerformanceReport} from "../compare/compute.js";
-import {postGaComment} from "../github/comments/index.js";
-import {isGaRun} from "../github/context.js";
-import {BenchmarkRunner} from "../benchmark/runner.js";
-import {optionsDefault} from "./options.js";
 import {consoleLog} from "../utils/output.js";
-import {HistoryProviderEnum} from "../history/provider.js";
-import {performanceReportComment} from "../github/comments/performanceReportComment.js";
-import {GithubCommentTagEnum} from "../github/octokit.js";
-import {defaultBenchmarkOptions} from "../benchmark/options.js";
+import {optionsDefault} from "./options.js";
 
 const debug = Debug("@chainsafe/benchmark/cli");
 

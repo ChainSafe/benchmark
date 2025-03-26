@@ -1,13 +1,13 @@
-import {describe, it, expect} from "vitest";
+import {describe, expect, it} from "vitest";
 import {
-  calcSum,
+  OutlierSensitivityEnum,
   calcMean,
-  calcVariance,
-  sortData,
   calcMedian,
   calcQuartile,
+  calcSum,
+  calcVariance,
   filterOutliers,
-  OutlierSensitivityEnum,
+  sortData,
 } from "../../../src/utils/math.js";
 
 describe("math utility functions", () => {

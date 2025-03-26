@@ -1,8 +1,8 @@
 import fs from "node:fs";
-import {expect, describe, it, afterAll} from "vitest";
 import {rimrafSync} from "rimraf";
-import {Benchmark} from "../../../src/types.js";
+import {afterAll, describe, expect, it} from "vitest";
 import {LocalHistoryProvider} from "../../../src/history/local.js";
+import {Benchmark} from "../../../src/types.js";
 
 describe("benchmark history local", () => {
   const testDir = fs.mkdtempSync("test_files_");

@@ -37,6 +37,6 @@ export function color(type: keyof typeof colors, str: string): string {
 }
 
 export function consoleLog(...args: unknown[]): void {
-  // eslint-disable-next-line no-console
+  // biome-ignore lint/suspicious/noConsoleLog: We explicitly need to log some output
   console.log(...args);
 }

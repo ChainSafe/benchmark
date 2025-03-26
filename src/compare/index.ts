@@ -1,9 +1,9 @@
 import * as github from "@actions/github";
-import {Benchmark, StorageOptions} from "../types.js";
-import {getGithubEventData, GithubActionsEventData, parseBranchFromRef, getDefaultBranch} from "../utils/index.js";
 import {isGaRun} from "../github/context.js";
 import {IHistoryProvider} from "../history/provider.js";
 import {validateBenchmark} from "../history/schema.js";
+import {Benchmark, StorageOptions} from "../types.js";
+import {GithubActionsEventData, getDefaultBranch, getGithubEventData, parseBranchFromRef} from "../utils/index.js";
 
 const CompareWithTypeEnum = {
   latestCommitInBranch: "latestCommitInBranch",
@@ -47,9 +47,9 @@ export function renderCompareWith(compareWith: CompareWith): string {
     case CompareWithTypeEnum.latestCommitInBranch: {
       if (compareWith.before) {
         return `latestCommitInBranch '${compareWith.branch}' before commit ${compareWith.before}`;
-      } else {
-        return `latestCommitInBranch '${compareWith.branch}'`;
       }
+
+      return `latestCommitInBranch '${compareWith.branch}'`;
     }
   }
 }
