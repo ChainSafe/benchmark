@@ -12,7 +12,6 @@ export function createLinearConvergenceCriteria(
   let lastConvergenceSample = startMs;
   const sampleEveryMs = 100;
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   return function canTerminate(runIdx: number, totalNs: bigint, _runNs: bigint[]): boolean {
     const currentMs = Date.now();
     const elapsedMs = currentMs - startMs;

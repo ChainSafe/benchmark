@@ -15,6 +15,7 @@ export function renderPerformanceTable(
   for (const result of results) {
     const {id, prevAverageNs, currAverageNs, ratio} = result;
 
+    // biome-ignore lint/suspicious/noDoubleEquals: We use it here to check both undefined and null
     if (prevAverageNs != undefined && ratio != undefined) {
       table.push([id, prettyTimeStr(currAverageNs), prettyTimeStr(prevAverageNs), ratio.toFixed(2)]);
     } else {

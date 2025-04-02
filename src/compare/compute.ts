@@ -1,10 +1,10 @@
 import {
-  PerformanceResult,
-  PerformanceReport,
   Benchmark,
-  BenchmarkResult,
   BenchmarkComparisonReport,
   BenchmarkComparisonResult,
+  BenchmarkResult,
+  PerformanceReport,
+  PerformanceResult,
 } from "../types.js";
 
 export function computeComparisonReport(benchmarks: Benchmark[]): BenchmarkComparisonReport {
@@ -29,7 +29,7 @@ export function computeComparisonReport(benchmarks: Benchmark[]): BenchmarkCompa
       const refBench = result[0];
       const thresholdBench = currBench.threshold ?? 0;
 
-      if (refBench && refBench.originAverageNs) {
+      if (refBench?.originAverageNs) {
         const ratio = currBench.averageNs / refBench.originAverageNs;
         const isFailed = ratio > thresholdBench;
         result.push({
@@ -91,16 +91,16 @@ export function computePerformanceReport(
         isFailed: ratio > thresholdBench,
         isImproved: ratio < 1 / thresholdBench,
       };
-    } else {
-      return {
-        id,
-        currAverageNs: currBench.averageNs,
-        prevAverageNs: null,
-        ratio: null,
-        isFailed: false,
-        isImproved: false,
-      };
     }
+
+    return {
+      id,
+      currAverageNs: currBench.averageNs,
+      prevAverageNs: null,
+      ratio: null,
+      isFailed: false,
+      isImproved: false,
+    };
   });
 
   return {

@@ -1,9 +1,9 @@
-import {StorageOptions} from "../types.js";
-import {resolveHistoryLocation} from "./location.js";
-import {LocalHistoryProvider} from "./local.js";
-import {getGaCacheHistoryProvider} from "./gaCache.js";
-import {IHistoryProvider} from "./provider.js";
 import {optionsDefault} from "../cli/options.js";
+import {StorageOptions} from "../types.js";
+import {getGaCacheHistoryProvider} from "./gaCache.js";
+import {LocalHistoryProvider} from "./local.js";
+import {resolveHistoryLocation} from "./location.js";
+import {IHistoryProvider} from "./provider.js";
 import {S3HistoryProvider} from "./s3.js";
 export {resolveHistoryLocation};
 

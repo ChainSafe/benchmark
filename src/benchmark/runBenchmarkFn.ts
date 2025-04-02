@@ -1,9 +1,9 @@
 import Debug from "debug";
-import {BenchmarkResult, BenchmarkOpts, Convergence, ConvergenceCheckFn, ConvergenceEnum} from "../types.js";
-import {calcSum, filterOutliers, OutlierSensitivityEnum} from "../utils/math.js";
-import {getBenchmarkOptionsWithDefaults} from "./options.js";
-import {createLinearConvergenceCriteria} from "./convergence/linearAverage.js";
+import {BenchmarkOpts, BenchmarkResult, Convergence, ConvergenceCheckFn, ConvergenceEnum} from "../types.js";
+import {OutlierSensitivityEnum, calcSum, filterOutliers} from "../utils/math.js";
 import {createCVConvergenceCriteria} from "./convergence/coefficientOfVariance.js";
+import {createLinearConvergenceCriteria} from "./convergence/linearAverage.js";
+import {getBenchmarkOptionsWithDefaults} from "./options.js";
 
 const debug = Debug("@chainsafe/benchmark/run");
 
@@ -121,14 +121,14 @@ Consider adjusting 'maxWarmUpMs' or 'maxWarmUpRuns' options orextend 'maxMs'
 if your function is very slow.
 `.trim()
       );
-    } else {
-      throw Error(
-        `
+    }
+
+    throw Error(
+      `
 No run was completed before 'maxMs' ${maxMs}. Consider extending the 'maxMs' time if
 either the before(), beforeEach() or fn() functions are too slow.
 `.trim()
-      );
-    }
+    );
   }
 
   let averageNs!: number;

@@ -13,7 +13,7 @@ export async function getCurrentCommitInfo(): Promise<{
   const branchStr = await shell("git branch --show-current");
   const timestamp = parseInt(timestampStr, 10);
 
-  if (!timestamp || isNaN(timestamp)) {
+  if (!timestamp || Number.isNaN(timestamp)) {
     throw Error(`Invalid timestampStr ${timestampStr}`);
   }
 
