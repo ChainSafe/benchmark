@@ -1,4 +1,4 @@
-import {bench, describe, setBenchOpts} from "../../src/index.js";
+import {bench, describe, setBenchOpts} from "../../src/index.ts";
 
 // As of Jun 17 2021
 // Compare state root

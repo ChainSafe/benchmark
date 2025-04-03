@@ -1,6 +1,6 @@
-import {optionsDefault} from "../cli/options.js";
-import {isGaRun} from "../github/context.js";
-import {StorageOptions} from "../types.js";
+import {optionsDefault} from "../cli/options.ts";
+import {isGaRun} from "../github/context.ts";
+import {StorageOptions} from "../types.ts";
 
 export type HistoryLocation = {type: "local"; path: string} | {type: "ga-cache"; key: string};
 

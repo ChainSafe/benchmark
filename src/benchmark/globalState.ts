@@ -1,6 +1,6 @@
 import type {Suite, SuiteCollector, Task} from "@vitest/runner";
 import Debug from "debug";
-import {BenchmarkOpts, BenchmarkResult, BenchmarkResults} from "../types.js";
+import {BenchmarkOpts, BenchmarkResult, BenchmarkResults} from "../types.ts";
 
 const debug = Debug("@chainsafe/benchmark/state");
 

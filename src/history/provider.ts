@@ -1,4 +1,4 @@
-import {Benchmark, EnumLike} from "../types.js";
+import {Benchmark, EnumLike} from "../types.ts";
 
 export const HistoryProviderEnum = {
   Local: "Local",

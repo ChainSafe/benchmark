@@ -1,5 +1,5 @@
 import Debug from "debug";
-import {BenchmarkOpts, ConvergenceCheckFn} from "../../types.js";
+import {BenchmarkOpts, ConvergenceCheckFn} from "../../types.ts";
 
 const debug = Debug("@chainsafe/benchmark/convergence");
 

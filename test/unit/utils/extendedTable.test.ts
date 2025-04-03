@@ -1,5 +1,5 @@
 import {describe, expect, it} from "vitest";
-import {ExtendedTable} from "../../../src/utils/extendedTable.js";
+import {ExtendedTable} from "../../../src/utils/extendedTable.ts";
 
 describe("table", () => {
   describe("ExtendedTable", () => {
@@ -20,15 +20,15 @@ describe("table", () => {
       <tbody>
       <tr>
       <td>Row 1 1</td>
-      <td>Row 1 2</td> 
+      <td>Row 1 2</td>
       </tr>
       <tr>
       <td>Row 2 1</td>
-      <td>Row 2 2</td> 
+      <td>Row 2 2</td>
       </tr>
       </tbody>
       </table>
-      
+
       `;
 
       expect(table.toHTML().replace(/ /g, "")).toEqual(html.replace(/ /g, ""));
@@ -50,11 +50,11 @@ describe("table", () => {
       </tr>
       <tr>
       <td>Row 1 1</td>
-      <td>Row 1 2</td> 
+      <td>Row 1 2</td>
       </tr>
       <tr>
       <td>Row 2 1</td>
-      <td>Row 2 2</td> 
+      <td>Row 2 2</td>
       </tr>
       </tbody>
       </table>
@@ -71,7 +71,7 @@ describe("table", () => {
       table.push(["Row 2 1", "Row 2 2", "Row 2 3"]);
 
       const html = `
-      
+
       <table>
       <tbody>
       <tr>

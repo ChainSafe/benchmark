@@ -2,10 +2,10 @@ import fs from "node:fs";
 import path from "node:path";
 import {getCurrentSuite, setFn} from "@vitest/runner";
 import {createChainable} from "@vitest/runner/utils";
-import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.js";
-import {store} from "./globalState.js";
-import {getBenchmarkOptionsWithDefaults} from "./options.js";
-import {runBenchFn} from "./runBenchmarkFn.js";
+import {BenchApi, BenchmarkOpts, BenchmarkRunOptsWithFn, PartialBy} from "../types.ts";
+import {store} from "./globalState.ts";
+import {getBenchmarkOptionsWithDefaults} from "./options.ts";
+import {runBenchFn} from "./runBenchmarkFn.ts";
 
 export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
   this: Record<"skip" | "only", boolean | undefined>,
@@ -17,7 +17,11 @@ export const bench: BenchApi = createBenchmarkFunction(function <T, T2>(
 
   const globalOptions = store.getGlobalOptions() ?? {};
   const parentOptions = store.getOptions(currentSuite) ?? {};
-  const options = getBenchmarkOptionsWithDefaults({...globalOptions, ...parentOptions, ...opts});
+  const options = getBenchmarkOptionsWithDefaults({
+    ...globalOptions,
+    ...parentOptions,
+    ...opts,
+  });
 
   async function handler(): Promise<void> {
     // Ensure bench id is unique

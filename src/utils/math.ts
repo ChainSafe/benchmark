@@ -1,4 +1,4 @@
-import {EnumLike} from "../types.js";
+import {EnumLike} from "../types.ts";
 
 export const MAX_FRACTION = 8;
 

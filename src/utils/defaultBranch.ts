@@ -1,7 +1,7 @@
-import {isGaRun} from "../github/context.js";
-import {getGithubDefaultBranch} from "../github/octokit.js";
-import {StorageOptions} from "../types.js";
-import {shell} from "./shell.js";
+import {isGaRun} from "../github/context.ts";
+import {getGithubDefaultBranch} from "../github/octokit.ts";
+import {StorageOptions} from "../types.ts";
+import {shell} from "./shell.ts";
 
 let defaultBranch: string | null = null;
 
