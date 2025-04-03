@@ -13,5 +13,5 @@ fs.writeFileSync(
     publish: {
       include: ["LICENSE", "README.md", "src/**/*.ts", "bin/**/*.ts", "deno.json"],
     },
-  })
+  }, null, "\t")
 );
