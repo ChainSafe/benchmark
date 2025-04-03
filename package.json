@@ -23,20 +23,20 @@
     "writeDocs": "node --loader ts-node/esm scripts/writeOptionsMd.ts"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@chainsafe/biomejs-config": "^0.1.1",
+    "@deno/dnt": "npm:@jsr/deno__dnt",
     "@eslint/js": "^9.15.0",
     "@types/debug": "^4.1.12",
     "@types/node": "^22.10.2",
     "@types/yargs": "^17.0.33",
-    "@deno/dnt": "npm:@jsr/deno__dnt",
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.4.7",
     "jsr": "^0.13.4",
     "rimraf": "^5.0.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
     "vitest": "^3.0.6",
-    "vitest-in-process-pool": "^2.0.0",
-    "@biomejs/biome": "^1.9.4",
-    "@chainsafe/biomejs-config": "^0.1.1"
+    "vitest-in-process-pool": "^2.0.0"
   },
   "dependencies": {
     "@actions/cache": "^4.0.0",
