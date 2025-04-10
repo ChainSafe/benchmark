@@ -1,0 +1,15 @@
+{
+  "$schema": "https://jsr.io/schema/config-file.v1.json",
+  "name": "@chainsafe/benchmark",
+  "version": "1.2.3",
+  "exports": {
+    ".": "./src/index.ts",
+    "./cli": "./src/cli/cli.ts"
+  },
+  "publish": {
+    "exclude": [
+      "lib",
+      "test"
+    ]
+  }
+}
