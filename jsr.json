@@ -7,9 +7,13 @@
     "./cli": "./src/cli/cli.ts"
   },
   "publish": {
-    "exclude": [
-      "lib",
-      "test"
+    "include": [
+      "src",
+      "package.json",
+      ".npmrc",
+      "README.md",
+      "LICENSE",
+      "CHANGELOG.md"
     ]
   }
 }
