@@ -20,7 +20,7 @@ jobs:
         run: yarn install --frozen-lockfile
       # </common-build>
       - name: Build
-        run: yarn build      
+        run: yarn build
       - name: Lint
         run: yarn lint
       - name: Unit tests
