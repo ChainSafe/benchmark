@@ -7,6 +7,16 @@
   "bin": {
     "benchmark": "./bin/index.js"
   },
+  "files": [
+    "lib/**/*.d.ts",
+    "lib/**/*.d.ts.map",
+    "lib/**/*.js",
+    "lib/**/*.js.map",
+    "lib/**/package.json",
+    "*.d.ts",
+    "*.js",
+    "bin"
+  ],
   "type": "module",
   "exports": {
     ".": "./lib/index.js",
