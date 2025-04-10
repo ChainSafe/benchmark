@@ -114,7 +114,3 @@ dist
 
 # TernJS port file
 .tern-port
-
-# Deno & JSR
-/npm
-deno.json
