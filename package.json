@@ -13,8 +13,7 @@
     "./cli": "./lib/cli/cli.js"
   },
   "scripts": {
-    "build:npm": "tsc -p tsconfig.build.json",
-    "build:jsr": "deno run -A scripts/buildJsr.ts",
+    "build": "tsc -p tsconfig.build.json",
     "test:unit": "vitest run test/unit/**/*.test.ts",
     "lint": "biome check",
     "check-types": "tsc --noEmit",
