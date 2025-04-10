@@ -4,7 +4,7 @@
     "target": "ESNext",
     "module": "ESNext",
     "pretty": true,
-    "moduleResolution": "bundler",
+    "moduleResolution": "node",
     "lib": ["es2020", "esnext.bigint", "es2020.string", "es2020.symbol.wellknown"],
     "strict": true,
     "alwaysStrict": true,
@@ -21,7 +21,7 @@
     "preserveWatchOutput": true,
     "erasableSyntaxOnly": true,
     "allowImportingTsExtensions": true,
-    "noEmit": true,
-    "skipLibCheck": true
+    "rewriteRelativeImportExtensions": true,
+    "noEmit": true
   }
 }
