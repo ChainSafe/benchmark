@@ -1,4 +1,4 @@
-import {bench, describe} from "../../src/index.js";
+import {bench, describe} from "../../src/index.ts";
 
 // This test file is to validate the error cases manually
 // should not be included into actual benchmarks as there are cases

@@ -1,5 +1,5 @@
-import {PerformanceReport} from "../../types.js";
-import {renderPerformanceTable} from "../../utils/render.js";
+import {PerformanceReport} from "../../types.ts";
+import {renderPerformanceTable} from "../../utils/render.ts";
 
 export function performanceReportComment(report: PerformanceReport): string {
   const isFailedResults = report.results.filter((r) => r.isFailed);

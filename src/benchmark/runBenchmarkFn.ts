@@ -1,9 +1,9 @@
 import Debug from "debug";
-import {BenchmarkOpts, BenchmarkResult, Convergence, ConvergenceCheckFn, ConvergenceEnum} from "../types.js";
-import {OutlierSensitivityEnum, calcSum, filterOutliers} from "../utils/math.js";
-import {createCVConvergenceCriteria} from "./convergence/coefficientOfVariance.js";
-import {createLinearConvergenceCriteria} from "./convergence/linearAverage.js";
-import {getBenchmarkOptionsWithDefaults} from "./options.js";
+import {BenchmarkOpts, BenchmarkResult, Convergence, ConvergenceCheckFn, ConvergenceEnum} from "../types.ts";
+import {OutlierSensitivityEnum, calcSum, filterOutliers} from "../utils/math.ts";
+import {createCVConvergenceCriteria} from "./convergence/coefficientOfVariance.ts";
+import {createLinearConvergenceCriteria} from "./convergence/linearAverage.ts";
+import {getBenchmarkOptionsWithDefaults} from "./options.ts";
 
 const debug = Debug("@chainsafe/benchmark/run");
 

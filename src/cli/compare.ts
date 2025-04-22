@@ -1,13 +1,13 @@
 import fs from "node:fs";
 import path from "node:path";
-import {computeComparisonReport} from "../compare/compute.js";
-import {benchmarkComparisonComment} from "../github/comments/comparisonReportComment.js";
-import {postGaComment} from "../github/comments/index.js";
-import {isGaRun} from "../github/context.js";
-import {GithubCommentTagEnum} from "../github/octokit.js";
-import {LocalHistoryProvider} from "../history/local.js";
-import {consoleLog} from "../utils/output.js";
-import {renderBenchmarkComparisonTable} from "../utils/render.js";
+import {computeComparisonReport} from "../compare/compute.ts";
+import {benchmarkComparisonComment} from "../github/comments/comparisonReportComment.ts";
+import {postGaComment} from "../github/comments/index.ts";
+import {isGaRun} from "../github/context.ts";
+import {GithubCommentTagEnum} from "../github/octokit.ts";
+import {LocalHistoryProvider} from "../history/local.ts";
+import {consoleLog} from "../utils/output.ts";
+import {renderBenchmarkComparisonTable} from "../utils/render.ts";
 
 export async function compare({dirs}: {dirs: string[]}): Promise<void> {
   consoleLog("Comparing benchmarks:");

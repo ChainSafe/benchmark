@@ -1,8 +1,8 @@
 import path from "node:path";
 import S3 from "aws-sdk/clients/s3.js";
-import {Benchmark, BenchmarkResults} from "../types.js";
-import {AwsError, extendError, fromCsv, toCsv} from "../utils/index.js";
-import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.js";
+import {Benchmark, BenchmarkResults} from "../types.ts";
+import {AwsError, extendError, fromCsv, toCsv} from "../utils/index.ts";
+import {HistoryProvider, HistoryProviderEnum, IHistoryProvider} from "./provider.ts";
 
 export type S3Config = Pick<S3.Types.ClientConfiguration, "accessKeyId" | "secretAccessKey" | "region" | "endpoint"> & {
   Bucket: string;

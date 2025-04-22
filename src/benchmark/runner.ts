@@ -9,9 +9,9 @@ import {
   startTests,
 } from "@vitest/runner";
 import Debug from "debug";
-import {Benchmark, BenchmarkOpts, BenchmarkResults} from "../types.js";
-import {store} from "./globalState.js";
-import {BenchmarkReporter} from "./reporter.js";
+import {Benchmark, BenchmarkOpts, BenchmarkResults} from "../types.ts";
+import {store} from "./globalState.ts";
+import {BenchmarkReporter} from "./reporter.ts";
 
 const debug = Debug("@chainsafe/benchmark/runner");
 

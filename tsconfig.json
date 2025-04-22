@@ -5,12 +5,7 @@
     "module": "ESNext",
     "pretty": true,
     "moduleResolution": "node",
-    "lib": [
-      "es2020",
-      "esnext.bigint",
-      "es2020.string",
-      "es2020.symbol.wellknown"
-    ],
+    "lib": ["es2020", "esnext.bigint", "es2020.string", "es2020.symbol.wellknown"],
     "strict": true,
     "alwaysStrict": true,
     "strictNullChecks": true,
@@ -24,6 +19,10 @@
     // Babel builds source, Typescript is used only for .d.ts files
     "incremental": true,
     "preserveWatchOutput": true,
-    "erasableSyntaxOnly": true
+    "erasableSyntaxOnly": true,
+    "allowImportingTsExtensions": true,
+    "rewriteRelativeImportExtensions": true,
+    "noEmit": true,
+    "skipLibCheck": true
   }
 }

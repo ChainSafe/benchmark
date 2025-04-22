@@ -1,8 +1,8 @@
-import {options} from "../src/cli/options.js";
+import {fileCollectionOptions, storageOptions, benchmarkOptions} from "../src/cli/options.ts";
 
 const sections: string[] = [];
 
-for (const [cmd, data] of Object.entries(options)) {
+for (const [cmd, data] of Object.entries({...fileCollectionOptions, ...storageOptions, ...benchmarkOptions})) {
   const cmds = [cmd, ...(data.alias || [])];
   sections.push(`### ${cmds.map((c) => `\`--${c}\``).join(", ")}
   

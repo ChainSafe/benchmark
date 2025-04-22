@@ -1,4 +1,4 @@
-import {AverageCalculationEnum, BenchmarkOpts, ConvergenceEnum} from "../types.js";
+import {AverageCalculationEnum, BenchmarkOpts, ConvergenceEnum} from "../types.ts";
 
 export const defaultBenchmarkOptions: Required<BenchmarkOpts> = {
   minRuns: 1,

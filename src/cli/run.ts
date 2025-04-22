@@ -1,18 +1,18 @@
 import * as github from "@actions/github";
 import Debug from "debug";
-import {defaultBenchmarkOptions} from "../benchmark/options.js";
-import {BenchmarkRunner} from "../benchmark/runner.js";
-import {computePerformanceReport} from "../compare/compute.js";
-import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.js";
-import {postGaComment} from "../github/comments/index.js";
-import {performanceReportComment} from "../github/comments/performanceReportComment.js";
-import {isGaRun} from "../github/context.js";
-import {GithubCommentTagEnum} from "../github/octokit.js";
-import {getHistoryProvider} from "../history/index.js";
-import {HistoryProviderEnum} from "../history/provider.js";
-import {validateBenchmark} from "../history/schema.js";
-import {resolveShouldPersist} from "../history/shouldPersist.js";
-import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.js";
+import {defaultBenchmarkOptions} from "../benchmark/options.ts";
+import {BenchmarkRunner} from "../benchmark/runner.ts";
+import {computePerformanceReport} from "../compare/compute.ts";
+import {renderCompareWith, resolveCompareWith, resolvePrevBenchmark} from "../compare/index.ts";
+import {postGaComment} from "../github/comments/index.ts";
+import {performanceReportComment} from "../github/comments/performanceReportComment.ts";
+import {isGaRun} from "../github/context.ts";
+import {GithubCommentTagEnum} from "../github/octokit.ts";
+import {getHistoryProvider} from "../history/index.ts";
+import {HistoryProviderEnum} from "../history/provider.ts";
+import {validateBenchmark} from "../history/schema.ts";
+import {resolveShouldPersist} from "../history/shouldPersist.ts";
+import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.ts";
 import {
   collectFiles,
   getCurrentBranch,
@@ -20,9 +20,9 @@ import {
   parseBranchFromRef,
   shell,
   sortFiles,
-} from "../utils/index.js";
-import {consoleLog} from "../utils/output.js";
-import {optionsDefault} from "./options.js";
+} from "../utils/index.ts";
+import {consoleLog} from "../utils/output.ts";
+import {optionsDefault} from "./options.ts";
 
 const debug = Debug("@chainsafe/benchmark/cli");
 

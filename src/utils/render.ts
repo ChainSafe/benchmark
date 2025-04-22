@@ -1,5 +1,5 @@
-import {BenchmarkComparisonReport, PerformanceReport, PerformanceResult} from "../types.js";
-import {CellOptions, CellValue, ExtendedTable} from "./extendedTable.js";
+import {BenchmarkComparisonReport, PerformanceReport, PerformanceResult} from "../types.ts";
+import {CellOptions, CellValue, ExtendedTable} from "./extendedTable.ts";
 
 type CommitsSha = Pick<PerformanceReport, "currCommitSha" | "prevCommitSha">;
 

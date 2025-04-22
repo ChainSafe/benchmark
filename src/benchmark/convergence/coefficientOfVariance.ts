@@ -1,13 +1,14 @@
 import Debug from "debug";
-import {BenchmarkOpts, ConvergenceCheckFn} from "../../types.js";
+import {BenchmarkOpts, ConvergenceCheckFn} from "../../types.ts";
 import {
+  OutlierSensitivity,
   OutlierSensitivityEnum,
   calcMean,
   calcMedian,
   calcVariance,
   filterOutliers,
   sortData,
-} from "../../utils/math.js";
+} from "../../utils/math.ts";
 
 const debug = Debug("@chainsafe/benchmark/convergence");
 

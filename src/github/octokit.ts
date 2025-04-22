@@ -1,5 +1,5 @@
-import {EnumLike} from "../types.js";
-import {getContext} from "./context.js";
+import {EnumLike} from "../types.ts";
+import {getContext} from "./context.ts";
 
 export const GithubCommentTagEnum = {
   PerformanceReport: "benchmarkbot/action",

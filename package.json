@@ -18,38 +18,34 @@
     "bin"
   ],
   "type": "module",
-  "main": "./lib/cjs/index.js",
-  "module": "./lib/esm/index.js",
   "exports": {
-    ".": {
-      "import": "./lib/esm/index.js",
-      "require": "./lib/cjs/index.js"
-    }
+    ".": "./lib/index.js",
+    "./cli": "./lib/cli/cli.js"
   },
   "scripts": {
-    "build": "yarn build:esm && yarn build:cjs",
-    "build:esm": "tsc -p tsconfig.build.esm.json && echo '{\"type\": \"module\"}' > ./lib/esm/package.json",
-    "build:cjs": "tsc -p tsconfig.build.cjs.json && echo '{\"type\": \"commonjs\"}' > ./lib/cjs/package.json",
+    "build": "tsc -p tsconfig.build.json",
     "test:unit": "vitest run test/unit/**/*.test.ts",
     "lint": "biome check",
+    "check-types": "tsc --noEmit",
     "lint:fix": "biome check --write",
     "prepublishOnly": "yarn build",
     "benchmark": "node --loader ts-node/esm ./src/cli/cli.ts 'test/perf/**/@(!(errors)).test.ts'",
     "writeDocs": "node --loader ts-node/esm scripts/writeOptionsMd.ts"
   },
   "devDependencies": {
+    "@biomejs/biome": "^1.9.4",
+    "@chainsafe/biomejs-config": "^0.1.1",
     "@eslint/js": "^9.15.0",
+    "@types/debug": "^4.1.12",
     "@types/node": "^22.10.2",
     "@types/yargs": "^17.0.33",
-    "@types/debug": "^4.1.12",
-    "dotenv": "^10.0.0",
+    "dotenv": "^16.4.7",
+    "jsr": "^0.13.4",
     "rimraf": "^5.0.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.8.2",
     "vitest": "^3.0.6",
-    "vitest-in-process-pool": "^2.0.0",
-    "@biomejs/biome": "^1.9.4",
-    "@chainsafe/biomejs-config": "^0.1.1"
+    "vitest-in-process-pool": "^2.0.0"
   },
   "dependencies": {
     "@actions/cache": "^4.0.0",
@@ -57,13 +53,13 @@
     "@vitest/runner": "^2.1.8",
     "ajv": "^8.17.1",
     "aws-sdk": "^2.932.0",
+    "cli-table3": "^0.6.5",
     "csv-parse": "^5.6.0",
     "csv-stringify": "^6.5.2",
     "debug": "^4.4.0",
     "glob": "^10.4.5",
     "log-symbols": "^7.0.0",
     "yaml": "^2.7.0",
-    "yargs": "^17.7.2",
-    "cli-table3": "^0.6.5"
+    "yargs": "^17.7.2"
   }
 }
