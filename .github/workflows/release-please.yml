@@ -1,0 +1,52 @@
+name: Release please
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - "**"
+
+jobs:
+  publish:
+    permissions:
+      contents: write
+      pull-requests: write
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    steps:
+      - uses: googleapis/release-please-action@v4
+        id: release
+        with:
+          release-type: node
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: actions/checkout@v4
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Use Node.js
+        uses: actions/setup-node@v4
+        if: ${{ steps.release.outputs.release_created }}
+        with:
+          node-version: 22.x
+          cache: yarn
+
+      - name: Install Yarn
+        run: yarn --immutable
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Build
+        run: yarn build
+        if: ${{ steps.release.outputs.release_created }}
+
+      - run: npm config set //registry.npmjs.org/:_authToken=${{secrets.NPM_TOKEN}}
+
+      - name: Publish to npm
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.NPM_TOKEN}}
+        run: npm publish --access public
+        if: ${{ steps.release.outputs.release_created }}
+
+      - name: Publish to JSR
+        run: yarn jsr publish
+        if: ${{ steps.release.outputs.release_created }}
