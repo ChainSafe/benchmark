@@ -9,6 +9,7 @@
       "bump-patch-for-minor-pre-major": false,
       "draft": false,
       "prerelease": false,
+      "include-component-in-tag": false,
       "extra-files": [
         { "type": "json", "path": "jsr.json", "jsonpath": "$.version" }
       ]
