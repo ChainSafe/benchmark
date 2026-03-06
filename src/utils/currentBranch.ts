@@ -2,6 +2,7 @@ import * as github from "@actions/github";
 import {isGaRun} from "../github/context.ts";
 import {GithubActionsEventData, getGithubEventData, parseBranchFromRef} from "../utils/index.ts";
 import {shell} from "./shell.ts";
+import {detectVcs} from "./vcs.ts";
 
 export async function getCurrentBranch(): Promise<string> {
   if (isGaRun()) {
@@ -15,6 +16,14 @@ export async function getCurrentBranch(): Promise<string> {
         return parseBranchFromRef(github.context.ref);
       }
     }
+  }
+
+  if (detectVcs() === "jj") {
+    const branchStr = await shell(
+      'jj log --no-graph -r @ -T \'if(bookmarks, bookmarks.map(|b| b.name()).join(","), "")\''
+    );
+    const branch = branchStr.trim().split(",")[0];
+    if (branch) return branch;
   }
 
   const refStr = github.context.ref || (await shell("git symbolic-ref HEAD"));
