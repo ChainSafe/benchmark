@@ -40,3 +40,7 @@ export function consoleLog(...args: unknown[]): void {
   // biome-ignore lint/suspicious/noConsoleLog: We explicitly need to log some output
   console.log(...args);
 }
+
+export function consoleError(...args: unknown[]): void {
+  console.error(...args);
+}
