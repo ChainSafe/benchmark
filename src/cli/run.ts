@@ -98,11 +98,17 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
 
     debug("detecting to post comment. skipPostComment: %o, isGaRun: %o", !opts.skipPostComment, isGaRun());
     if (!opts.skipPostComment && isGaRun()) {
-      await postGaComment({
-        commentBody: performanceReportComment(resultsComp),
-        tag: GithubCommentTagEnum.PerformanceReport,
-        commentOnPush: resultsComp.someFailed,
-      });
+      try {
+        await postGaComment({
+          commentBody: performanceReportComment(resultsComp),
+          tag: GithubCommentTagEnum.PerformanceReport,
+          commentOnPush: resultsComp.someFailed,
+        });
+      } catch (e) {
+        // Don't fail the benchmark run due to comment posting errors
+        // (e.g. fork PRs lack pull-requests:write permission)
+        consoleLog(`Warning: Failed to post GitHub comment: ${(e as Error).message}`);
+      }
     }
 
     if (resultsComp.someFailed && !opts.noThrow) {
