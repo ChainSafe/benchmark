@@ -1,6 +1,6 @@
 {
   "name": "@chainsafe/benchmark",
-  "version": "2.0.1",
+  "version": "2.0.2",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/ChainSafe/benchmark.git"
