@@ -1,11 +1,14 @@
 {
   "name": "@chainsafe/benchmark",
   "version": "2.0.1",
-  "repository": "git@github.com:chainsafe/benchmark.git",
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/chainsafe/benchmark.git"
+  },
   "author": "ChainSafe Systems",
   "license": "MIT",
   "bin": {
-    "benchmark": "./bin/index.js"
+    "benchmark": "bin/index.js"
   },
   "files": [
     "lib/**/*.d.ts",
