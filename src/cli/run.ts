@@ -114,6 +114,10 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
     if (resultsComp.someFailed && !opts.noThrow) {
       throw Error("Performance regression");
     }
+
+    if (runner.failedCount > 0 && !opts.noThrow) {
+      throw Error(`${runner.failedCount} benchmark(s) failed with errors`);
+    }
   } catch (err) {
     consoleLog(`Error processing benchmark files. ${(err as Error).message}`);
     throw err;

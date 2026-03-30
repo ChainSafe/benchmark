@@ -10,6 +10,7 @@ import {
 } from "@vitest/runner";
 import Debug from "debug";
 import {Benchmark, BenchmarkOpts, BenchmarkResults} from "../types.ts";
+import {consoleError} from "../utils/output.ts";
 import {store} from "./globalState.ts";
 import {BenchmarkReporter} from "./reporter.ts";
 
@@ -17,6 +18,7 @@ const debug = Debug("@chainsafe/benchmark/runner");
 
 export class BenchmarkRunner implements VitestRunner {
   readonly triggerGC: boolean;
+  failedCount = 0;
   readonly config: VitestRunnerConfig;
   readonly reporter: BenchmarkReporter;
   readonly prevBench: Benchmark | null;
@@ -98,10 +100,20 @@ export class BenchmarkRunner implements VitestRunner {
 
     debug("finished tests. passed: %i, skipped: %i, failed: %i", passed.length, skipped.length, failed.length);
 
-    if (passed.length + skipped.length + failed.length === res.length) {
-      return store.getAllResults();
+    if (passed.length + skipped.length + failed.length !== res.length) {
+      throw new Error("Some tests returned with unknown state");
     }
 
-    throw new Error("Some tests cause returned with unknown state");
+    if (failed.length > 0) {
+      this.failedCount = failed.length;
+      consoleError(`${failed.length} benchmark(s) failed:\n`);
+      for (const f of failed) {
+        const error = f.result?.errors?.[0];
+        const errorMsg = error?.message ?? error?.toString() ?? "unknown error";
+        consoleError(`  ✖ ${f.name}: ${errorMsg}`);
+      }
+    }
+
+    return store.getAllResults();
   }
 }
