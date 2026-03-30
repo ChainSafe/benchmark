@@ -1,5 +1,21 @@
 # Changelog
 
+## 2.0.2 (2026-03-30)
+
+## What's Changed
+* fix: use parseAsync to propagate async handler errors to exit code by @lodekeeper in https://github.com/ChainSafe/benchmark/pull/46
+* fix: throw error when benchmarks fail instead of silently dropping results by @lodekeeper in https://github.com/ChainSafe/benchmark/pull/45
+* chore(main): release 2.0.2 by @github-actions[bot] in https://github.com/ChainSafe/benchmark/pull/47
+* chore: remove npm token setup from release workflow by @nazarhussain in https://github.com/ChainSafe/benchmark/pull/48
+* chore(main): release 2.0.3 by @github-actions[bot] in https://github.com/ChainSafe/benchmark/pull/49
+* fix: release workflow by @nazarhussain in https://github.com/ChainSafe/benchmark/pull/50
+* chore(main): release 2.0.2 by @github-actions[bot] in https://github.com/ChainSafe/benchmark/pull/51
+
+## New Contributors
+* @lodekeeper made their first contribution in https://github.com/ChainSafe/benchmark/pull/46
+
+**Full Changelog**: https://github.com/ChainSafe/benchmark/compare/v2.0.1...v2.0.2
+
 ## 2.0.1 (2025-04-30)
 
 ## What's Changed
