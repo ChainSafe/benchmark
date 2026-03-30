@@ -1,5 +1,13 @@
 # Changelog
 
+## 2.0.3 (2026-03-30)
+
+## What's Changed
+* chore: remove npm token setup from release workflow by @nazarhussain in https://github.com/ChainSafe/benchmark/pull/48
+
+
+**Full Changelog**: https://github.com/ChainSafe/benchmark/compare/v2.0.2...v2.0.3
+
 ## 2.0.2 (2026-03-30)
 
 ## What's Changed
