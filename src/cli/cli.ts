@@ -13,7 +13,7 @@ import {compare} from "./compare.ts";
 import {CLIOptions, benchmarkOptions, fileCollectionOptions, storageOptions} from "./options.ts";
 import {run} from "./run.ts";
 
-void yargs(hideBin(process.argv))
+yargs(hideBin(process.argv))
   .env("BENCHMARK")
   .scriptName("benchmark")
   .command({
@@ -83,4 +83,7 @@ void yargs(hideBin(process.argv))
     console.error(` ✖ ${errorMessage}\n`);
     process.exit(1);
   })
-  .parse();
+  .parseAsync()
+  .catch(() => {
+    // Error already handled by .fail() handler
+  });
