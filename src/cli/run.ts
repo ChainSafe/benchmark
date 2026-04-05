@@ -17,6 +17,7 @@ import {
   collectFiles,
   getCurrentBranch,
   getCurrentCommitInfo,
+  getHeadRef,
   parseBranchFromRef,
   shell,
   sortFiles,
@@ -80,7 +81,7 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
       const branch =
         currentCommit.branch ??
         parseBranchFromRef(
-          github.context.ref ?? (await shell("git symbolic-ref HEAD")),
+          github.context.ref ?? (await getHeadRef()),
           historyProvider.type === HistoryProviderEnum.Local
         );
       consoleLog(`Persisting new benchmark data for branch '${branch}' commit '${currBench.commitSha}'`);
