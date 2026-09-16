@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import Debug from "debug";
+import {runIsolated} from "../benchmark/isolate.ts";
 import {defaultBenchmarkOptions} from "../benchmark/options.ts";
 import {BenchmarkRunner} from "../benchmark/runner.ts";
 import {computePerformanceReport} from "../compare/compute.ts";
@@ -59,7 +60,10 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
 
   try {
     const runner = new BenchmarkRunner({prevBench, benchmarkOpts: opts});
-    const results = await runner.process(opts.sort ? sortFiles(files) : files);
+    const orderedFiles = opts.sort ? sortFiles(files) : files;
+    const results = opts.isolate
+      ? await runIsolated(orderedFiles, prevBench, opts)
+      : await runner.process(orderedFiles);
 
     if (results.length === 0) {
       throw Error("No benchmark result was produced");
