@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.0 (2026-09-17)
+
+## What's Changed
+* fix: broken npm release with provernce error by @nazarhussain in https://github.com/ChainSafe/benchmark/pull/52
+* chore(main): release 2.0.2 by @github-actions[bot] in https://github.com/ChainSafe/benchmark/pull/53
+* feat: add opt-in process isolation for benchmark files by @lodekeeper-z in https://github.com/ChainSafe/benchmark/pull/55
+
+## New Contributors
+* @lodekeeper-z made their first contribution in https://github.com/ChainSafe/benchmark/pull/55
+
+**Full Changelog**: https://github.com/ChainSafe/benchmark/compare/v2.0.2...v2.1.0
+
 ## 2.0.2 (2026-03-30)
 
 ## What's Changed
