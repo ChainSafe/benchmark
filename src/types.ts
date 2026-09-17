@@ -1,6 +1,8 @@
 export type EnumLike<T> = T[keyof T];
 
 export interface FileCollectionOptions {
+  /** Run each file sequentially in a fresh process */
+  isolate?: boolean;
   /** File extensions to use */
   extension: string[];
   /** Files, dirs, globs to ignore */

@@ -1,5 +1,6 @@
 import * as github from "@actions/github";
 import Debug from "debug";
+import {runIsolated} from "../benchmark/isolate.ts";
 import {defaultBenchmarkOptions} from "../benchmark/options.ts";
 import {BenchmarkRunner} from "../benchmark/runner.ts";
 import {computePerformanceReport} from "../compare/compute.ts";
@@ -12,7 +13,7 @@ import {getHistoryProvider} from "../history/index.ts";
 import {HistoryProviderEnum} from "../history/provider.ts";
 import {validateBenchmark} from "../history/schema.ts";
 import {resolveShouldPersist} from "../history/shouldPersist.ts";
-import {Benchmark, BenchmarkOpts, FileCollectionOptions, StorageOptions} from "../types.ts";
+import {Benchmark, BenchmarkOpts, BenchmarkResults, FileCollectionOptions, StorageOptions} from "../types.ts";
 import {
   collectFiles,
   getCurrentBranch,
@@ -58,8 +59,16 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
   }
 
   try {
-    const runner = new BenchmarkRunner({prevBench, benchmarkOpts: opts});
-    const results = await runner.process(opts.sort ? sortFiles(files) : files);
+    const orderedFiles = opts.sort ? sortFiles(files) : files;
+    let results: BenchmarkResults;
+    let failedCount = 0;
+    if (opts.isolate) {
+      results = await runIsolated(orderedFiles, prevBench, opts);
+    } else {
+      const runner = new BenchmarkRunner({prevBench, benchmarkOpts: opts});
+      results = await runner.process(orderedFiles);
+      failedCount = runner.failedCount;
+    }
 
     if (results.length === 0) {
       throw Error("No benchmark result was produced");
@@ -115,8 +124,8 @@ export async function run(opts_: FileCollectionOptions & StorageOptions & Benchm
       throw Error("Performance regression");
     }
 
-    if (runner.failedCount > 0 && !opts.noThrow) {
-      throw Error(`${runner.failedCount} benchmark(s) failed with errors`);
+    if (failedCount > 0 && !opts.noThrow) {
+      throw Error(`${failedCount} benchmark(s) failed with errors`);
     }
   } catch (err) {
     consoleLog(`Error processing benchmark files. ${(err as Error).message}`);

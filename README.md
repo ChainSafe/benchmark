@@ -126,9 +126,30 @@ benchmark test/perf/func.perf.ts --local
 - Run benchmark comparing with prev
 - Does not write benchmark data
 
+### Isolate benchmark files (Node.js)
+
+Use `--isolate` to run each file sequentially in a fresh process instead of the default shared process:
+
+```sh
+benchmark 'test/perf/**/*.perf.js' --isolate --historyLocal ./benchmark_data-isolated
+```
+
+Each worker inherits the Node executable, runtime flags (including loaders and `--expose-gc`), environment, and working directory. Setup files run in each worker. The next file starts only after the previous worker exits, releasing its retained memory and native resources. Completed workers exit even if benchmark code leaves open handles.
+
+The parent still owns history, the combined snapshot, performance comparison, and the single GitHub report. Collection failures, failed benchmarks, crashes, missing worker results, interruption, and duplicate IDs across files abort before persistence, including with `--noThrow`. Skipped files are allowed, but the complete run must produce at least one result.
+
+Files must be independent: globals and hooks are not shared across files, and `.only` selection is local to each file. Use unique benchmark IDs across files. When switching modes, use a fresh local history path, CI cache key, or S3 prefix; shared-process and isolated measurements are not interchangeable baselines. History namespaces are not changed automatically.
+
 ## Config
 
 <!-- Auto-generated options START -->
+
+### `--isolate`
+
+Run each file sequentially in a fresh process
+
+- type: boolean
+- default: false
 
 ### `--defaultBranch`
 

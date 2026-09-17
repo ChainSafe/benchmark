@@ -27,6 +27,12 @@ const storageGroup = "Storage options:";
 const benchmarkGroup = "Benchmark options:";
 
 export const fileCollectionOptions: ICliCommandOptions<CLIFileCollectionOptions> = {
+  isolate: {
+    description: "Run each file sequentially in a fresh process",
+    type: "boolean",
+    default: false,
+    group: fileGroup,
+  },
   extension: {
     description: "File extension(s) to load",
     type: "array",
